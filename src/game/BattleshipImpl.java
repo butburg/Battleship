@@ -1,7 +1,7 @@
 package game;
 
 import exceptions.BattleshipException;
-import exceptions.StatusException;
+import exceptions.PhaseException;
 import ship.Ship;
 
 import java.awt.*;
@@ -11,17 +11,17 @@ import java.awt.*;
  */
 public class BattleshipImpl implements Battleship {
     @Override
-    public void choosePlayer(String playerName) throws BattleshipException, StatusException {
+    public void choosePlayer(String playerName) throws BattleshipException, PhaseException {
 
     }
 
     @Override
-    public boolean setShip(String player, Ship ship) throws BattleshipException, StatusException {
+    public boolean setShip(String player, Ship ship) throws BattleshipException, PhaseException {
         return false;
     }
 
     @Override
-    public Result attack(String player, Point position) throws BattleshipException, StatusException {
+    public Result attack(String player, Point position) throws BattleshipException, PhaseException {
         return null;
     }
 }

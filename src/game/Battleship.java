@@ -1,7 +1,7 @@
 package game;
 
 import exceptions.BattleshipException;
-import exceptions.StatusException;
+import exceptions.PhaseException;
 import ship.Ship;
 
 import java.awt.*;
@@ -17,9 +17,9 @@ public interface Battleship {
      *
      * @param playerName the new Name for a Player
      * @throws BattleshipException
-     * @throws StatusException
+     * @throws PhaseException
      */
-    void choosePlayer(String playerName) throws BattleshipException, StatusException;
+    void choosePlayer(String playerName) throws BattleshipException, PhaseException;
 
     /**
      * Set one ship at players own field, validates the position of the ship and checks, if all ships are set
@@ -29,9 +29,9 @@ public interface Battleship {
      * @param ship   the specific ship, that should be set into the field
      * @return if ships are left to set true else false
      * @throws BattleshipException wrong player, wrong ships, wrong positions, out of bounds, wrong state
-     * @throws StatusException     not allowed to set a Ship, in the wrong phase
+     * @throws PhaseException     not allowed to set a Ship, in the wrong phase
      */
-    boolean setShip(String player, Ship ship) throws BattleshipException, StatusException;
+    boolean setShip(String player, Ship ship) throws BattleshipException, PhaseException;
 
 
     /**
@@ -42,7 +42,7 @@ public interface Battleship {
      * @param position position to be attacked
      * @return hit ? fail ? win ? destroy
      * @throws BattleshipException wrong player, outOfBounds, wrong state, already attacked
-     * @throws StatusException     not allowed to attack, in the wrong phase, not your turn
+     * @throws PhaseException     not allowed to attack, in the wrong phase, not your turn
      */
-    Result attack(String player, Point position) throws BattleshipException, StatusException;
+    Result attack(String player, Point position) throws BattleshipException, PhaseException;
 }
