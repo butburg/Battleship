@@ -1,56 +1,77 @@
 package ship;
 
 import exceptions.ShipException;
-import game.Shipmodel;
 
 import java.awt.*;
 
 /**
  * @author Edwin W (570900) on Nov 2020
+ * The ship consists of at least two parts that must be hit with an attack in order for it to sink.
+ * So the size matters. The position is also stored by the ship.
+ * <p>
+ * The size is in relation with the type of ship, which stored in enums.
  */
-public class Ship {
+public interface Ship {
 
-    final Shipmodel model;
-    private final int size;
-    Point ancher;// = {{2,3},{2,4}};
-    Point[] position;// = {{2,3},{2,4}};
+    /**
+     * Let the ship know where it is swimming in the ocean.
+     * The position in the field.
+     *
+     * @param x        coordinate
+     * @param y        coordinate
+     * @param vertical true for a vertical placement, otherwise horizontal
+     * @return the positions as array
+     * @throws ShipException when the coordinates are negative
+     */
+    Point[] createPosition(int x, int y, boolean vertical) throws ShipException;
 
-    public Ship(Shipmodel model, int x, int y) throws ShipException {
-        this.model = model;
-        this.size = model.returnSize();
-        this.ancher = new Point(x, y);
+    default Point[] createPosition(int x, int y) throws ShipException {
+        return createPosition(x, y, false);
     }
 
-    public Point[] createPosition(Point anchor, boolean vertical) {
-        int inc_x = 0;
-        int inc_y = 0;
 
-        if (vertical) inc_x = 1;
-        else inc_y = 1;
+    /**
+     * Attack the ship on a specific field/part. Destroys the selected healthy field.
+     * A 5 field ship can get destroyed at field 4 but not 5!
+     *
+     * @param field that should be destroyed
+     * @return true if the ship sinks. false if it remains
+     * @throws ShipException when the field is not in the size of the ship
+     */
+    boolean hit(int field) throws ShipException;
 
-        Point[] points = new Point[model.returnSize()];
+    /**
+     * Check, if the ship is sunk!
+     *
+     * @return true if the ship is destroyed, sunk. false if it is intact
+     */
+    boolean sunk();
 
-        for (int i = 0; i < size; i++) {
-            points[i] = anchor;
-            anchor.x = +inc_x;
-            anchor.y = +inc_y;
-        }
-        return points;
-    }
+    /**
+     * Get the Anchor coordinate
+     *
+     * @return the anchor as a new Point(x,y)
+     */
+    Point getAnchor();
 
-    public Point getAncher() {
-        return ancher;
-    }
+    /**
+     * Returns the total number of fields, i.e. the length, the size of the ship.
+     *
+     * @return the number of fields (healthy and destroyed)
+     */
+    int getSize();
 
-    public int getSize() {
-        return size;
-    }
+    /**
+     * The positions as array stored in the ship.
+     *
+     * @return the positions as array
+     */
+    Point[] getPosition();
 
-    public Point[] getPosition() {
-        return position;
-    }
-
-    public Shipmodel getModel() {
-        return model;
-    }
+    /**
+     * Get the type of ship model.
+     *
+     * @return the ship model
+     */
+    Shipmodel getModel();
 }

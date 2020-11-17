@@ -2,8 +2,11 @@ package exceptions;
 
 /**
  * @author Edwin W (570900) on Nov 2020
+ * These eceptions are thrown when a method call is made
+ * but are not allowed in this status/phase of the game.
+ * Always is it a matter of timing!!
  */
-public class PhaseException extends Exception {
+public class PhaseException extends Exception implements ExceptionMessages {
     public PhaseException() {
         super();
     }

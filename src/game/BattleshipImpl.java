@@ -8,8 +8,11 @@ import java.awt.*;
 
 /**
  * @author Edwin W (570900) on Nov 2020
+ * This is an implementation for the battleship game.
  */
 public class BattleshipImpl implements Battleship {
+
+
     @Override
     public void choosePlayer(String playerName) throws BattleshipException, PhaseException {
 
