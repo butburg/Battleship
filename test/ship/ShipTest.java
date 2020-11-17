@@ -10,6 +10,9 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * @author Edwin W (570900) on Nov 2020
+ */
 class ShipTest {
     Ship s1;
     Ship s2;
