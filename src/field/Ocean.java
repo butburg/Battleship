@@ -24,5 +24,5 @@ public interface Ocean {
      * @param y    the coordinate
      * @param ship the reference to the ship
      */
-    void placeShipPart(int x, int y, Ship ship);
+    void placeShipPart(Ship ship, int x, int y, boolean vertical);
 }

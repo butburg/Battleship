@@ -6,7 +6,7 @@ package exceptions;
  * but are not allowed in this status/phase of the game.
  * Always is it a matter of timing!!
  */
-public class PhaseException extends Exception implements ExceptionMessages {
+public class PhaseException extends java.lang.Exception implements ExceptionMsg {
     public PhaseException() {
         super();
     }

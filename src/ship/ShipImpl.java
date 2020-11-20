@@ -1,6 +1,6 @@
 package ship;
 
-import exceptions.ExceptionMessages;
+import exceptions.ExceptionMsg;
 import exceptions.ShipException;
 
 import java.awt.*;
@@ -18,12 +18,13 @@ public class ShipImpl implements Ship {
     boolean[] hurt;// = {true,true};
 
     /**
-     * Constructor for the tests.
-     * @param model
-     * @param x
-     * @param y
-     * @param vertical
-     * @throws ShipException
+     * Constructor for the tests. Will be removed!
+     *
+     * @param model    type of the ship
+     * @param x        coordinate
+     * @param y        coordinate
+     * @param vertical true, or false for horizontal
+     * @throws ShipException if the ship get a bad position
      */
     public ShipImpl(Shipmodel model, int x, int y, boolean vertical) throws ShipException {
         this.model = model;
@@ -37,7 +38,7 @@ public class ShipImpl implements Ship {
         this(model, x, y, false);
     }
 
-    public ShipImpl(Shipmodel model) throws ShipException {
+    public ShipImpl(Shipmodel model) {
         this.model = model;
         this.size = model.returnSize();
         hurt = new boolean[size];
@@ -59,7 +60,7 @@ public class ShipImpl implements Ship {
 
     @Override
     public Point[] createPosition(int x, int y, boolean vertical) throws ShipException {
-        if (x < 0 || y < 0) throw new ShipException(ExceptionMessages.shipInvalidPosition);
+        if (x < 0 || y < 0) throw new ShipException(ExceptionMsg.shipInvalidPosition);
         this.anchor = new Point(x, y);
         int inc_x = 0;
         int inc_y = 0;

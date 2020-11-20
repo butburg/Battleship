@@ -1,7 +1,7 @@
 package game;
 
 import exceptions.BattleshipException;
-import exceptions.ExceptionMessages;
+import exceptions.ExceptionMsg;
 import exceptions.PhaseException;
 import exceptions.ShipException;
 import field.Ocean;
@@ -9,13 +9,14 @@ import field.OceanImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import ship.*;
+import ship.Ship;
+import ship.ShipImpl;
+import ship.Shipmodel;
 
 import java.awt.*;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Edwin W (570900) on Nov 2020
@@ -49,7 +50,7 @@ class BattleshipTest {
     @BeforeEach
     void setUp() throws ShipException {
         bs = new BattleshipImpl();
-        ocean = new OceanImpl();
+        ocean = new OceanImpl(11);
         oceanSize = ocean.getSize();
 
         //good Ships: inside ocean and right amount of each type, not collidating
@@ -73,64 +74,79 @@ class BattleshipTest {
 
     }
 
+    @Test
+    void checkPhaseChanges() {
+        assertEquals(Phase.CHOOSE, bs.getPhase());
+    }
+
+    @Test
+    void getPlayers() throws BattleshipException, PhaseException {
+        bs.choosePlayerName(PNAME1);
+        bs.choosePlayerName(PNAME2);
+        assertThrows(Exception.class, () -> bs.choosePlayerName(PNAME3));
+        assertThrows(Exception.class, () -> bs.choosePlayerName(PNAME1));
+        assertArrayEquals(new String[]{PNAME1, PNAME2}, bs.getPlayers());
+    }
+
+
     @Nested
     public class PhaseChoose {
 
         @Test
         void choosePlayerGood() throws BattleshipException, PhaseException {
-            bs.choosePlayer(PNAME1);
-            bs.choosePlayer(PNAME2);
+            bs.choosePlayerName(PNAME1);
+            bs.choosePlayerName(PNAME2);
         }
 
         @Test
         void choosePlayerSameName() throws BattleshipException, PhaseException {
-            bs.choosePlayer(PNAME2);
-            Throwable e = assertThrows(BattleshipException.class, () -> bs.choosePlayer(PNAME2));
-            assertEquals(ExceptionMessages.playerNameTaken, e.getMessage());
+            bs.choosePlayerName(PNAME2);
+            Throwable e = assertThrows(BattleshipException.class, () -> bs.choosePlayerName(PNAME2));
+            assertEquals(ExceptionMsg.playerNameTaken, e.getMessage());
         }
 
         @Test
         void choosePlayer3Player() throws BattleshipException, PhaseException {
-            bs.choosePlayer(PNAME1);
-            bs.choosePlayer(PNAME2);
-            Throwable e = assertThrows(BattleshipException.class, () -> bs.choosePlayer(PNAME3));
-            assertEquals(ExceptionMessages.tooManyPlayers, e.getMessage());
+            bs.choosePlayerName(PNAME1);
+            bs.choosePlayerName(PNAME2);
+            Throwable e = assertThrows(BattleshipException.class, () -> bs.choosePlayerName(PNAME3));
+            assertEquals(ExceptionMsg.tooManyPlayers, e.getMessage());
         }
 
         @Test
         void choosePlayer3PlayerSameName() throws BattleshipException, PhaseException {
-            bs.choosePlayer(PNAME1);
-            bs.choosePlayer(PNAME2);
-            Throwable e = assertThrows(BattleshipException.class, () -> bs.choosePlayer(PNAME1));
-            assertEquals(ExceptionMessages.tooManyPlayers, e.getMessage());
+            bs.choosePlayerName(PNAME1);
+            bs.choosePlayerName(PNAME2);
+            Throwable e = assertThrows(BattleshipException.class, () -> bs.choosePlayerName(PNAME1));
+            assertEquals(ExceptionMsg.tooManyPlayers, e.getMessage());
         }
 
         @Nested
         public class WrongPhase {
             @Test
             void setShipWrongPhase1() throws BattleshipException, PhaseException {
-                bs.choosePlayer(PNAME1);
+                bs.choosePlayerName(PNAME1);
                 Throwable e = assertThrows(PhaseException.class, () -> bs.setShip(PNAME1, ship1));
-                assertEquals(ExceptionMessages.wrongPhase, e.getMessage());
+                assertEquals(ExceptionMsg.wrongPhase, e.getMessage());
             }
 
             @Test
             void setShipWrongPhase2() throws BattleshipException, PhaseException {
                 Throwable e = assertThrows(PhaseException.class, () -> bs.setShip(PNAME1, ship1));
-                assertEquals(ExceptionMessages.wrongPhase, e.getMessage());
+                assertEquals(ExceptionMsg.wrongPhase, e.getMessage());
             }
 
             @Test
             void attackWrongPhase1() throws BattleshipException, PhaseException {
-                bs.choosePlayer(PNAME1);
+                bs.choosePlayerName(PNAME1);
                 Throwable e = assertThrows(PhaseException.class, () -> bs.attack(PNAME1, p_0_0));
-                assertEquals(ExceptionMessages.wrongPhase, e.getMessage());
+                assertEquals(ExceptionMsg.wrongPhase, e.getMessage());
             }
 
             @Test
             void attackWrongPhase2() throws BattleshipException, PhaseException {
                 Throwable e = assertThrows(PhaseException.class, () -> bs.attack(PNAME1, p_0_0));
-                assertEquals(ExceptionMessages.wrongPhase, e.getMessage());
+                assertEquals(ExceptionMsg.wrongPhase, e.getMessage());
             }
         }
     }
@@ -138,7 +154,7 @@ class BattleshipTest {
     @Nested
     public class PhaseSetShips {
         @BeforeEach
-        public void setUp() throws Exception {
+        public void setUp() throws java.lang.Exception {
             choosePlayerDefault();
         }
 
@@ -184,23 +200,23 @@ class BattleshipTest {
         @Test
         void setShipWrongPlayer() throws BattleshipException, PhaseException {
             Throwable e1 = assertThrows(BattleshipException.class, () -> bs.setShip(PNAME3, ship1));
-            assertEquals(ExceptionMessages.wrongPlayer, e1.getMessage());
+            assertEquals(ExceptionMsg.wrongPlayer, e1.getMessage());
         }
 
 
         @Test
         void setShipOutside() throws ShipException, BattleshipException, PhaseException {
             Ship shipOutside1 = new ShipImpl(Shipmodel.BATTLESHIP, 15, 1);
-            Throwable e1 = assertThrows(Exception.class, () -> bs.setShip(PNAME1, shipOutside1));
-            assertEquals(ExceptionMessages.shipOutside, e1.getMessage());
+            Throwable e1 = assertThrows(java.lang.Exception.class, () -> bs.setShip(PNAME1, shipOutside1));
+            assertEquals(ExceptionMsg.shipOutside, e1.getMessage());
 
             Ship shipOutside2 = new ShipImpl(Shipmodel.BATTLESHIP, 1, 15);
-            Throwable e2 = assertThrows(Exception.class, () -> bs.setShip(PNAME1, shipOutside2));
-            assertEquals(ExceptionMessages.shipOutside, e2.getMessage());
+            Throwable e2 = assertThrows(java.lang.Exception.class, () -> bs.setShip(PNAME1, shipOutside2));
+            assertEquals(ExceptionMsg.shipOutside, e2.getMessage());
 
             Ship shipOutside3 = new ShipImpl(Shipmodel.BATTLESHIP, 15, 16);
-            Throwable e3 = assertThrows(Exception.class, () -> bs.setShip(PNAME1, shipOutside3));
-            assertEquals(ExceptionMessages.shipOutside, e3.getMessage());
+            Throwable e3 = assertThrows(java.lang.Exception.class, () -> bs.setShip(PNAME1, shipOutside3));
+            assertEquals(ExceptionMsg.shipOutside, e3.getMessage());
         }
 
         @Nested
@@ -208,8 +224,8 @@ class BattleshipTest {
             @Test
             void setBattleshipToOften() throws ShipException, BattleshipException, PhaseException {
                 assertEquals(true, bs.setShip(PNAME1, new ShipImpl(Shipmodel.BATTLESHIP, 6, 0)));
-                Throwable e1 = assertThrows(Exception.class, () -> bs.setShip(PNAME1, new ShipImpl(Shipmodel.BATTLESHIP, 6, 4)));
-                assertEquals(ExceptionMessages.shipAllSet, e1.getMessage());
+                Throwable e1 = assertThrows(java.lang.Exception.class, () -> bs.setShip(PNAME1, new ShipImpl(Shipmodel.BATTLESHIP, 6, 4)));
+                assertEquals(ExceptionMsg.shipTypeAllSet, e1.getMessage());
             }
 
             @Test
@@ -217,8 +233,8 @@ class BattleshipTest {
                 assertEquals(true, bs.setShip(PNAME1, new ShipImpl(Shipmodel.CRUISERS, 0, 5)));
                 assertEquals(true, bs.setShip(PNAME1, new ShipImpl(Shipmodel.CRUISERS, 0, 7, true)));
 
-                Throwable e1 = assertThrows(Exception.class, () -> bs.setShip(PNAME1, new ShipImpl(Shipmodel.CRUISERS, 6, 4)));
-                assertEquals(ExceptionMessages.shipAllSet, e1.getMessage());
+                Throwable e1 = assertThrows(java.lang.Exception.class, () -> bs.setShip(PNAME1, new ShipImpl(Shipmodel.CRUISERS, 6, 4)));
+                assertEquals(ExceptionMsg.shipTypeAllSet, e1.getMessage());
             }
 
             @Test
@@ -226,8 +242,8 @@ class BattleshipTest {
                 assertEquals(true, bs.setShip(PNAME1, new ShipImpl(Shipmodel.DESTROYERS, 3, 0, true)));
                 assertEquals(true, bs.setShip(PNAME1, new ShipImpl(Shipmodel.DESTROYERS, 8, 8)));
                 assertEquals(true, bs.setShip(PNAME1, new ShipImpl(Shipmodel.DESTROYERS, 8, 10)));
-                Throwable e1 = assertThrows(Exception.class, () -> bs.setShip(PNAME1, new ShipImpl(Shipmodel.DESTROYERS, 6, 4)));
-                assertEquals(ExceptionMessages.shipAllSet, e1.getMessage());
+                Throwable e1 = assertThrows(java.lang.Exception.class, () -> bs.setShip(PNAME1, new ShipImpl(Shipmodel.DESTROYERS, 6, 4)));
+                assertEquals(ExceptionMsg.shipTypeAllSet, e1.getMessage());
             }
 
             @Test
@@ -235,9 +251,9 @@ class BattleshipTest {
                 assertEquals(true, bs.setShip(PNAME1, new ShipImpl(Shipmodel.SUBMARINES, 0, 0)));
                 assertEquals(true, bs.setShip(PNAME1, new ShipImpl(Shipmodel.SUBMARINES, 9, 2)));
                 assertEquals(true, bs.setShip(PNAME1, new ShipImpl(Shipmodel.SUBMARINES, 3, 10)));
-                assertEquals(false, bs.setShip(PNAME1, new ShipImpl(Shipmodel.SUBMARINES, 6, 9, true)));
-                Throwable e1 = assertThrows(Exception.class, () -> bs.setShip(PNAME1, new ShipImpl(Shipmodel.SUBMARINES, 6, 4)));
-                assertEquals(ExceptionMessages.shipAllSet, e1.getMessage());
+                assertEquals(true, bs.setShip(PNAME1, new ShipImpl(Shipmodel.SUBMARINES, 6, 9, true)));
+                Throwable e1 = assertThrows(java.lang.Exception.class, () -> bs.setShip(PNAME1, new ShipImpl(Shipmodel.SUBMARINES, 6, 4)));
+                assertEquals(ExceptionMsg.shipTypeAllSet, e1.getMessage());
             }
 
 
@@ -251,8 +267,8 @@ class BattleshipTest {
                 assertEquals(true, bs.setShip(PNAME1, new ShipImpl(Shipmodel.DESTROYERS, 8, 10)));
                 assertEquals(true, bs.setShip(PNAME1, new ShipImpl(Shipmodel.SUBMARINES, 0, 0)));
                 assertEquals(true, bs.setShip(PNAME1, new ShipImpl(Shipmodel.SUBMARINES, 9, 2)));
-                Throwable e1 = assertThrows(Exception.class, () -> bs.setShip(PNAME1, new ShipImpl(Shipmodel.CRUISERS, 6, 4)));
-                assertEquals(ExceptionMessages.shipAllSet, e1.getMessage());
+                Throwable e1 = assertThrows(java.lang.Exception.class, () -> bs.setShip(PNAME1, new ShipImpl(Shipmodel.CRUISERS, 6, 4)));
+                assertEquals(ExceptionMsg.shipTypeAllSet, e1.getMessage());
             }
 
             @Test
@@ -268,8 +284,8 @@ class BattleshipTest {
                 assertEquals(true, bs.setShip(PNAME1, new ShipImpl(Shipmodel.SUBMARINES, 3, 10)));
                 assertEquals(false, bs.setShip(PNAME1, new ShipImpl(Shipmodel.SUBMARINES, 6, 9, true)));
                 //set 11th ship
-                Throwable e1 = assertThrows(Exception.class, () -> bs.setShip(PNAME1, new ShipImpl(Shipmodel.CRUISERS, 6, 4)));
-                assertEquals(ExceptionMessages.shipAllSet, e1.getMessage());
+                Throwable e1 = assertThrows(java.lang.Exception.class, () -> bs.setShip(PNAME1, new ShipImpl(Shipmodel.CRUISERS, 6, 4)));
+                assertEquals(ExceptionMsg.shipAllSet, e1.getMessage());
             }
 
         }
@@ -281,14 +297,14 @@ class BattleshipTest {
                 bs.setShip(PNAME1, ship1);
                 bs.setShip(PNAME1, ship2);
 
-                Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayer(PNAME3));
-                assertEquals(ExceptionMessages.wrongPhase, e.getMessage());
+                Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayerName(PNAME3));
+                assertEquals(ExceptionMsg.wrongPhase, e.getMessage());
             }
 
             @Test
             void choosePlayerWrongPhase2() throws BattleshipException, PhaseException {
-                Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayer(PNAME3));
-                assertEquals(ExceptionMessages.wrongPhase, e.getMessage());
+                Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayerName(PNAME3));
+                assertEquals(ExceptionMsg.wrongPhase, e.getMessage());
             }
 
 
@@ -298,13 +314,13 @@ class BattleshipTest {
                 bs.setShip(PNAME1, ship2);
 
                 Throwable e = assertThrows(PhaseException.class, () -> bs.attack(PNAME1, p_0_0));
-                assertEquals(ExceptionMessages.wrongPhase, e.getMessage());
+                assertEquals(ExceptionMsg.wrongPhase, e.getMessage());
             }
 
             @Test
             void attackWrongPhase2() throws BattleshipException, PhaseException {
                 Throwable e = assertThrows(PhaseException.class, () -> bs.attack(PNAME1, p_0_0));
-                assertEquals(ExceptionMessages.wrongPhase, e.getMessage());
+                assertEquals(ExceptionMsg.wrongPhase, e.getMessage());
             }
         }
     }
@@ -312,7 +328,7 @@ class BattleshipTest {
     @Nested
     public class PhaseAttack {
         @BeforeEach
-        public void setUp() throws Exception, ShipException {
+        public void setUp() throws java.lang.Exception, ShipException {
             choosePlayerDefault();
             setShipDefaultGood();
         }
@@ -328,7 +344,7 @@ class BattleshipTest {
         @Test
         void attackWrongPlayer() throws BattleshipException, PhaseException {
             Throwable e2 = assertThrows(BattleshipException.class, () -> bs.attack(PNAME3, p_2_2));
-            assertEquals(ExceptionMessages.wrongPlayer, e2.getMessage());
+            assertEquals(ExceptionMsg.wrongPlayer, e2.getMessage());
         }
 
         @Test
@@ -336,7 +352,7 @@ class BattleshipTest {
             assertEquals(Result.HIT, bs.attack(PNAME1, p_0_0));
             assertEquals(Result.MISSED, bs.attack(PNAME2, p_10_1));
             Throwable e2 = assertThrows(BattleshipException.class, () -> bs.attack(PNAME2, p_6_6));
-            assertEquals(ExceptionMessages.wrongTurn, e2.getMessage());
+            assertEquals(ExceptionMsg.wrongTurn, e2.getMessage());
         }
 
         @Test
@@ -345,7 +361,7 @@ class BattleshipTest {
             assertEquals(Result.MISSED, bs.attack(PNAME2, p_10_1));
             assertEquals(Result.HIT, bs.attack(PNAME1, p_6_6));
             Throwable e2 = assertThrows(BattleshipException.class, () -> bs.attack(PNAME1, p_1_0));
-            assertEquals(ExceptionMessages.wrongTurn, e2.getMessage());
+            assertEquals(ExceptionMsg.wrongTurn, e2.getMessage());
         }
 
         @Nested
@@ -353,7 +369,7 @@ class BattleshipTest {
             @Test
             void attackOutsideOcean1() throws BattleshipException, PhaseException {
                 Throwable e = assertThrows(PhaseException.class, () -> bs.attack(PNAME1, new Point(-2, 3)));
-                assertEquals(ExceptionMessages.attackOutside, e.getMessage());
+                assertEquals(ExceptionMsg.attackOutside, e.getMessage());
             }
 
             @Test
@@ -361,7 +377,7 @@ class BattleshipTest {
                 assertEquals(Result.HIT, bs.attack(PNAME1, p_0_0));
                 assertEquals(Result.MISSED, bs.attack(PNAME2, p_10_1));
                 Throwable e = assertThrows(PhaseException.class, () -> bs.attack(PNAME1, new Point(2, -3)));
-                assertEquals(ExceptionMessages.attackOutside, e.getMessage());
+                assertEquals(ExceptionMsg.attackOutside, e.getMessage());
             }
 
             @Test
@@ -369,27 +385,27 @@ class BattleshipTest {
                 assertEquals(Result.HIT, bs.attack(PNAME1, p_0_0));
                 assertEquals(Result.MISSED, bs.attack(PNAME2, p_10_1));
                 Throwable e = assertThrows(PhaseException.class, () -> bs.attack(PNAME1, new Point(1, 15)));
-                assertEquals(ExceptionMessages.attackOutside, e.getMessage());
+                assertEquals(ExceptionMsg.attackOutside, e.getMessage());
             }
 
             @Test
             void attackOutsideOcean4() throws BattleshipException, PhaseException {
                 Throwable e = assertThrows(PhaseException.class, () -> bs.attack(PNAME1, new Point(22, 3)));
-                assertEquals(ExceptionMessages.attackOutside, e.getMessage());
+                assertEquals(ExceptionMsg.attackOutside, e.getMessage());
             }
 
             @Test
             void attackOutsideOceanEdgeX() throws BattleshipException, PhaseException {
                 assertEquals(Result.HIT, bs.attack(PNAME1, p_max_max));
                 Throwable e = assertThrows(PhaseException.class, () -> bs.attack(PNAME2, new Point(oceanSize + 1, oceanSize)));
-                assertEquals(ExceptionMessages.attackOutside, e.getMessage());
+                assertEquals(ExceptionMsg.attackOutside, e.getMessage());
             }
 
             @Test
             void attackOutsideOceanEdgeY() throws BattleshipException, PhaseException {
                 assertEquals(Result.HIT, bs.attack(PNAME1, p_max_max));
                 Throwable e = assertThrows(PhaseException.class, () -> bs.attack(PNAME2, new Point(oceanSize, oceanSize + 1)));
-                assertEquals(ExceptionMessages.attackOutside, e.getMessage());
+                assertEquals(ExceptionMsg.attackOutside, e.getMessage());
             }
         }
 
@@ -399,14 +415,14 @@ class BattleshipTest {
             void choosePlayerWrongPhase1() throws BattleshipException, PhaseException {
                 bs.attack(PNAME1, p_0_0);
 
-                Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayer(PNAME3));
-                assertEquals(ExceptionMessages.wrongPhase, e.getMessage());
+                Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayerName(PNAME3));
+                assertEquals(ExceptionMsg.wrongPhase, e.getMessage());
             }
 
             @Test
             void choosePlayerWrongPhase2() throws BattleshipException, PhaseException {
-                Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayer(PNAME2));
-                assertEquals(ExceptionMessages.wrongPhase, e.getMessage());
+                Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayerName(PNAME2));
+                assertEquals(ExceptionMsg.wrongPhase, e.getMessage());
             }
 
             @Test
@@ -414,13 +430,13 @@ class BattleshipTest {
                 bs.attack(PNAME1, p_0_0);
 
                 Throwable e = assertThrows(PhaseException.class, () -> bs.setShip(PNAME1, ship1));
-                assertEquals(ExceptionMessages.wrongPhase, e.getMessage());
+                assertEquals(ExceptionMsg.wrongPhase, e.getMessage());
             }
 
             @Test
             void setShipWrongPhase2() throws BattleshipException, PhaseException {
                 Throwable e = assertThrows(PhaseException.class, () -> bs.setShip(PNAME1, ship1));
-                assertEquals(ExceptionMessages.wrongPhase, e.getMessage());
+                assertEquals(ExceptionMsg.wrongPhase, e.getMessage());
             }
         }
     }
@@ -431,8 +447,8 @@ class BattleshipTest {
     /* helping methods */
 
     void choosePlayerDefault() throws BattleshipException, PhaseException {
-        bs.choosePlayer(PNAME1);
-        bs.choosePlayer(PNAME2);
+        bs.choosePlayerName(PNAME1);
+        bs.choosePlayerName(PNAME2);
     }
 
     void setShipsDefault() throws BattleshipException, PhaseException {

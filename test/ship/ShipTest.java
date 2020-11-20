@@ -1,6 +1,6 @@
 package ship;
 
-import exceptions.ExceptionMessages;
+import exceptions.ExceptionMsg;
 import exceptions.ShipException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ class ShipTest {
     Ship s4;
 
     @BeforeEach
-    void setUp() throws ShipException {
+    void setUp() {
         s1 = new ShipImpl(Shipmodel.BATTLESHIP);
         s2 = new ShipImpl(Shipmodel.CRUISERS);
         s3 = new ShipImpl(Shipmodel.DESTROYERS);
@@ -64,7 +64,7 @@ class ShipTest {
         Throwable e3 = assertThrows(ShipException.class, () -> s3.createPosition(-1, -20));
         Throwable e4 = assertThrows(ShipException.class, () -> s4.createPosition(-3, 0, false));
         for (Throwable e : Arrays.asList(e1, e2, e3, e4))
-            assertEquals(ExceptionMessages.shipInvalidPosition, e.getMessage());
+            assertEquals(ExceptionMsg.shipInvalidPosition, e.getMessage());
     }
 
     @Test

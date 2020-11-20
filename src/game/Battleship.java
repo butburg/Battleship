@@ -2,7 +2,9 @@ package game;
 
 import exceptions.BattleshipException;
 import exceptions.PhaseException;
+import field.Coordinate;
 import ship.Ship;
+import ship.Shipmodel;
 
 import java.awt.*;
 
@@ -19,10 +21,10 @@ public interface Battleship {
      * Phase 1
      *
      * @param playerName the new Name for a Player
-     * @throws BattleshipException
-     * @throws PhaseException
+     * @throws BattleshipException when the names are equal or too many players call method
+     * @throws PhaseException      when the phase of the game is not anymore choosing the names, e.i. attacking phase
      */
-    void choosePlayer(String playerName) throws BattleshipException, PhaseException;
+    void choosePlayerName(String playerName) throws BattleshipException, PhaseException;
 
     /**
      * Set one ship at the players field, validate the position of the ship and check that all ships are set.
@@ -32,12 +34,14 @@ public interface Battleship {
      *
      * @param player the player who is setting the ship
      * @param ship   the specific ship, that should be set into the field
+     * @param xy     the coordinate
      * @return if ships are left to set true else false
      * @throws BattleshipException wrong player, wrong ships, wrong positions, out of bounds, wrong state
      * @throws PhaseException      not allowed to set a Ship, in the wrong phase
      */
-    boolean setShip(String player, Ship ship) throws BattleshipException, PhaseException;
+    boolean setShip(String player, Shipmodel ship, Coordinate xy, boolean vertical) throws BattleshipException, PhaseException;
 
+    boolean setShip(String player, Ship ship) throws BattleshipException, PhaseException;
 
     /**
      * The attack can hit an opponents ship or fail. If its a ships last hit, it will sink.
@@ -52,4 +56,13 @@ public interface Battleship {
      * @throws PhaseException      not allowed to attack, in the wrong phase, not your turn
      */
     Result attack(String player, Point position) throws BattleshipException, PhaseException;
+
+    /**
+     * returns the phase of the game
+     *
+     * @return the Enum Phase: CHOOSE,SETSHIPS, PLAY, WAITFORPLAY
+     */
+    Phase getPhase();
+
+    String[] getPlayers();
 }
