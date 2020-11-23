@@ -35,6 +35,7 @@ public class BattleshipImpl implements Battleship {
 
     public BattleshipImpl() {
         //TODO add an function for that task
+        //TODO set a Map with Shipmodel as Key and Count as Value Map(Shipmodel.CRUISERS->2,...)
         for (Shipmodel shipmodel1 : Arrays.asList(Shipmodel.BATTLESHIP, Shipmodel.CRUISERS, Shipmodel.CRUISERS, Shipmodel.DESTROYERS, Shipmodel.DESTROYERS, Shipmodel.DESTROYERS, Shipmodel.SUBMARINES, Shipmodel.SUBMARINES, Shipmodel.SUBMARINES, Shipmodel.SUBMARINES)) {
             ships1.add(new ShipImpl(shipmodel1));
         }
@@ -86,7 +87,7 @@ public class BattleshipImpl implements Battleship {
     @Override
     public boolean setShip(String player, Shipmodel shipmodel, Coordinate xy, boolean vertical) throws BattleshipException, PhaseException {
         if (phase != Phase.SETSHIPS) throw new PhaseException(ExceptionMsg.wrongPhase);
-        chooseOceanAnShips(player);
+        chooseOceanAnShips(player); //also have to restore the values back with actual list/map
         if (ships.isEmpty()) throw new BattleshipException(ExceptionMsg.shipAllSet);
 
         Ship shipToSet = null;
@@ -98,6 +99,7 @@ public class BattleshipImpl implements Battleship {
         ships.remove(shipToSet);
         if (shipToSet == null) throw new BattleshipException(ExceptionMsg.shipTypeAllSet);
         ocean.placeShipPart(shipToSet, xy.x, xy.y, vertical);
+        //TODO set the ship variable back into ship1 or 2 to get the change/remove stored properly
         if (ships.isEmpty()) {
             if (ships1.isEmpty() && ships2.isEmpty()) {
                 setPhase(Phase.PLAY);
