@@ -14,21 +14,11 @@ import java.awt.*;
 public interface Ship {
 
     /**
-     * Let the ship know where it is swimming in the ocean.
-     * The position in the field.
-     *
-     * @param x        coordinate
-     * @param y        coordinate
-     * @param vertical true for a vertical placement, otherwise horizontal
-     * @return the positions as array
-     * @throws ShipException when the coordinates are negative
+     * @param field
+     * @param located_x
+     * @param located_y
      */
-    Point[] createPosition(int x, int y, boolean vertical) throws ShipException;
-
-    default Point[] createPosition(int x, int y) throws ShipException {
-        return createPosition(x, y, false);
-    }
-
+    void locate(int field, int located_x, int located_y);
 
     /**
      * Attack the ship on a specific field/part. Destroys the selected healthy field.
@@ -42,11 +32,11 @@ public interface Ship {
 
     /**
      * Attack the ship at a specific position in the field.
+     *
      * @param x coordinate
      * @param y coordinate
      * @return true if the ship sinks. false if it remains
      * @throws ShipException when the ship is not positioned at the coordinate
-     *
      */
     boolean hit(int x, int y) throws ShipException;
 
@@ -85,5 +75,4 @@ public interface Ship {
      */
     Shipmodel getModel();
 
-    void locate(int field, int located_x, int located_y);
 }

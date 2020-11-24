@@ -4,7 +4,6 @@ import exceptions.BattleshipException;
 import exceptions.OceanException;
 import exceptions.PhaseException;
 import field.Coordinate;
-import ship.Ship;
 import ship.Shipmodel;
 
 import java.awt.*;
@@ -42,7 +41,7 @@ public interface Battleship {
      */
     boolean setShip(String player, Shipmodel ship, Coordinate xy, boolean vertical) throws BattleshipException, PhaseException, OceanException;
 
-    boolean setShip(String player, Ship ship) throws BattleshipException, PhaseException, OceanException;
+    boolean setShip(String player, Shipmodel ship, Coordinate xy) throws BattleshipException, PhaseException, OceanException;
 
     /**
      * The attack can hit an opponents ship or fail. If its a ships last hit, it will sink.

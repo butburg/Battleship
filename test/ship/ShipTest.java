@@ -1,8 +1,11 @@
 package ship;
 
 import exceptions.ExceptionMsg;
+import exceptions.OceanException;
 import exceptions.ShipException;
+import field.Ocean;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
@@ -18,59 +21,76 @@ class ShipTest {
     Ship s2;
     Ship s3;
     Ship s4;
+    Ocean ocean;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws OceanException {
         s1 = new ShipImpl(Shipmodel.BATTLESHIP);
         s2 = new ShipImpl(Shipmodel.CRUISERS);
         s3 = new ShipImpl(Shipmodel.DESTROYERS);
         s4 = new ShipImpl(Shipmodel.SUBMARINES);
+        ocean.placeShipPart(s1, 0, 0, true);
+        ocean.placeShipPart(s2, 2, 4, false);
+        ocean.placeShipPart(s3, 4, 7, false);
+        ocean.placeShipPart(s4, 2, 6, true);
 
     }
 
-    @Test
-    void createPosition() throws ShipException {
-        assertArrayEquals(new Point[]{
-                new Point(0, 0),
-                new Point(0, 1),
-                new Point(0, 2),
-                new Point(0, 3),
-                new Point(0, 4),
-        }, s1.createPosition(0, 0, true));
+    @Nested
+    public class PlaceShip {
+        @BeforeEach
+        void setUp() throws OceanException {
+            ocean.placeShipPart(s1, 0, 0, true);
+            ocean.placeShipPart(s2, 2, 4, false);
+            ocean.placeShipPart(s3, 4, 7, false);
+            ocean.placeShipPart(s4, 2, 6, true);
+        }
 
-        assertArrayEquals(new Point[]{
-                new Point(2, 4),
-                new Point(3, 4),
-                new Point(4, 4),
-                new Point(5, 4),
-        }, s2.createPosition(2, 4, false));
+        @Test
+        void getPosition() {
+            assertArrayEquals(new Point[]{
+                    new Point(0, 0),
+                    new Point(0, 1),
+                    new Point(0, 2),
+                    new Point(0, 3),
+                    new Point(0, 4),
+            }, s1.getPosition());
 
-        assertArrayEquals(new Point[]{
-                new Point(4, 7),
-                new Point(5, 7),
-                new Point(6, 7),
-        }, s3.createPosition(4, 7));
+            assertArrayEquals(new Point[]{
+                    new Point(2, 4),
+                    new Point(3, 4),
+                    new Point(4, 4),
+                    new Point(5, 4),
+            }, s1.getPosition());
 
-        assertArrayEquals(new Point[]{
-                new Point(2, 6),
-                new Point(2, 7),
-        }, s4.createPosition(2, 6, true));
+            assertArrayEquals(new Point[]{
+                    new Point(4, 7),
+                    new Point(5, 7),
+                    new Point(6, 7),
+            }, s1.getPosition());
+
+            assertArrayEquals(new Point[]{
+                    new Point(2, 6),
+                    new Point(2, 7),
+            }, s1.getPosition());
+        }
     }
 
+    //TODO belongs to the ocean test
     @Test
-    void createPositionNegative() {
-        Throwable e1 = assertThrows(ShipException.class, () -> s1.createPosition(-1, 0, true));
-        Throwable e2 = assertThrows(ShipException.class, () -> s2.createPosition(1, -10, true));
-        Throwable e3 = assertThrows(ShipException.class, () -> s3.createPosition(-1, -20));
-        Throwable e4 = assertThrows(ShipException.class, () -> s4.createPosition(-3, 0, false));
+    void setPositionNegative() {
+        Throwable e1 = assertThrows(ShipException.class, () -> ocean.placeShipPart(s1, -1, 0, true));
+        Throwable e2 = assertThrows(ShipException.class, () -> ocean.placeShipPart(s2, 1, -10, true));
+        Throwable e3 = assertThrows(ShipException.class, () -> ocean.placeShipPart(s3, -1, -20, false));
+        Throwable e4 = assertThrows(ShipException.class, () -> ocean.placeShipPart(s4, -3, 0, false));
         for (Throwable e : Arrays.asList(e1, e2, e3, e4))
-            assertEquals(ExceptionMsg.shipInvalidPosition, e.getMessage());
+            assertEquals(ExceptionMsg.shipOutside, e.getMessage());
     }
 
     @Test
-    void hit() throws ShipException {
-        s1.createPosition(0, 0, true);
-        s2.createPosition(6, 6);
+    void hit() throws ShipException, OceanException {
+        ocean.placeShipPart(s1, 0, 0, true);
+        ocean.placeShipPart(s2, 6, 6, false);
         assertFalse(s1.hit(0));
 
         assertFalse(s2.hit(0));
@@ -87,8 +107,8 @@ class ShipTest {
     }
 
     @Test
-    void sinking() throws ShipException {
-        s1.createPosition(0, 0, true);
+    void sinking() throws ShipException, OceanException {
+        ocean.placeShipPart(s1, 0, 0, true);
         assertFalse(s1.sunk());
 
         assertFalse(s1.hit(0));
@@ -102,7 +122,7 @@ class ShipTest {
         assertTrue(s1.sunk());
 
 
-        s2.createPosition(6, 6);
+        ocean.placeShipPart(s2, 6, 6, false);
         assertFalse(s2.sunk());
 
         assertFalse(s2.hit(0));
@@ -116,8 +136,10 @@ class ShipTest {
     }
 
     @Test
-    void getAncher() throws ShipException {
-        s1.createPosition(3, 6);
+    void getAncher() throws OceanException {
+
+        ocean.placeShipPart(s2, 3, 6, false);
+
         assertEquals(new Point(3, 6), s1.getAnchor());
     }
 
@@ -130,9 +152,11 @@ class ShipTest {
     }
 
     @Test
-    void getPosition() throws ShipException {
-        s1.createPosition(0, 0, true);
-        s3.createPosition(4, 7);
+    void getPosition() throws OceanException {
+
+        ocean.placeShipPart(s1, 0, 0, true);
+        ocean.placeShipPart(s3, 4, 7, false);
+
         assertArrayEquals(new Point[]{
                 new Point(0, 0),
                 new Point(0, 1),

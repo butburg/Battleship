@@ -79,19 +79,12 @@ public class BattleshipImpl implements Battleship {
         }
     }
 
-
     private boolean nameTaken(String playerName) {
         return Arrays.asList(players).contains(playerName);
     }
 
     private void setPhase(Phase newPhase) {
         this.phase = newPhase;
-    }
-
-
-    @Override
-    public boolean setShip(String player, Ship ship) throws BattleshipException, PhaseException, OceanException {
-        return setShip(player, ship.getModel(), new Coordinate(3, 4), false);
     }
 
 
@@ -123,6 +116,13 @@ public class BattleshipImpl implements Battleship {
             //if it was the last placed ship for the actual player
             return true;
     }
+
+
+    @Override
+    public boolean setShip(String player, Shipmodel ship, Coordinate xy) throws BattleshipException, PhaseException, OceanException {
+        return setShip(player, ship, xy, false);
+    }
+
 
     private void setNextPhase() {
         switch (this.phase) {

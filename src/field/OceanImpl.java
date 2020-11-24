@@ -2,10 +2,7 @@ package field;
 
 import exceptions.ExceptionMsg;
 import exceptions.OceanException;
-import exceptions.ShipException;
 import ship.Ship;
-
-import java.awt.*;
 
 /**
  * @author Edwin W (570900) on Nov 2020
@@ -28,7 +25,7 @@ public class OceanImpl implements Ocean {
 
     @Override
     public void placeShipPart(Ship ship, int x, int y, boolean vertical) throws OceanException {
-        if (x < 0 || y < 0) throw new OceanException();
+        if (x < 0 || y < 0 || x >= size || y >= size) throw new OceanException(ExceptionMsg.shipOutside);
 
         int inc_x = 0;
         int inc_y = 0;
@@ -36,10 +33,10 @@ public class OceanImpl implements Ocean {
         if (vertical) inc_y = 1;
         else inc_x = 1;
 
-        int shipSize=ship.getModel().returnSize();
+        int shipSize = ship.getModel().returnSize();
 
         for (int i = 0; i < shipSize; i++) {
-            ship.locate(i,x,y);
+            ship.locate(i, x, y);
             field[x][y] = ship;
             x += inc_x;
             y += inc_y;
