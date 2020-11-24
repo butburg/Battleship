@@ -36,8 +36,9 @@ public class OceanImpl implements Ocean {
         int shipSize = ship.getModel().returnSize();
 
         for (int i = 0; i < shipSize; i++) {
-            ship.locate(i, x, y);
+            if (field[x][y] != null) throw new OceanException(ExceptionMsg.shipCollidingPosition);
             field[x][y] = ship;
+            ship.locate(i, x, y);
             x += inc_x;
             y += inc_y;
         }
