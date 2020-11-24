@@ -1,6 +1,11 @@
 package field;
 
+import exceptions.ExceptionMsg;
+import exceptions.OceanException;
+import exceptions.ShipException;
 import ship.Ship;
+
+import java.awt.*;
 
 /**
  * @author Edwin W (570900) on Nov 2020
@@ -8,20 +13,37 @@ import ship.Ship;
  */
 public class OceanImpl implements Ocean {
 
-    private final int[][] field;
+    private final Ship[][] field;
+    private int size;
 
     public OceanImpl(int size) {
-        this.field = new int[size][size];
+        this.field = new Ship[size][size];
+        this.size = size;
     }
 
     @Override
     public int getSize() {
-        return 0;
+        return size;
     }
 
     @Override
-    public void placeShipPart(Ship ship, int x, int y, boolean vertical) {
+    public void placeShipPart(Ship ship, int x, int y, boolean vertical) throws OceanException {
+        if (x < 0 || y < 0) throw new OceanException();
 
+        int inc_x = 0;
+        int inc_y = 0;
+
+        if (vertical) inc_y = 1;
+        else inc_x = 1;
+
+        int shipSize=ship.getModel().returnSize();
+
+        for (int i = 0; i < shipSize; i++) {
+            ship.locate(i,x,y);
+            field[x][y] = ship;
+            x += inc_x;
+            y += inc_y;
+        }
     }
 
 

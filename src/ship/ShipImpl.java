@@ -2,6 +2,7 @@ package ship;
 
 import exceptions.ExceptionMsg;
 import exceptions.ShipException;
+import field.Coordinate;
 
 import java.awt.*;
 
@@ -14,7 +15,7 @@ public class ShipImpl implements Ship {
     final Shipmodel model;
     private final int size;
     Point anchor;// = {{2,3},{2,4}};
-    Point[] position;// = {{2,3},{2,4}};
+    Coordinate[] position;// = {{2,3},{2,4}};
     boolean[] hurt;// = {true,true};
 
     /**
@@ -41,12 +42,30 @@ public class ShipImpl implements Ship {
     public ShipImpl(Shipmodel model) {
         this.model = model;
         this.size = model.returnSize();
+         position = new Coordinate[size];
         hurt = new boolean[size];
     }
 
     @Override
-    public boolean hit(int field) {
+    public boolean hit(int field) throws ShipException {
+        if (field >= size || field < 0) throw new ShipException(ExceptionMsg.shipFieldInvalid);
         hurt[field] = true;
+        return sunk();
+    }
+
+    @Override
+    public boolean hit(int x, int y) throws ShipException {
+        Coordinate hitHere = new Coordinate(x, y);
+        int index = 0;
+        boolean foundCoordinate = false;
+        for (Coordinate shipFieldPosition : position) {
+            if (shipFieldPosition == hitHere) {
+                hurt[index] = true;
+                foundCoordinate = true;
+            }
+            index++;
+        }
+        if (!foundCoordinate) throw new ShipException(ExceptionMsg.shipUnawareOfCoordinate);
         return sunk();
     }
 
@@ -68,10 +87,10 @@ public class ShipImpl implements Ship {
         if (vertical) inc_y = 1;
         else inc_x = 1;
 
-        Point[] position = new Point[model.returnSize()];
+        Coordinate[] position = new Coordinate[model.returnSize()];
 
         for (int i = 0; i < size; i++) {
-            position[i] = new Point(x, y);
+            position[i] = new Coordinate(x, y);
             x += inc_x;
             y += inc_y;
         }
@@ -97,5 +116,10 @@ public class ShipImpl implements Ship {
     @Override
     public Shipmodel getModel() {
         return model;
+    }
+
+    @Override
+    public void locate(int field, int located_x, int located_y) {
+        position[field] = new Coordinate(located_x, located_y);
     }
 }

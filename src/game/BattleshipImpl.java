@@ -2,6 +2,7 @@ package game;
 
 import exceptions.BattleshipException;
 import exceptions.ExceptionMsg;
+import exceptions.OceanException;
 import exceptions.PhaseException;
 import field.Coordinate;
 import field.Ocean;
@@ -34,15 +35,26 @@ public class BattleshipImpl implements Battleship {
     private ArrayList<Ship> ships2 = new ArrayList<>();
 
     public BattleshipImpl() {
-        //TODO add an function for that task
-        //TODO set a Map with Shipmodel as Key and Count as Value Map(Shipmodel.CRUISERS->2,...)
-        for (Shipmodel shipmodel1 : Arrays.asList(Shipmodel.BATTLESHIP, Shipmodel.CRUISERS, Shipmodel.CRUISERS, Shipmodel.DESTROYERS, Shipmodel.DESTROYERS, Shipmodel.DESTROYERS, Shipmodel.SUBMARINES, Shipmodel.SUBMARINES, Shipmodel.SUBMARINES, Shipmodel.SUBMARINES)) {
-            ships1.add(new ShipImpl(shipmodel1));
-        }
-        for (Shipmodel shipmodel : Arrays.asList(Shipmodel.BATTLESHIP, Shipmodel.CRUISERS, Shipmodel.CRUISERS, Shipmodel.DESTROYERS, Shipmodel.DESTROYERS, Shipmodel.DESTROYERS, Shipmodel.SUBMARINES, Shipmodel.SUBMARINES, Shipmodel.SUBMARINES, Shipmodel.SUBMARINES)) {
-            ships2.add(new ShipImpl(shipmodel));
-        }
+        createAllShips();
+    }
 
+    /**
+     * This Method creates the ships that can be set in the game. Will create the ships for both player.
+     * Here you can change the number of every shipmodel!
+     * (Default: 1 Battleship, 2 Cruiser, 3 Destroyers, 4 Submarines)
+     */
+    private void createAllShips() {
+        createShip(Shipmodel.BATTLESHIP, 1);
+        createShip(Shipmodel.CRUISERS, 2);
+        createShip(Shipmodel.DESTROYERS, 3);
+        createShip(Shipmodel.SUBMARINES, 4);
+    }
+
+    private void createShip(Shipmodel ship, int count) {
+        for (; count > 0; count--) {
+            ships1.add(new ShipImpl(ship));
+            ships2.add(new ShipImpl(ship));
+        }
     }
 
     public String[] getPlayers() {
@@ -63,7 +75,7 @@ public class BattleshipImpl implements Battleship {
         } else if (playerNumber == 1) {
             this.players[playerNumber] = playerName;
             playerNumber++;
-            setPhase(Phase.SETSHIPS); //maybe wrong place?
+            setNextPhase();
         }
     }
 
@@ -73,21 +85,21 @@ public class BattleshipImpl implements Battleship {
     }
 
     private void setPhase(Phase newPhase) {
-        //TODO build a Pattern for Status with Classes
         this.phase = newPhase;
     }
 
 
     @Override
-    public boolean setShip(String player, Ship ship) throws BattleshipException, PhaseException {
+    public boolean setShip(String player, Ship ship) throws BattleshipException, PhaseException, OceanException {
         return setShip(player, ship.getModel(), new Coordinate(3, 4), false);
     }
 
 
     @Override
-    public boolean setShip(String player, Shipmodel shipmodel, Coordinate xy, boolean vertical) throws BattleshipException, PhaseException {
+    public boolean setShip(String player, Shipmodel shipmodel, Coordinate xy, boolean vertical) throws BattleshipException, PhaseException, OceanException {
         if (phase != Phase.SETSHIPS) throw new PhaseException(ExceptionMsg.wrongPhase);
-        chooseOceanAnShips(player); //also have to restore the values back with actual list/map
+        //get the ships and ocean from the actual player
+        chooseOceanAndShips(player); //also have to restore the values back with actual list/map
         if (ships.isEmpty()) throw new BattleshipException(ExceptionMsg.shipAllSet);
 
         Ship shipToSet = null;
@@ -99,17 +111,38 @@ public class BattleshipImpl implements Battleship {
         ships.remove(shipToSet);
         if (shipToSet == null) throw new BattleshipException(ExceptionMsg.shipTypeAllSet);
         ocean.placeShipPart(shipToSet, xy.x, xy.y, vertical);
-        //TODO set the ship variable back into ship1 or 2 to get the change/remove stored properly
+        //update the list and the ocean for the actual player
+        updateOceanAndShips(ships, ocean, player);
         if (ships.isEmpty()) {
             if (ships1.isEmpty() && ships2.isEmpty()) {
-                setPhase(Phase.PLAY);
+                setNextPhase();
             }
+            //if there are more ships to set for the actual player
             return false;
         } else
+            //if it was the last placed ship for the actual player
             return true;
     }
 
-    private void chooseOceanAnShips(String player) throws BattleshipException {
+    private void setNextPhase() {
+        switch (this.phase) {
+            case CHOOSE -> setPhase(Phase.SETSHIPS);
+            case SETSHIPS, WAITFORPLAY -> setPhase(Phase.PLAY);
+            case PLAY -> setPhase(Phase.WAITFORPLAY);
+        }
+    }
+
+    private void updateOceanAndShips(ArrayList<Ship> ships, Ocean ocean, String player) throws BattleshipException {
+        if (player.equals(players[0])) {
+            this.ocean1 = ocean;
+            this.ships1 = ships;
+        } else if (player.equals(players[1])) {
+            this.ocean2 = ocean;
+            this.ships2 = ships;
+        } else throw new BattleshipException(ExceptionMsg.wrongPlayer);
+    }
+
+    private void chooseOceanAndShips(String player) throws BattleshipException {
         if (player.equals(players[0])) {
             this.ocean = ocean1;
             this.ships = ships1;
@@ -122,6 +155,7 @@ public class BattleshipImpl implements Battleship {
     @Override
     public Result attack(String player, Point position) throws PhaseException {
         if (phase != Phase.PLAY && phase != Phase.WAITFORPLAY) throw new PhaseException(ExceptionMsg.wrongPhase);
+        setNextPhase();
         return null;
     }
 

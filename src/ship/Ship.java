@@ -41,6 +41,16 @@ public interface Ship {
     boolean hit(int field) throws ShipException;
 
     /**
+     * Attack the ship at a specific position in the field.
+     * @param x coordinate
+     * @param y coordinate
+     * @return true if the ship sinks. false if it remains
+     * @throws ShipException when the ship is not positioned at the coordinate
+     *
+     */
+    boolean hit(int x, int y) throws ShipException;
+
+    /**
      * Check, if the ship is sunk!
      *
      * @return true if the ship is destroyed, sunk. false if it is intact
@@ -74,4 +84,6 @@ public interface Ship {
      * @return the ship model
      */
     Shipmodel getModel();
+
+    void locate(int field, int located_x, int located_y);
 }

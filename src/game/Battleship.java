@@ -1,6 +1,7 @@
 package game;
 
 import exceptions.BattleshipException;
+import exceptions.OceanException;
 import exceptions.PhaseException;
 import field.Coordinate;
 import ship.Ship;
@@ -39,9 +40,9 @@ public interface Battleship {
      * @throws BattleshipException wrong player, wrong ships, wrong positions, out of bounds, wrong state
      * @throws PhaseException      not allowed to set a Ship, in the wrong phase
      */
-    boolean setShip(String player, Shipmodel ship, Coordinate xy, boolean vertical) throws BattleshipException, PhaseException;
+    boolean setShip(String player, Shipmodel ship, Coordinate xy, boolean vertical) throws BattleshipException, PhaseException, OceanException;
 
-    boolean setShip(String player, Ship ship) throws BattleshipException, PhaseException;
+    boolean setShip(String player, Ship ship) throws BattleshipException, PhaseException, OceanException;
 
     /**
      * The attack can hit an opponents ship or fail. If its a ships last hit, it will sink.

@@ -1,5 +1,6 @@
 package field;
 
+import exceptions.OceanException;
 import ship.Ship;
 
 
@@ -24,5 +25,5 @@ public interface Ocean {
      * @param y    the coordinate
      * @param ship the reference to the ship
      */
-    void placeShipPart(Ship ship, int x, int y, boolean vertical);
+    void placeShipPart(Ship ship, int x, int y, boolean vertical) throws OceanException;
 }

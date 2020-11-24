@@ -15,4 +15,7 @@ public interface ExceptionMsg {
     String shipTypeAllSet = "All ships of this type are already set!";
     String attackOutside = "You can't attack outside of the field!";
     String shipInvalidPosition = "Ship-position is invalid! Coordinates must be positive!";
+    String shipCollidingPosition = "Ship-position is invalid! A another ship is placed there!";
+    String shipUnawareOfCoordinate = "The ship don't know the Coordinate! Shouldn't be possible!!!";
+    String shipFieldInvalid = "The ship dont have that field. Make sure the field is in the ships length and positive!";
 }
