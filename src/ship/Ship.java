@@ -17,7 +17,7 @@ public interface Ship {
      * @param located_x
      * @param located_y
      */
-    void locate(int field, int located_x, int located_y);
+    void locate(int field, int located_x, int located_y) throws ShipException;
 
     /**
      * Attack the ship on a specific field/part. Destroys the selected healthy field.

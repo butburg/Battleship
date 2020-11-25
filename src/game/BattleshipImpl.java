@@ -59,8 +59,8 @@ public class BattleshipImpl implements Battleship {
 
     @Override
     public void choosePlayerName(String playerName) throws BattleshipException, PhaseException {
-        if (phase != Phase.CHOOSE) throw new PhaseException(ExceptionMsg.wrongPhase);
-        if (nameTaken(playerName)) throw new BattleshipException(ExceptionMsg.playerNameTaken);
+        if (phase != Phase.CHOOSE) throw new PhaseException(ExceptionMsg.ph_wrongPhase);
+        if (nameTaken(playerName)) throw new BattleshipException(ExceptionMsg.bs_playerNameTaken);
 
         //check for actual player names in the array and add the name if not full
         if (playerNumber == 0) {
@@ -83,11 +83,11 @@ public class BattleshipImpl implements Battleship {
 
 
     @Override
-    public boolean setShip(String player, Shipmodel shipmodel, Coordinate xy, boolean vertical) throws BattleshipException, PhaseException, OceanException {
-        if (phase != Phase.SETSHIPS) throw new PhaseException(ExceptionMsg.wrongPhase);
+    public boolean setShip(String player, Shipmodel shipmodel, Coordinate xy, boolean vertical) throws BattleshipException, PhaseException, OceanException, ShipException {
+        if (phase != Phase.SETSHIPS) throw new PhaseException(ExceptionMsg.ph_wrongPhase);
         //get the ships and ocean from the actual player
         chooseOceanAndShips(player); //also have to restore the values back with actual list/map
-        if (ships.isEmpty()) throw new BattleshipException(ExceptionMsg.shipAllSet);
+        if (ships.isEmpty()) throw new BattleshipException(ExceptionMsg.bs_shipAllSet);
 
         Ship shipToSet = null;
         for (Ship ship : ships) {
@@ -96,7 +96,7 @@ public class BattleshipImpl implements Battleship {
             }
         }
         ships.remove(shipToSet);
-        if (shipToSet == null) throw new BattleshipException(ExceptionMsg.shipTypeAllSet);
+        if (shipToSet == null) throw new BattleshipException(ExceptionMsg.bs_shipTypeAllSet);
         ocean.placeShipPart(shipToSet, xy.x, xy.y, vertical);
         //update the list and the ocean for the actual player
         updateOceanAndShips(ships, ocean, player);
@@ -113,7 +113,7 @@ public class BattleshipImpl implements Battleship {
 
 
     @Override
-    public boolean setShip(String player, Shipmodel ship, Coordinate xy) throws BattleshipException, PhaseException, OceanException {
+    public boolean setShip(String player, Shipmodel ship, Coordinate xy) throws BattleshipException, PhaseException, OceanException, ShipException {
         return setShip(player, ship, xy, false);
     }
 
@@ -133,7 +133,7 @@ public class BattleshipImpl implements Battleship {
         } else if (player.equals(players[1])) {
             this.ocean2 = ocean;
             this.ships2 = ships;
-        } else throw new BattleshipException(ExceptionMsg.wrongPlayer);
+        } else throw new BattleshipException(ExceptionMsg.bs_wrongPlayer);
     }
 
     private void chooseOceanAndShips(String player) throws BattleshipException {
@@ -143,16 +143,16 @@ public class BattleshipImpl implements Battleship {
         } else if (player.equals(players[1])) {
             this.ocean = ocean2;
             this.ships = ships2;
-        } else throw new BattleshipException(ExceptionMsg.wrongPlayer);
+        } else throw new BattleshipException(ExceptionMsg.bs_wrongPlayer);
     }
 
     @Override
     public Result attack(String player, Coordinate position) throws PhaseException, BattleshipException, ShipException, OceanException {
-        if (phase != Phase.PLAY && phase != Phase.WAITFORPLAY) throw new PhaseException(ExceptionMsg.wrongPhase);
-        if (!nameTaken(player)) throw new BattleshipException(ExceptionMsg.wrongPlayer);
+        if (phase != Phase.PLAY && phase != Phase.WAITFORPLAY) throw new PhaseException(ExceptionMsg.ph_wrongPhase);
+        if (!nameTaken(player)) throw new BattleshipException(ExceptionMsg.bs_wrongPlayer);
         if (phase == Phase.WAITFORPLAY && players[0].equals(player))
-            throw new BattleshipException(ExceptionMsg.wrongTurn1);
-        if (phase == Phase.PLAY && players[1].equals(player)) throw new BattleshipException(ExceptionMsg.wrongTurn2);
+            throw new BattleshipException(ExceptionMsg.bs_wrongTurn1);
+        if (phase == Phase.PLAY && players[1].equals(player)) throw new BattleshipException(ExceptionMsg.bs_wrongTurn2);
 
         Result hitResult = ocean.bombAt(position);
 

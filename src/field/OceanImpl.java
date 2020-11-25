@@ -26,8 +26,8 @@ public class OceanImpl implements Ocean {
     }
 
     @Override
-    public void placeShipPart(Ship ship, int x, int y, boolean vertical) throws OceanException {
-        if (x < 0 || y < 0 || x >= size || y >= size) throw new OceanException(ExceptionMsg.shipOutside);
+    public void placeShipPart(Ship ship, int x, int y, boolean vertical) throws OceanException, ShipException {
+        if (x < 0 || y < 0 || x >= size || y >= size) throw new OceanException(ExceptionMsg.oc_shipOutside);
 
         int inc_x = 0;
         int inc_y = 0;
@@ -38,7 +38,7 @@ public class OceanImpl implements Ocean {
         int shipSize = ship.getModel().returnSize();
 
         for (int i = 0; i < shipSize; i++) {
-            if (field[x][y] != null) throw new OceanException(ExceptionMsg.shipCollidingPosition);
+            if (field[x][y] != null) throw new OceanException(ExceptionMsg.oc_shipCollidingPosition);
             field[x][y] = ship;
             ship.locate(i, x, y);
             x += inc_x;
@@ -51,7 +51,7 @@ public class OceanImpl implements Ocean {
         int x = position.x;
         int y = position.y;
         Result hitResult = Result.MISSED;
-        if (x < 0 || y < 0 || x >= size || y >= size) throw new OceanException(ExceptionMsg.attackOutside);
+        if (x < 0 || y < 0 || x >= size || y >= size) throw new OceanException(ExceptionMsg.oc_attackOutside);
         if (field[x][y] != null) hitResult = attackShipAt(x, y);
         return hitResult;
     }

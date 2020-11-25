@@ -26,7 +26,7 @@ public class ShipImpl implements Ship {
 
     @Override
     public boolean hit(int field) throws ShipException {
-        if (field >= size || field < 0) throw new ShipException(ExceptionMsg.shipFieldInvalid);
+        if (field >= size || field < 0) throw new ShipException(ExceptionMsg.sh_shipFieldInvalid);
         hurt[field] = true;
         return sunk();
     }
@@ -43,7 +43,7 @@ public class ShipImpl implements Ship {
             }
             index++;
         }
-        if (!foundCoordinate) throw new ShipException(ExceptionMsg.shipUnawareOfCoordinate);
+        if (!foundCoordinate) throw new ShipException(ExceptionMsg.sh_shipUnawareOfCoordinate);
         return sunk();
     }
 
@@ -56,8 +56,35 @@ public class ShipImpl implements Ship {
     }
 
     @Override
-    public void locate(int field, int located_x, int located_y) {
-        position[field] = new Coordinate(located_x, located_y);
+    public void locate(int field, int located_x, int located_y) throws ShipException {
+        if (field >= size || field < 0) throw new ShipException(ExceptionMsg.sh_shipFieldInvalid);
+        Coordinate xy = new Coordinate(located_x, located_y);
+        if (anchor == null) anchor = xy;
+        else validate(field, located_x, located_y);
+        position[field] = xy;
+    }
+
+    private void validate(int field, int located_x, int located_y) throws ShipException {
+        // if the anchor is already set in ship, the field shouldn't be zero, because this would be the anchor
+        if (field < 1)
+            throw new ShipException(ExceptionMsg.sh_wrongLocate);
+
+        // the field should not be already set
+        if (position[field] != null)
+            throw new ShipException(ExceptionMsg.sh_wrongLocate);
+
+        // the location should be in range of the size relative to the anchor
+        if ((located_x - anchor.x) >= size || (located_y - anchor.y) >= size)
+            throw new ShipException(ExceptionMsg.sh_wrongLocate);
+
+        // the location x and y should be larger than the anchor, when the other location is the same as the anchor is(as it should)
+        if (located_x <= anchor.x && located_y == anchor.y || located_y <= anchor.y && located_x == anchor.x)
+            throw new ShipException(ExceptionMsg.sh_wrongLocate);
+
+        // one Dimension should stay like the anchors one, means x or y is zero to anchor
+        if ((located_x - anchor.x) != 0 && (located_y - anchor.y) != 0)
+            throw new ShipException(ExceptionMsg.sh_wrongLocate);
+
     }
 
     @Override

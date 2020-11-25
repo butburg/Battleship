@@ -27,7 +27,7 @@ public interface Ocean {
      * @param y    the coordinate
      * @param ship the reference to the ship
      */
-    void placeShipPart(Ship ship, int x, int y, boolean vertical) throws OceanException;
+    void placeShipPart(Ship ship, int x, int y, boolean vertical) throws OceanException, ShipException;
 
     Result bombAt(Coordinate position) throws OceanException, ShipException;
 }
