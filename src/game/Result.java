@@ -1,7 +1,7 @@
 package game;
 
 /**
- * @author Edwin W (570900) on Nov 2020
+ * @author Edwin W (HTW) on Nov 2020
  * The attack can result in different ways.
  */
 public enum Result {

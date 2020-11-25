@@ -1,11 +1,15 @@
 package field;
 
 import exceptions.OceanException;
+import exceptions.ShipException;
+import game.Result;
 import ship.Ship;
+
+import java.awt.*;
 
 
 /**
- * @author Edwin W (570900) on Nov 2020
+ * @author Edwin W (HTW) on Nov 2020
  * This is the field, where the ships can be placed! It has 2 dimensions and is usually around 11x11 fields large.
  */
 public interface Ocean {
@@ -26,4 +30,6 @@ public interface Ocean {
      * @param ship the reference to the ship
      */
     void placeShipPart(Ship ship, int x, int y, boolean vertical) throws OceanException;
+
+    Result bombAt(Coordinate position) throws OceanException, ShipException;
 }

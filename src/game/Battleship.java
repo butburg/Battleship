@@ -3,13 +3,14 @@ package game;
 import exceptions.BattleshipException;
 import exceptions.OceanException;
 import exceptions.PhaseException;
+import exceptions.ShipException;
 import field.Coordinate;
 import ship.Shipmodel;
 
 import java.awt.*;
 
 /**
- * @author Edwin W (570900) on Nov 2020
+ * @author Edwin W (HTW) on Nov 2020
  * The interface for the battleship game. There will be two players and oceans. Players can set their ships
  * and after that attack each other in rounds until each ship has been hit and sunk by one player.
  */
@@ -55,7 +56,7 @@ public interface Battleship {
      * @throws BattleshipException wrong player, outOfBounds, wrong state, already attacked
      * @throws PhaseException      not allowed to attack, in the wrong phase, not your turn
      */
-    Result attack(String player, Point position) throws BattleshipException, PhaseException;
+    Result attack(String player, Coordinate position) throws BattleshipException, PhaseException, ShipException, OceanException;
 
     /**
      * returns the phase of the game

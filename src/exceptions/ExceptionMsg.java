@@ -1,7 +1,7 @@
 package exceptions;
 
 /**
- * @author Edwin W (570900) on Nov 2020
+ * @author Edwin W (HTW) on Nov 2020
  * This is my current List of Error-Msg. Later it can be replaced by resources
  */
 public interface ExceptionMsg {
@@ -9,7 +9,8 @@ public interface ExceptionMsg {
     String tooManyPlayers = "Two players already exist!";
     String wrongPhase = "Wrong phase!";
     String wrongPlayer = "Wrong player!";
-    String wrongTurn = "Not your turn!";
+    String wrongTurn1 = "Not your turn! Its the second players!";
+    String wrongTurn2 = "Not your turn! Its the firsts players!";
     String shipOutside = "Ship is not inside the field!";
     String shipAllSet = "All ships are already set!";
     String shipTypeAllSet = "All ships of this type are already set!";

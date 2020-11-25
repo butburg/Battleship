@@ -1,7 +1,7 @@
 package ship;
 
 /**
- * @author Edwin W (570900) on Nov 2020
+ * @author Edwin W (HTW) on Nov 2020
  * The different types of ship, that exists in the game and their specific size!
  */
 public enum Shipmodel {

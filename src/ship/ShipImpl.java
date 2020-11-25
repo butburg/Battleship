@@ -7,14 +7,14 @@ import field.Coordinate;
 import java.awt.*;
 
 /**
- * @author Edwin W (570900) on Nov 2020
+ * @author Edwin W (HTW) on Nov 2020
  * This is an implementation for the ship.
  */
 public class ShipImpl implements Ship {
 
     final Shipmodel model;
     private final int size;
-    Point anchor;// = {{2,3},{2,4}};
+    Coordinate anchor;// = {{2,3},{2,4}};
     Coordinate[] position;// = {{2,3},{2,4}};
     boolean[] hurt;// = {true,true};
 
@@ -39,7 +39,7 @@ public class ShipImpl implements Ship {
         int index = 0;
         boolean foundCoordinate = false;
         for (Coordinate shipFieldPosition : position) {
-            if (shipFieldPosition == hitHere) {
+            if (shipFieldPosition.equals(hitHere)) {
                 hurt[index] = true;
                 foundCoordinate = true;
             }
@@ -63,8 +63,8 @@ public class ShipImpl implements Ship {
     }
 
     @Override
-    public Point getAnchor() {
-        return new Point(anchor);
+    public Coordinate getAnchor() {
+        return new Coordinate(anchor);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class ShipImpl implements Ship {
     }
 
     @Override
-    public Point[] getPosition() {
+    public Coordinate[] getPosition() {
         return position;
     }
 

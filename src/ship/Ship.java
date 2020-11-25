@@ -1,11 +1,12 @@
 package ship;
 
 import exceptions.ShipException;
+import field.Coordinate;
 
 import java.awt.*;
 
 /**
- * @author Edwin W (570900) on Nov 2020
+ * @author Edwin W (HTW) on Nov 2020
  * The ship consists of at least two parts that must be hit with an attack in order for it to sink.
  * So the size matters. The position is also stored by the ship.
  * <p>
@@ -52,7 +53,7 @@ public interface Ship {
      *
      * @return the anchor as a new Point(x,y)
      */
-    Point getAnchor();
+    Coordinate getAnchor();
 
     /**
      * Returns the total number of fields, i.e. the length, the size of the ship.
@@ -66,7 +67,7 @@ public interface Ship {
      *
      * @return the positions as array
      */
-    Point[] getPosition();
+    Coordinate[] getPosition();
 
     /**
      * Get the type of ship model.

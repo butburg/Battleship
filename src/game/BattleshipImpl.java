@@ -1,9 +1,6 @@
 package game;
 
-import exceptions.BattleshipException;
-import exceptions.ExceptionMsg;
-import exceptions.OceanException;
-import exceptions.PhaseException;
+import exceptions.*;
 import field.Coordinate;
 import field.Ocean;
 import field.OceanImpl;
@@ -11,12 +8,11 @@ import ship.Ship;
 import ship.ShipImpl;
 import ship.Shipmodel;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * @author Edwin W (570900) on Nov 2020
+ * @author Edwin W (HTW) on Nov 2020
  * This is an implementation for the battleship game.
  */
 public class BattleshipImpl implements Battleship {
@@ -24,7 +20,7 @@ public class BattleshipImpl implements Battleship {
     private Phase phase = Phase.CHOOSE;
     final private int PLAYERCOUNT = 2;
     private int playerNumber = 0; //is there a more generic way (needed?)
-    private String[] players = new String[PLAYERCOUNT];
+    private final String[] players = new String[PLAYERCOUNT];
     private Ocean ocean;
 
     private Ocean ocean1 = new OceanImpl(11);
@@ -153,10 +149,16 @@ public class BattleshipImpl implements Battleship {
     }
 
     @Override
-    public Result attack(String player, Point position) throws PhaseException {
+    public Result attack(String player, Coordinate position) throws PhaseException, BattleshipException, ShipException, OceanException {
         if (phase != Phase.PLAY && phase != Phase.WAITFORPLAY) throw new PhaseException(ExceptionMsg.wrongPhase);
+        if (!nameTaken(player)) throw new BattleshipException(ExceptionMsg.wrongPlayer);
+        if (phase == Phase.WAITFORPLAY && players[0].equals(player)) throw new BattleshipException(ExceptionMsg.wrongTurn1);
+        if (phase == Phase.PLAY && players[1].equals(player)) throw new BattleshipException(ExceptionMsg.wrongTurn2);
+
+        Result hitResult = ocean.bombAt(position);
+
         setNextPhase();
-        return null;
+        return hitResult;
     }
 
     @Override

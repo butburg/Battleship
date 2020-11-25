@@ -1,7 +1,7 @@
 package exceptions;
 
 /**
- * @author Edwin W (570900) on Nov 2020
+ * @author Edwin W (HTW) on Nov 2020
  * These eceptions are thrown by the main game.
  */
 public class BattleshipException extends java.lang.Exception implements ExceptionMsg {

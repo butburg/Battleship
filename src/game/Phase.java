@@ -1,7 +1,7 @@
 package game;
 
 /**
- * @author Edwin W (570900) on Nov 2020
+ * @author Edwin W (HTW) on Nov 2020
  * The game can be in more than one state. These states are here defined.
  */
 public enum Phase {
@@ -20,5 +20,5 @@ public enum Phase {
     /**
      * It is the opponent's turn and the current player must wait.
      */
-    WAITFORPLAY;
+    WAITFORPLAY
 }

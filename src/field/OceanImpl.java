@@ -2,10 +2,12 @@ package field;
 
 import exceptions.ExceptionMsg;
 import exceptions.OceanException;
+import exceptions.ShipException;
+import game.Result;
 import ship.Ship;
 
 /**
- * @author Edwin W (570900) on Nov 2020
+ * @author Edwin W (HTW) on Nov 2020
  * This is an implementation for the ocean. It will be 11x11 squares in size.
  */
 public class OceanImpl implements Ocean {
@@ -42,6 +44,21 @@ public class OceanImpl implements Ocean {
             x += inc_x;
             y += inc_y;
         }
+    }
+
+    @Override
+    public Result bombAt(Coordinate position) throws OceanException, ShipException {
+        int x = position.x;
+        int y = position.y;
+        Result hitResult = Result.MISSED;
+        if (x < 0 || y < 0 || x >= size || y >= size) throw new OceanException(ExceptionMsg.attackOutside);
+        if (field[x][y] != null) hitResult = attackShipAt(x, y);
+        return hitResult;
+    }
+
+    private Result attackShipAt(int x, int y) throws ShipException {
+        if (field[x][y].hit(x, y)) return Result.SINK;
+        return Result.HIT;
     }
 
 
