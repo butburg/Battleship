@@ -52,7 +52,7 @@ class BattleshipTest {
         p_10_1 = new Coordinate(10, 1);
         p_6_9 = new Coordinate(6, 9);
         p_1_0 = new Coordinate(1, 0);
-        p_max_max = new Coordinate(oceanSize-1, oceanSize-1);
+        p_max_max = new Coordinate(oceanSize - 1, oceanSize - 1);
 
     }
 

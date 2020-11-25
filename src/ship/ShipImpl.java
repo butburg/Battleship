@@ -4,8 +4,6 @@ import exceptions.ExceptionMsg;
 import exceptions.ShipException;
 import field.Coordinate;
 
-import java.awt.*;
-
 /**
  * @author Edwin W (HTW) on Nov 2020
  * This is an implementation for the ship.

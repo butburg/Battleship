@@ -5,8 +5,6 @@ import exceptions.ShipException;
 import game.Result;
 import ship.Ship;
 
-import java.awt.*;
-
 
 /**
  * @author Edwin W (HTW) on Nov 2020

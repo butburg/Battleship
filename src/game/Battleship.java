@@ -7,8 +7,6 @@ import exceptions.ShipException;
 import field.Coordinate;
 import ship.Shipmodel;
 
-import java.awt.*;
-
 /**
  * @author Edwin W (HTW) on Nov 2020
  * The interface for the battleship game. There will be two players and oceans. Players can set their ships

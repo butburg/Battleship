@@ -3,8 +3,6 @@ package ship;
 import exceptions.ShipException;
 import field.Coordinate;
 
-import java.awt.*;
-
 /**
  * @author Edwin W (HTW) on Nov 2020
  * The ship consists of at least two parts that must be hit with an attack in order for it to sink.
@@ -13,7 +11,7 @@ import java.awt.*;
  * The size is in relation with the type of ship, which stored in enums.
  */
 public interface Ship {
-
+//TODO do all the JavaDoc again
     /**
      * @param field
      * @param located_x
