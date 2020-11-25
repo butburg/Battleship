@@ -6,7 +6,6 @@ package exceptions;
  */
 public interface ExceptionMsg {
     String playerNameTaken = "Name already taken!";
-    String tooManyPlayers = "Two players already exist!";
     String wrongPhase = "Wrong phase!";
     String wrongPlayer = "Wrong player!";
     String wrongTurn1 = "Not your turn! Its the second players!";

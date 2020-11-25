@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import ship.Ship;
 import ship.Shipmodel;
 
-import java.awt.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -38,7 +36,7 @@ class BattleshipTest {
     private Coordinate p_0_0;
     private Coordinate p_2_2;
     private Coordinate p_10_1;
-    private Coordinate p_6_6;
+    private Coordinate p_6_9;
     private Coordinate p_1_0;
     private Coordinate p_max_max;
     private int oceanSize;
@@ -52,9 +50,9 @@ class BattleshipTest {
         p_0_0 = new Coordinate(0, 0);
         p_2_2 = new Coordinate(2, 2);
         p_10_1 = new Coordinate(10, 1);
-        p_6_6 = new Coordinate(6, 6);
+        p_6_9 = new Coordinate(6, 9);
         p_1_0 = new Coordinate(1, 0);
-        p_max_max = new Coordinate(oceanSize, oceanSize);
+        p_max_max = new Coordinate(oceanSize-1, oceanSize-1);
 
     }
 
@@ -93,16 +91,16 @@ class BattleshipTest {
         void choosePlayer3Player() throws BattleshipException, PhaseException {
             bs.choosePlayerName(PNAME1);
             bs.choosePlayerName(PNAME2);
-            Throwable e = assertThrows(BattleshipException.class, () -> bs.choosePlayerName(PNAME3));
-            assertEquals(ExceptionMsg.tooManyPlayers, e.getMessage());
+            Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayerName(PNAME3));
+            assertEquals(ExceptionMsg.wrongPhase, e.getMessage());
         }
 
         @Test
         void choosePlayer3PlayerSameName() throws BattleshipException, PhaseException {
             bs.choosePlayerName(PNAME1);
             bs.choosePlayerName(PNAME2);
-            Throwable e = assertThrows(BattleshipException.class, () -> bs.choosePlayerName(PNAME1));
-            assertEquals(ExceptionMsg.tooManyPlayers, e.getMessage());
+            Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayerName(PNAME1));
+            assertEquals(ExceptionMsg.wrongPhase, e.getMessage());
         }
 
         @Nested
@@ -340,7 +338,7 @@ class BattleshipTest {
         void attackGood() throws BattleshipException, PhaseException, ShipException, OceanException {
             assertEquals(Result.HIT, bs.attack(PNAME1, p_0_0));
             assertEquals(Result.MISSED, bs.attack(PNAME2, p_10_1));
-            assertEquals(Result.HIT, bs.attack(PNAME1, p_6_6));
+            assertEquals(Result.HIT, bs.attack(PNAME1, p_6_9));
             assertEquals(Result.SINK, bs.attack(PNAME2, p_1_0));
         }
 
@@ -354,7 +352,7 @@ class BattleshipTest {
         void attackWrongTurn1() throws BattleshipException, PhaseException, ShipException, OceanException {
             assertEquals(Result.HIT, bs.attack(PNAME1, p_0_0));
             assertEquals(Result.MISSED, bs.attack(PNAME2, p_10_1));
-            Throwable e2 = assertThrows(BattleshipException.class, () -> bs.attack(PNAME2, p_6_6));
+            Throwable e2 = assertThrows(BattleshipException.class, () -> bs.attack(PNAME2, p_6_9));
             assertEquals(ExceptionMsg.wrongTurn2, e2.getMessage());
         }
 
@@ -362,7 +360,7 @@ class BattleshipTest {
         void attackWrongTurn2() throws BattleshipException, PhaseException, ShipException, OceanException {
             assertEquals(Result.HIT, bs.attack(PNAME1, p_0_0));
             assertEquals(Result.MISSED, bs.attack(PNAME2, p_10_1));
-            assertEquals(Result.HIT, bs.attack(PNAME1, p_6_6));
+            assertEquals(Result.SINK, bs.attack(PNAME1, p_1_0));
             Throwable e2 = assertThrows(BattleshipException.class, () -> bs.attack(PNAME1, p_1_0));
             assertEquals(ExceptionMsg.wrongTurn1, e2.getMessage());
         }

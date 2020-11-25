@@ -61,8 +61,6 @@ public class BattleshipImpl implements Battleship {
     public void choosePlayerName(String playerName) throws BattleshipException, PhaseException {
         if (phase != Phase.CHOOSE) throw new PhaseException(ExceptionMsg.wrongPhase);
         if (nameTaken(playerName)) throw new BattleshipException(ExceptionMsg.playerNameTaken);
-        //if (playerNumber > 1) throw new BattleshipException(ExceptionMsg.tooManyPlayers);
-        //is this check needed when I set the Phase also here?
 
         //check for actual player names in the array and add the name if not full
         if (playerNumber == 0) {
@@ -152,7 +150,8 @@ public class BattleshipImpl implements Battleship {
     public Result attack(String player, Coordinate position) throws PhaseException, BattleshipException, ShipException, OceanException {
         if (phase != Phase.PLAY && phase != Phase.WAITFORPLAY) throw new PhaseException(ExceptionMsg.wrongPhase);
         if (!nameTaken(player)) throw new BattleshipException(ExceptionMsg.wrongPlayer);
-        if (phase == Phase.WAITFORPLAY && players[0].equals(player)) throw new BattleshipException(ExceptionMsg.wrongTurn1);
+        if (phase == Phase.WAITFORPLAY && players[0].equals(player))
+            throw new BattleshipException(ExceptionMsg.wrongTurn1);
         if (phase == Phase.PLAY && players[1].equals(player)) throw new BattleshipException(ExceptionMsg.wrongTurn2);
 
         Result hitResult = ocean.bombAt(position);
