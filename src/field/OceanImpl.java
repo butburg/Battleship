@@ -81,7 +81,7 @@ public class OceanImpl implements Ocean {
             y += inc_y;
         }
         try {
-            if (field[x + inc_x][y + inc_y] != null) throw new OceanException(ExceptionMsg.oc_shipTouching);
+            if (field[x][y] != null) throw new OceanException(ExceptionMsg.oc_shipTouching);
         } catch (ArrayIndexOutOfBoundsException e) {
         }
     }

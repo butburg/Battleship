@@ -52,6 +52,15 @@ class OceanTest {
         ocean.placeShip(s4, 2, 6, true);
     }
 
+
+    @Test
+    void placeShipEachShipCorner() throws ShipException, OceanException {
+        ocean.placeShip(s1, 5, 5, false);
+        ocean.placeShip(s2, 4, 6, true);
+        ocean.placeShip(s3, 1, 5, false);
+        ocean.placeShip(s4, 4, 3, true);
+    }
+
     @Test
     void placeShipColliding() throws ShipException, OceanException {
         ocean.placeShip(s1, 4, 0, true);
@@ -97,6 +106,39 @@ class OceanTest {
         assertEquals(ExceptionMsg.oc_shipTouching, e.getMessage());
     }
 
+    @Test
+    void placeShipTouchingAllSides1() throws ShipException, OceanException {
+        ocean.placeShip(s4, 5, 5, true);
+        Throwable e = assertThrows(OceanException.class, () -> ocean.placeShip(s3, 4, 4, true));
+        assertEquals(ExceptionMsg.oc_shipTouching, e.getMessage());
+        e = assertThrows(OceanException.class, () -> ocean.placeShip(s3, 4, 3, true));
+        assertEquals(ExceptionMsg.oc_shipTouching, e.getMessage());
+        e = assertThrows(OceanException.class, () -> ocean.placeShip(s3, 4, 7, false));
+        assertEquals(ExceptionMsg.oc_shipTouching, e.getMessage());
+        e = assertThrows(OceanException.class, () -> ocean.placeShip(s3, 6, 6, true));
+        assertEquals(ExceptionMsg.oc_shipTouching, e.getMessage());
+        e = assertThrows(OceanException.class, () -> ocean.placeShip(s3, 6, 6, false));
+        assertEquals(ExceptionMsg.oc_shipTouching, e.getMessage());
+        e = assertThrows(OceanException.class, () -> ocean.placeShip(s3, 6, 3, true));
+        assertEquals(ExceptionMsg.oc_shipTouching, e.getMessage());
+    }
+
+    @Test
+    void placeShipTouchingAllSides2() throws ShipException, OceanException {
+        ocean.placeShip(s2, 5, 5, false);
+        Throwable e = assertThrows(OceanException.class, () -> ocean.placeShip(s3, 4, 4, true));
+        assertEquals(ExceptionMsg.oc_shipTouching, e.getMessage());
+        e = assertThrows(OceanException.class, () -> ocean.placeShip(s3, 4, 3, true));
+        assertEquals(ExceptionMsg.oc_shipTouching, e.getMessage());
+        e = assertThrows(OceanException.class, () -> ocean.placeShip(s3, 9, 4, true));
+        assertEquals(ExceptionMsg.oc_shipTouching, e.getMessage());
+        e = assertThrows(OceanException.class, () -> ocean.placeShip(s3, 6, 6, true));
+        assertEquals(ExceptionMsg.oc_shipTouching, e.getMessage());
+        e = assertThrows(OceanException.class, () -> ocean.placeShip(s3, 6, 6, false));
+        assertEquals(ExceptionMsg.oc_shipTouching, e.getMessage());
+        e = assertThrows(OceanException.class, () -> ocean.placeShip(s3, 6, 2, true));
+        assertEquals(ExceptionMsg.oc_shipTouching, e.getMessage());
+    }
 
     @Test
     void bombAt() throws OceanException, ShipException {

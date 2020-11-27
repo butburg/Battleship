@@ -70,15 +70,16 @@ class BattleshipTest {
         assertArrayEquals(new String[]{PNAME1, PNAME2}, bs.getPlayers());
     }
 
-
     @Nested
     public class PhaseChoose {
+
 
         @Test
         void choosePlayerGood() throws BattleshipException, PhaseException {
             bs.choosePlayerName(PNAME1);
             bs.choosePlayerName(PNAME2);
         }
+
 
         @Test
         void choosePlayerSameName() throws BattleshipException, PhaseException {
@@ -442,7 +443,86 @@ class BattleshipTest {
         }
     }
 
+    @Nested
+    public class WinScenarios {
+        @BeforeEach
+        public void setUp() throws ShipException, OceanException, BattleshipException, PhaseException {
+            choosePlayerDefault();
+            setShipsDefault();
+        }
 
+        @Test
+        void winGood() throws ShipException, PhaseException, BattleshipException, OceanException {
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(0,0)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(0,0)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(1,0)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(1,0)));
+
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(3,0)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(3,0)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(6,0)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(6,0)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(7,0)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(7,0)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(8,0)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(8,0)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(9,0)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(9,0)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(10,0)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(10,0)));
+
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(3,1)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(3,1)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(3,2)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(3,2)));
+
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(9,2)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(9,2)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(10,2)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(10,2)));
+
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(0,5)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(0,5)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(1,5)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(1,5)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(2,5)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(2,5)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(3,5)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(3,5)));
+
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(0,7)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(0,7)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(0,8)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(0,8)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(0,9)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(0,9)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(0,10)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(0,10)));
+
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(8,8)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(8,8)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(9,8)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(9,8)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(10,8)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(10,8)));
+
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(3,10)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(3,10)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(4,10)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(4,10)));
+
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(8,10)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(8,10)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(9,10)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(9,10)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(10,10)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(10,10)));
+
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(6,9)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(6,9)));
+            assertEquals(Result.WIN, bs.attack(PNAME1, new Coordinate(6,10)));
+        }
+    }
 
 
     /* helping methods */

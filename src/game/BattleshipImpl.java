@@ -29,6 +29,8 @@ public class BattleshipImpl implements Battleship {
     private ArrayList<Ship> ships;
     private ArrayList<Ship> ships1 = new ArrayList<>();
     private ArrayList<Ship> ships2 = new ArrayList<>();
+    private int[] shipsDestroyed = new int[2];
+    private int numberOfShips;
 
     public BattleshipImpl() {
         createAllShips();
@@ -50,6 +52,7 @@ public class BattleshipImpl implements Battleship {
         for (; count > 0; count--) {
             ships1.add(new ShipImpl(ship));
             ships2.add(new ShipImpl(ship));
+            numberOfShips++;
         }
     }
 
@@ -111,38 +114,42 @@ public class BattleshipImpl implements Battleship {
             return true;
     }
 
-
     @Override
     public boolean setShip(String player, Shipmodel ship, Coordinate xy) throws BattleshipException, PhaseException, OceanException, ShipException {
         return setShip(player, ship, xy, false);
     }
 
+    private void chooseOceanAndShips(String player) throws BattleshipException {
+        chooseOcean(player);
+        if (player.equals(players[0])) {
+            this.ships = ships1;
+        } else if (player.equals(players[1])) {
+            this.ships = ships2;
+        } else throw new BattleshipException(ExceptionMsg.bs_wrongPlayer);
+    }
 
-    private void setNextPhase() {
-        switch (this.phase) {
-            case CHOOSE -> setPhase(Phase.SETSHIPS);
-            case SETSHIPS, WAITFORPLAY -> setPhase(Phase.PLAY);
-            case PLAY -> setPhase(Phase.WAITFORPLAY);
-        }
+    private void chooseOcean(String player) throws BattleshipException {
+        if (player.equals(players[0])) {
+            this.ocean = ocean1;
+        } else if (player.equals(players[1])) {
+            this.ocean = ocean2;
+        } else throw new BattleshipException(ExceptionMsg.bs_wrongPlayer);
     }
 
     private void updateOceanAndShips(ArrayList<Ship> ships, Ocean ocean, String player) throws BattleshipException {
+        updateOcean(player);
         if (player.equals(players[0])) {
-            this.ocean1 = ocean;
             this.ships1 = ships;
         } else if (player.equals(players[1])) {
-            this.ocean2 = ocean;
             this.ships2 = ships;
         } else throw new BattleshipException(ExceptionMsg.bs_wrongPlayer);
     }
 
-    private void chooseOceanAndShips(String player) throws BattleshipException {
+    private void updateOcean(String player) throws BattleshipException {
         if (player.equals(players[0])) {
-            this.ocean = ocean1;
-            this.ships = ships1;
+            this.ocean1 = ocean;
         } else if (player.equals(players[1])) {
-            this.ocean = ocean2;
-            this.ships = ships2;
+            this.ocean2 = ocean;
         } else throw new BattleshipException(ExceptionMsg.bs_wrongPlayer);
     }
 
@@ -154,14 +161,41 @@ public class BattleshipImpl implements Battleship {
             throw new BattleshipException(ExceptionMsg.bs_wrongTurn1);
         if (phase == Phase.PLAY && players[1].equals(player)) throw new BattleshipException(ExceptionMsg.bs_wrongTurn2);
 
-        Result hitResult = ocean.bombAt(position);
+        chooseOcean(player);
+        Result hitResult = checkWin(ocean.bombAt(position), player);
+        updateOcean(player);
+
 
         setNextPhase();
         return hitResult;
+    }
+
+    private Result checkWin(Result bomb, String p) {
+        //TODO improve the player one player two logic!
+        if (p.equals(players[0])) {
+            if (bomb == Result.SINK) shipsDestroyed[0]++;
+            if (shipsDestroyed[0] == numberOfShips) return Result.WIN;
+            else
+                return bomb;
+        } else {
+            if (bomb == Result.SINK) shipsDestroyed[1]++;
+            if (shipsDestroyed[1] == numberOfShips) return Result.WIN;
+            else
+                return bomb;
+        }
     }
 
     @Override
     public Phase getPhase() {
         return this.phase;
     }
+
+    private void setNextPhase() {
+        switch (this.phase) {
+            case CHOOSE -> setPhase(Phase.SETSHIPS);
+            case SETSHIPS, WAITFORPLAY -> setPhase(Phase.PLAY);
+            case PLAY -> setPhase(Phase.WAITFORPLAY);
+        }
+    }
+
 }
