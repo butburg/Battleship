@@ -17,6 +17,8 @@ public interface ExceptionMsg {
     String oc_shipOutside = "Ship is not inside the field!";
     String oc_attackOutside = "You can't attack outside of the field!";
     String oc_shipCollidingPosition = "Ship-position is invalid! A another ship is placed there!";
+    String oc_attackedAlready = "You attacked already here!";
+    String oc_shipTouching = "The ships are not allowed to touch each other!";
 
     String sh_shipUnawareOfCoordinate = "The ship don't know the Coordinate! Shouldn't be possible!!!";
     String sh_shipFieldInvalid = "The ship dont have that field. Make sure the field is in the ships length and positive!";

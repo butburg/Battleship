@@ -97,7 +97,7 @@ public class BattleshipImpl implements Battleship {
         }
         ships.remove(shipToSet);
         if (shipToSet == null) throw new BattleshipException(ExceptionMsg.bs_shipTypeAllSet);
-        ocean.placeShipPart(shipToSet, xy.x, xy.y, vertical);
+        ocean.placeShip(shipToSet, xy.x, xy.y, vertical);
         //update the list and the ocean for the actual player
         updateOceanAndShips(ships, ocean, player);
         if (ships.isEmpty()) {

@@ -39,10 +39,10 @@ class ShipTest {
     public class PlaceShip {
         @BeforeEach
         void setUp() throws OceanException, ShipException {
-            ocean.placeShipPart(s1, 0, 0, true);
-            ocean.placeShipPart(s2, 2, 4, false);
-            ocean.placeShipPart(s3, 4, 7, false);
-            ocean.placeShipPart(s4, 2, 6, true);
+            ocean.placeShip(s1, 0, 0, true);
+            ocean.placeShip(s2, 2, 4, false);
+            ocean.placeShip(s3, 4, 7, false);
+            ocean.placeShip(s4, 2, 6, true);
         }
 
         @Test
@@ -79,10 +79,10 @@ class ShipTest {
     public class ShipsPlaced {
         @BeforeEach
         void setUp() throws OceanException, ShipException {
-            ocean.placeShipPart(s1, 0, 0, true);
-            ocean.placeShipPart(s2, 2, 4, false);
-            ocean.placeShipPart(s3, 4, 7, false);
-            ocean.placeShipPart(s4, 2, 6, true);
+            ocean.placeShip(s1, 0, 0, true);
+            ocean.placeShip(s2, 2, 4, false);
+            ocean.placeShip(s3, 4, 7, false);
+            ocean.placeShip(s4, 2, 6, true);
         }
 
         @Test
@@ -106,8 +106,8 @@ class ShipTest {
 
     @Test
     void hit() throws ShipException, OceanException {
-        ocean.placeShipPart(s1, 0, 0, true);
-        ocean.placeShipPart(s2, 6, 6, false);
+        ocean.placeShip(s1, 0, 0, true);
+        ocean.placeShip(s2, 6, 6, false);
         assertFalse(s1.hit(0));
 
         assertFalse(s2.hit(0));
@@ -126,7 +126,7 @@ class ShipTest {
 
     @Test
     void sinking() throws ShipException, OceanException {
-        ocean.placeShipPart(s1, 0, 0, true);
+        ocean.placeShip(s1, 0, 0, true);
         assertFalse(s1.sunk());
 
         assertFalse(s1.hit(0));
@@ -140,7 +140,7 @@ class ShipTest {
         assertTrue(s1.sunk());
 
 
-        ocean.placeShipPart(s2, 6, 6, false);
+        ocean.placeShip(s2, 6, 6, false);
         assertFalse(s2.sunk());
 
         assertFalse(s2.hit(0));
@@ -212,15 +212,15 @@ assertEquals(ExceptionMsg.sh_wrongLocate,e.getMessage());
 
     @Test
     void getAncher() throws OceanException, ShipException {
-        ocean.placeShipPart(s2, 3, 6, false);
+        ocean.placeShip(s2, 3, 6, false);
         assertEquals(new Point(3, 6), s2.getAnchor());
     }
 
     @Test
     void getPosition() throws OceanException, ShipException {
 
-        ocean.placeShipPart(s1, 0, 0, true);
-        ocean.placeShipPart(s3, 4, 7, false);
+        ocean.placeShip(s1, 0, 0, true);
+        ocean.placeShip(s3, 4, 7, false);
 
         assertArrayEquals(new Point[]{
                 new Point(0, 0),
