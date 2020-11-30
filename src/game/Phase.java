@@ -20,5 +20,10 @@ public enum Phase {
     /**
      * It is the opponent's turn and the current player must wait.
      */
-    WAITFORPLAY
+    WAITFORPLAY,
+
+    /**
+     * When the game is over!
+     */
+    END
 }

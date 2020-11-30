@@ -165,6 +165,7 @@ public class BattleshipImpl implements Battleship {
         Result hitResult = checkWin(ocean.bombAt(position), player);
         updateOcean(player);
 
+        if (hitResult == Result.WIN) setPhase(Phase.END);
 
         setNextPhase();
         return hitResult;
@@ -193,8 +194,11 @@ public class BattleshipImpl implements Battleship {
     private void setNextPhase() {
         switch (this.phase) {
             case CHOOSE -> setPhase(Phase.SETSHIPS);
-            case SETSHIPS, WAITFORPLAY -> setPhase(Phase.PLAY);
+            case SETSHIPS -> setPhase(Phase.PLAY);
+            case WAITFORPLAY -> setPhase(Phase.PLAY);
             case PLAY -> setPhase(Phase.WAITFORPLAY);
+            case END -> {
+            }
         }
     }
 

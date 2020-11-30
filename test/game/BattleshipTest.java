@@ -522,6 +522,27 @@ class BattleshipTest {
             assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(6,9)));
             assertEquals(Result.WIN, bs.attack(PNAME1, new Coordinate(6,10)));
         }
+
+        @Test
+        void winGoodP2() throws ShipException, PhaseException, BattleshipException, OceanException {
+            oneShipLeftToSink();
+            assertEquals(Result.MISSED, bs.attack(PNAME1, new Coordinate(6,8)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(6,9)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(6,9)));
+            assertEquals(Result.WIN, bs.attack(PNAME2, new Coordinate(6,10)));
+        }
+
+        @Test
+        void lastAttack() throws ShipException, PhaseException, BattleshipException, OceanException {
+            oneShipLeftToSink();
+            assertEquals(Result.MISSED, bs.attack(PNAME1, new Coordinate(6,8)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(6,9)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(6,9)));
+            assertEquals(Result.WIN, bs.attack(PNAME2, new Coordinate(6,10)));
+            Throwable e = assertThrows(PhaseException.class, () -> bs.attack(PNAME1, new Coordinate(6,10)));
+            assertEquals(ExceptionMsg.ph_wrongPhase, e.getMessage());
+        }
+
     }
 
 
@@ -549,5 +570,72 @@ class BattleshipTest {
         bs.setShip(player, Shipmodel.SUBMARINES, new Coordinate(9, 2));
         bs.setShip(player, Shipmodel.SUBMARINES, new Coordinate(3, 10));
         bs.setShip(player, Shipmodel.SUBMARINES, new Coordinate(6, 9), true);
+    }
+
+    private void oneShipLeftToSink() throws ShipException, PhaseException, BattleshipException, OceanException {
+        bs.attack(PNAME1, new Coordinate(0,0));
+        bs.attack(PNAME2, new Coordinate(0,0));
+        bs.attack(PNAME1, new Coordinate(1,0));
+        bs.attack(PNAME2, new Coordinate(1,0));
+
+        bs.attack(PNAME1, new Coordinate(3,0));
+        bs.attack(PNAME2, new Coordinate(3,0));
+        bs.attack(PNAME1, new Coordinate(6,0));
+        bs.attack(PNAME2, new Coordinate(6,0));
+        bs.attack(PNAME1, new Coordinate(7,0));
+        bs.attack(PNAME2, new Coordinate(7,0));
+        bs.attack(PNAME1, new Coordinate(8,0));
+        bs.attack(PNAME2, new Coordinate(8,0));
+        bs.attack(PNAME1, new Coordinate(9,0));
+        bs.attack(PNAME2, new Coordinate(9,0));
+        bs.attack(PNAME1, new Coordinate(10,0));
+        bs.attack(PNAME2, new Coordinate(10,0));
+
+        bs.attack(PNAME1, new Coordinate(3,1));
+        bs.attack(PNAME2, new Coordinate(3,1));
+        bs.attack(PNAME1, new Coordinate(3,2));
+        bs.attack(PNAME2, new Coordinate(3,2));
+
+        bs.attack(PNAME1, new Coordinate(9,2));
+        bs.attack(PNAME2, new Coordinate(9,2));
+        bs.attack(PNAME1, new Coordinate(10,2));
+        bs.attack(PNAME2, new Coordinate(10,2));
+
+        bs.attack(PNAME1, new Coordinate(0,5));
+        bs.attack(PNAME2, new Coordinate(0,5));
+        bs.attack(PNAME1, new Coordinate(1,5));
+        bs.attack(PNAME2, new Coordinate(1,5));
+        bs.attack(PNAME1, new Coordinate(2,5));
+        bs.attack(PNAME2, new Coordinate(2,5));
+        bs.attack(PNAME1, new Coordinate(3,5));
+        bs.attack(PNAME2, new Coordinate(3,5));
+
+        bs.attack(PNAME1, new Coordinate(0,7));
+        bs.attack(PNAME2, new Coordinate(0,7));
+        bs.attack(PNAME1, new Coordinate(0,8));
+        bs.attack(PNAME2, new Coordinate(0,8));
+        bs.attack(PNAME1, new Coordinate(0,9));
+        bs.attack(PNAME2, new Coordinate(0,9));
+        bs.attack(PNAME1, new Coordinate(0,10));
+        bs.attack(PNAME2, new Coordinate(0,10));
+
+        bs.attack(PNAME1, new Coordinate(8,8));
+        bs.attack(PNAME2, new Coordinate(8,8));
+        bs.attack(PNAME1, new Coordinate(9,8));
+        bs.attack(PNAME2, new Coordinate(9,8));
+        bs.attack(PNAME1, new Coordinate(10,8));
+        bs.attack(PNAME2, new Coordinate(10,8));
+
+        bs.attack(PNAME1, new Coordinate(3,10));
+        bs.attack(PNAME2, new Coordinate(3,10));
+        bs.attack(PNAME1, new Coordinate(4,10));
+        bs.attack(PNAME2, new Coordinate(4,10));
+
+        bs.attack(PNAME1, new Coordinate(8,10));
+        bs.attack(PNAME2, new Coordinate(8,10));
+        bs.attack(PNAME1, new Coordinate(9,10));
+        bs.attack(PNAME2, new Coordinate(9,10));
+        bs.attack(PNAME1, new Coordinate(10,10));
+        bs.attack(PNAME2, new Coordinate(10,10));
     }
 }
