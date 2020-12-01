@@ -37,7 +37,7 @@ public class BattleshipProtocolEngine implements Battleship {
         DataOutputStream dos = new DataOutputStream(this.os);
 
         try {
-            dos.writeInt(0);
+            dos.writeInt(METHOD_CHOOSE);
 
             dos.writeUTF(playerName);
         } catch (IOException e) {
@@ -62,7 +62,7 @@ public class BattleshipProtocolEngine implements Battleship {
         DataOutputStream dos = new DataOutputStream(this.os);
 
         try {
-            dos.writeInt(1);
+            dos.writeInt(METHOD_SET_V);
 
             dos.writeUTF(player);
             dos.writeUTF(String.valueOf(ship));
@@ -97,7 +97,7 @@ public class BattleshipProtocolEngine implements Battleship {
         DataOutputStream dos = new DataOutputStream(this.os);
 
         try {
-            dos.writeInt(2);
+            dos.writeInt(METHOD_SET);
 
             dos.writeUTF(player);
             dos.writeUTF(String.valueOf(ship));
@@ -130,7 +130,7 @@ public class BattleshipProtocolEngine implements Battleship {
         DataOutputStream dos = new DataOutputStream(this.os);
 
         try {
-            dos.writeInt(3);
+            dos.writeInt(METHOD_ATTACK);
             dos.writeUTF(player);
             dos.writeInt(position.x);
             dos.writeInt(position.y);
