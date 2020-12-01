@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import ship.Ship;
+import ship.ShipImpl;
 import ship.Shipmodel;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +33,6 @@ class BattleshipTest {
     public static final String PNAME3 = "Kevin";
 
 
-    private Ship ship1, ship2, ship3, ship4, ship5, ship6, ship7, ship8, ship9, ship10;
     private Coordinate p_0_0;
     private Coordinate p_2_2;
     private Coordinate p_10_1;

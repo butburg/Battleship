@@ -1,7 +1,9 @@
 package network;
 
 import exceptions.BattleshipException;
+import exceptions.OceanException;
 import exceptions.PhaseException;
+import exceptions.ShipException;
 import field.Coordinate;
 import game.Battleship;
 import game.Phase;
@@ -36,6 +38,7 @@ public class BattleshipProtocolEngine implements Battleship {
 
         try {
             dos.writeInt(0);
+
             dos.writeUTF(playerName);
         } catch (IOException e) {
             throw new BattleshipException("Serialize error!");
@@ -45,6 +48,7 @@ public class BattleshipProtocolEngine implements Battleship {
 
     private void deserializeChoosePlayerName() throws BattleshipException, PhaseException {
         DataInputStream dis = new DataInputStream(this.is);
+
         try {
             String playerName = dis.readUTF();
             this.gameEngine.choosePlayerName(playerName);
@@ -54,18 +58,101 @@ public class BattleshipProtocolEngine implements Battleship {
     }
 
     @Override
-    public boolean setShip(String player, Shipmodel ship, Coordinate xy, boolean vertical)  {
+    public boolean setShip(String player, Shipmodel ship, Coordinate xy, boolean vertical) throws BattleshipException {
+        DataOutputStream dos = new DataOutputStream(this.os);
+
+        try {
+            dos.writeInt(1);
+
+            dos.writeUTF(player);
+            dos.writeUTF(String.valueOf(ship));
+            dos.writeInt(xy.x);
+            dos.writeInt(xy.y);
+            dos.writeBoolean(vertical);
+        } catch (IOException e) {
+            throw new BattleshipException("Serialize error!");
+        }
         return false;
     }
 
+    private void deserializeSetShipV() throws ShipException, PhaseException, BattleshipException, OceanException {
+        DataInputStream dis = new DataInputStream(this.is);
+
+        try {
+            Coordinate xy = new Coordinate(-1, -1);
+            String player = dis.readUTF();
+            Shipmodel ship = Shipmodel.valueOf(dis.readUTF());
+            xy.x = dis.readInt();
+            xy.y = dis.readInt();
+            boolean vertical = dis.readBoolean();
+            this.gameEngine.setShip(player, ship, xy, vertical);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @Override
-    public boolean setShip(String player, Shipmodel ship, Coordinate xy)  {
+    public boolean setShip(String player, Shipmodel ship, Coordinate xy) throws BattleshipException {
+        DataOutputStream dos = new DataOutputStream(this.os);
+
+        try {
+            dos.writeInt(2);
+
+            dos.writeUTF(player);
+            dos.writeUTF(String.valueOf(ship));
+            dos.writeInt(xy.x);
+            dos.writeInt(xy.y);
+        } catch (IOException e) {
+            throw new BattleshipException("Serialize error!");
+        }
+
         return false;
     }
 
+    private void deserializeSetShip() throws ShipException, PhaseException, BattleshipException, OceanException {
+        DataInputStream dis = new DataInputStream(this.is);
+
+        try {
+            Coordinate xy = new Coordinate(-1, -1);
+            String player = dis.readUTF();
+            Shipmodel ship = Shipmodel.valueOf(dis.readUTF());
+            xy.x = dis.readInt();
+            xy.y = dis.readInt();
+            this.gameEngine.setShip(player, ship, xy);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
-    public Result attack(String player, Coordinate position){
+    public Result attack(String player, Coordinate position) throws BattleshipException {
+        DataOutputStream dos = new DataOutputStream(this.os);
+
+        try {
+            dos.writeInt(3);
+            dos.writeUTF(player);
+            dos.writeInt(position.x);
+            dos.writeInt(position.y);
+        } catch (IOException e) {
+            throw new BattleshipException("Serialize error!");
+        }
+
         return null;
+    }
+
+    private void deserializeAttack() throws ShipException, PhaseException, BattleshipException, OceanException {
+        DataInputStream dis = new DataInputStream(this.is);
+
+        try {
+            Coordinate xy = new Coordinate(-1,-1);
+            String player = dis.readUTF();
+            xy.x = dis.readInt();
+            xy.y = dis.readInt();
+            this.gameEngine.attack(player, xy);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -78,7 +165,7 @@ public class BattleshipProtocolEngine implements Battleship {
         return new String[0];
     }
 
-    public void read() throws BattleshipException, PhaseException {
+    public void read() throws BattleshipException, PhaseException, ShipException, OceanException {
         DataInputStream dis = new DataInputStream(this.is);
         try {
 
@@ -95,14 +182,5 @@ public class BattleshipProtocolEngine implements Battleship {
         }
     }
 
-    private void deserializeAttack() {
 
-    }
-
-    private void deserializeSetShipV() {
-
-    }
-
-    private void deserializeSetShip() {
-    }
 }
