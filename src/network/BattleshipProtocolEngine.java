@@ -15,15 +15,21 @@ import java.io.*;
 /**
  * @author Edwin W (HTW) on Nov 2020
  */
-public class BattleshipProtocolEngine implements Battleship {
+public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolEngine {
 
-    private final InputStream is;
-    private final OutputStream os;
+    private InputStream is;
+    private OutputStream os;
     private final Battleship gameEngine;
     private final int METHOD_CHOOSE = 0;
-    private final int METHOD_SET_V = 1;
-    private final int METHOD_SET = 2;
-    private final int METHOD_ATTACK = 3;
+    private final int METHOD_SET = 1;
+    private final int METHOD_ATTACK = 2;
+    private static final int RESULT_SET = 3;
+    private static final int RESULT_ATTACK = 4;
+    private Thread protocolThread;
+    private boolean storedSetResult;
+    private Thread setWaitThread;
+    private Thread attackWaitThread;
+    private Result storedAttackResult;
 
 
     public BattleshipProtocolEngine(InputStream is, OutputStream os, Battleship gameEngine) {
@@ -38,12 +44,11 @@ public class BattleshipProtocolEngine implements Battleship {
 
         try {
             dos.writeInt(METHOD_CHOOSE);
-
             dos.writeUTF(playerName);
+
         } catch (IOException e) {
             throw new BattleshipException("Serialize error!");
         }
-
     }
 
     private void deserializeChoosePlayerName() throws BattleshipException, PhaseException {
@@ -52,6 +57,7 @@ public class BattleshipProtocolEngine implements Battleship {
         try {
             String playerName = dis.readUTF();
             this.gameEngine.choosePlayerName(playerName);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -62,52 +68,27 @@ public class BattleshipProtocolEngine implements Battleship {
         DataOutputStream dos = new DataOutputStream(this.os);
 
         try {
-            dos.writeInt(METHOD_SET_V);
-
+            dos.writeInt(METHOD_SET);
             dos.writeUTF(player);
             dos.writeUTF(String.valueOf(ship));
             dos.writeInt(xy.x);
             dos.writeInt(xy.y);
             dos.writeBoolean(vertical);
+
+            try {
+                this.setWaitThread = Thread.currentThread();
+                Thread.sleep(Long.MAX_VALUE);
+
+            } catch (InterruptedException e) {
+                //interrupted
+                System.out.println("received return value of setShip");
+            }
+            setWaitThread = null;
+            return storedSetResult;
+
         } catch (IOException e) {
             throw new BattleshipException("Serialize error!");
         }
-        return false;
-    }
-
-    private void deserializeSetShipV() throws ShipException, PhaseException, BattleshipException, OceanException {
-        DataInputStream dis = new DataInputStream(this.is);
-
-        try {
-            Coordinate xy = new Coordinate(-1, -1);
-            String player = dis.readUTF();
-            Shipmodel ship = Shipmodel.valueOf(dis.readUTF());
-            xy.x = dis.readInt();
-            xy.y = dis.readInt();
-            boolean vertical = dis.readBoolean();
-            this.gameEngine.setShip(player, ship, xy, vertical);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    @Override
-    public boolean setShip(String player, Shipmodel ship, Coordinate xy) throws BattleshipException {
-        DataOutputStream dos = new DataOutputStream(this.os);
-
-        try {
-            dos.writeInt(METHOD_SET);
-
-            dos.writeUTF(player);
-            dos.writeUTF(String.valueOf(ship));
-            dos.writeInt(xy.x);
-            dos.writeInt(xy.y);
-        } catch (IOException e) {
-            throw new BattleshipException("Serialize error!");
-        }
-
-        return false;
     }
 
     private void deserializeSetShip() throws ShipException, PhaseException, BattleshipException, OceanException {
@@ -119,7 +100,33 @@ public class BattleshipProtocolEngine implements Battleship {
             Shipmodel ship = Shipmodel.valueOf(dis.readUTF());
             xy.x = dis.readInt();
             xy.y = dis.readInt();
-            this.gameEngine.setShip(player, ship, xy);
+            boolean vertical = dis.readBoolean();
+
+            boolean lastShip = this.gameEngine.setShip(player, ship, xy, vertical);
+
+            // write Result
+            DataOutputStream dos = new DataOutputStream(os);
+            dos.writeInt(RESULT_SET);
+            dos.writeBoolean(lastShip);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public boolean setShip(String player, Shipmodel ship, Coordinate xy) throws BattleshipException {
+        return setShip(player, ship, xy, false);
+    }
+
+    private void deserializeResultSet() {
+        DataInputStream dis = new DataInputStream(this.is);
+
+        try {
+            storedSetResult = dis.readBoolean();
+            setWaitThread.interrupt();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -134,26 +141,58 @@ public class BattleshipProtocolEngine implements Battleship {
             dos.writeUTF(player);
             dos.writeInt(position.x);
             dos.writeInt(position.y);
+
+            try {
+                this.attackWaitThread = Thread.currentThread();
+                Thread.sleep(Long.MAX_VALUE);
+
+            } catch (InterruptedException e) {
+                //interrupted
+                System.out.println("received return value of attack");
+            }
+            attackWaitThread = null;
+            return storedAttackResult;
+
         } catch (IOException e) {
             throw new BattleshipException("Serialize error!");
         }
-
-        return null;
     }
 
     private void deserializeAttack() throws ShipException, PhaseException, BattleshipException, OceanException {
         DataInputStream dis = new DataInputStream(this.is);
 
         try {
-            Coordinate xy = new Coordinate(-1,-1);
+            Coordinate xy = new Coordinate(-1, -1);
             String player = dis.readUTF();
             xy.x = dis.readInt();
             xy.y = dis.readInt();
-            this.gameEngine.attack(player, xy);
+
+            Result result = this.gameEngine.attack(player, xy);
+
+            // write Result
+            DataOutputStream dos = new DataOutputStream(os);
+            dos.writeInt(RESULT_ATTACK);
+            dos.writeUTF(String.valueOf(result));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private void deserializeResultAttack() {
+        DataInputStream dis = new DataInputStream(this.is);
+
+        try {
+            storedAttackResult = Result.valueOf(dis.readUTF());
+            attackWaitThread.interrupt();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     @Override
     public Phase getPhase() {
@@ -166,6 +205,7 @@ public class BattleshipProtocolEngine implements Battleship {
     }
 
     public void read() throws BattleshipException, PhaseException, ShipException, OceanException {
+        System.out.println("ProtocolEngine: Read from input stream...");
         DataInputStream dis = new DataInputStream(this.is);
         try {
 
@@ -173,8 +213,9 @@ public class BattleshipProtocolEngine implements Battleship {
             switch (commandID) {
                 case METHOD_CHOOSE -> this.deserializeChoosePlayerName();
                 case METHOD_SET -> this.deserializeSetShip();
-                case METHOD_SET_V -> this.deserializeSetShipV();
                 case METHOD_ATTACK -> this.deserializeAttack();
+                case RESULT_SET -> this.deserializeResultSet();
+                case RESULT_ATTACK -> this.deserializeResultAttack();
                 default -> throw new BattleshipException("Deserialize: unknown Method ID:" + commandID);
             }
         } catch (IOException e) {
@@ -183,4 +224,32 @@ public class BattleshipProtocolEngine implements Battleship {
     }
 
 
+    @Override
+    public void run() {
+        System.out.println("BSProtocolEngine started..." + this);
+
+        try {
+            while (true) {
+                this.read();
+            }
+        } catch (BattleshipException | PhaseException | ShipException | OceanException e) {
+            System.err.println("Exception called in protocol engine thread");
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void handleConnection(InputStream is, OutputStream os) throws IOException {
+        this.is = is;
+        this.os = os;
+
+        this.protocolThread = new Thread(this);
+        this.protocolThread.start();
+    }
+
+    @Override
+    public void close() throws IOException {
+
+    }
 }
