@@ -11,11 +11,9 @@ import game.Result;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ship.Shipmodel;
+import tcp_helper.TCPStream;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,16 +24,120 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProtocolEngineTest {
 
     private final String PNAME1 = "Alice";
+    private final String PNAME2 = "Jake";
+    public static final long TEST_THREAD_SLEEP_DURATION = 1000;
+    //Network
+    public static final int PORTNUMBER = 5555;
+    private static int port = 0;
 
     @BeforeEach
     void setUp() {
     }
 
-    private Battleship getBsEngine(InputStream is, OutputStream os, Battleship engine) {
-        return new BattleshipProtocolEngine(is, os, engine);
+
+    //////////////////////////////////////////////
+    // with tcp, mainly by author thsc42
+    //////////////////////////////////////////////
+
+    private int getPortNumber() {
+        if (ProtocolEngineTest.port == 0) {
+            ProtocolEngineTest.port = PORTNUMBER;
+        } else {
+            ProtocolEngineTest.port++;
+        }
+
+        System.out.println("use portnumber " + ProtocolEngineTest.port);
+        return ProtocolEngineTest.port;
     }
 
     @Test
+    public void pickNetworkTest() throws InterruptedException, IOException, BattleshipException, PhaseException, ShipException, OceanException {
+        // there are players in this test: Alice and Kevin
+        // create Alice's game engine tester
+        BattleshipRXTester aliceGameEngineTester = new BattleshipRXTester();
+
+        // create real protocol engine on Alice's side
+        BattleshipProtocolEngine aliceBSProtocolEngine = new BattleshipProtocolEngine(aliceGameEngineTester, "Alice");
+
+        // make it clear - this is a protocol engine
+        ProtocolEngine aliceProtocolEngine = aliceBSProtocolEngine;
+        // make it clear - it also supports the game engine interface
+        Battleship aliceGameEngineSide = aliceBSProtocolEngine;
+
+        // create Kevin's game engine tester
+        BattleshipRXTester kevinGameEngineTester = new BattleshipRXTester();
+        // create real protocol engine on Kevin's side
+        ProtocolEngine kevinProtocolEngine = new BattleshipProtocolEngine(kevinGameEngineTester, "Kevin");
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //                                           setup tcp                                                    //
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        int port = this.getPortNumber();
+        // this stream plays TCP server role during connection establishment
+        TCPStream aliceSide = new TCPStream(port, true, "aliceSide");
+        // this stream plays TCP client role during connection establishment
+        TCPStream kevinSide = new TCPStream(port, false, "kevinSide");
+        // start both stream
+        aliceSide.start();
+        kevinSide.start();
+        // wait until TCP connection is established
+        aliceSide.waitForConnection();
+        kevinSide.waitForConnection();
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //                                       launch protocol engine                                           //
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // give protocol engines streams and launch (reda / write)
+        aliceProtocolEngine.handleConnection(aliceSide.getInputStream(), aliceSide.getOutputStream());
+        kevinProtocolEngine.handleConnection(kevinSide.getInputStream(), kevinSide.getOutputStream());
+        // give it a moment - important stop this test thread - to threads must be launched
+        System.out.println("give threads a moment to be launched");
+        Thread.sleep(TEST_THREAD_SLEEP_DURATION);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //                                             run scenario                                               //
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // connection is established here - pick thread waits for results
+
+        aliceGameEngineSide.choosePlayerName(PNAME1);
+        //give some time to transfer after call
+        Thread.sleep(100);
+        //test results
+        assertTrue(kevinGameEngineTester.lastCallchoosePlayerName);
+        assertFalse(kevinGameEngineTester.lastCallsetShip);
+        assertFalse(kevinGameEngineTester.lastCallAttack);
+        assertEquals(kevinGameEngineTester.lastPlayerName, PNAME1);
+
+        aliceGameEngineSide.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(6, 9), true);
+        //give some time to transfer after call
+        Thread.sleep(100);
+        //test results
+        assertTrue(kevinGameEngineTester.lastCallsetShip);
+        assertFalse(kevinGameEngineTester.lastCallchoosePlayerName);
+        assertFalse(kevinGameEngineTester.lastCallAttack);
+        assertEquals(kevinGameEngineTester.lastCoordinate, new Coordinate(6, 9));
+        assertTrue(kevinGameEngineTester.lastVertical);
+        assertEquals(kevinGameEngineTester.lastShip, Shipmodel.SUBMARINES);
+        assertEquals(kevinGameEngineTester.lastPlayerName, PNAME1);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //                                             tidy up                                                    //
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        aliceProtocolEngine.close();
+        kevinProtocolEngine.close();
+        // stop test thread to allow operating system to close sockets
+        Thread.sleep(TEST_THREAD_SLEEP_DURATION);
+    }
+
+    //////////////////////////////////////////////
+    // old test
+    //////////////////////////////////////////////
+/*
+
+    private Battleship getBsEngine(InputStream is, OutputStream os, Battleship engine) {
+        return new BattleshipProtocolEngine(engine);
+    }
+
+
+    //@Test
     public void simpleChooseTest() throws BattleshipException, PhaseException, ShipException, OceanException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Battleship bsProtocolTX = this.getBsEngine(null, baos, null);
@@ -61,7 +163,7 @@ class ProtocolEngineTest {
     }
 
 
-    @Test
+    //@Test
     public void simpleSetVerticalTest() throws BattleshipException, PhaseException, ShipException, OceanException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Battleship bsProtocolTX = this.getBsEngine(null, baos, null);
@@ -89,7 +191,7 @@ class ProtocolEngineTest {
         assertFalse(bsRXtester.lastCallAttack);
     }
 
-    @Test
+    //@Test
     public void simpleSetNoVerticalTest() throws BattleshipException, PhaseException, ShipException, OceanException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Battleship bsProtocolTX = this.getBsEngine(null, baos, null);
@@ -116,7 +218,7 @@ class ProtocolEngineTest {
         assertFalse(bsRXtester.lastCallAttack);
     }
 
-    @Test
+    //@Test
     public void simpleAttackTest() throws BattleshipException, PhaseException, ShipException, OceanException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Battleship bsProtocolTX = this.getBsEngine(null, baos, null);
@@ -141,7 +243,7 @@ class ProtocolEngineTest {
         assertFalse(bsRXtester.lastCallchoosePlayerName);
         assertFalse(bsRXtester.lastCallsetShip);
     }
-
+*/
     private class BattleshipRXTester implements Battleship {
         private boolean lastCallsetShip = false;
         private boolean lastCallchoosePlayerName = false;
