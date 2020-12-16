@@ -5,6 +5,7 @@ import field.Coordinate;
 import field.Ocean;
 import field.OceanImpl;
 import network.BattleshipProtocolEngine;
+import network.SessionEstablishedListener;
 import ship.Ship;
 import ship.ShipImpl;
 import ship.Shipmodel;
@@ -16,7 +17,7 @@ import java.util.Arrays;
  * @author Edwin W (HTW) on Nov 2020
  * This is an implementation for the battleship game.
  */
-public class BattleshipImpl implements Battleship {
+public class BattleshipImpl implements Battleship, SessionEstablishedListener {
 
     private Phase phase = Phase.CHOOSE;
     final private int PLAYERCOUNT = 2;
@@ -33,6 +34,9 @@ public class BattleshipImpl implements Battleship {
     private int[] shipsDestroyed = new int[2];
     private int numberOfShips;
     private BattleshipProtocolEngine protocolEngine;
+    private boolean startsFirst = false;
+    private String remotePlayerName;
+    private String localPlayerName;
 
     public BattleshipImpl(String localPLayer) {
         createAllShips();
@@ -76,6 +80,12 @@ public class BattleshipImpl implements Battleship {
             playerNumber++;
             setNextPhase();
         }
+
+        // tell other side - if local call (test of null if for some unit tests)
+        if (isLocalCall() && this.protocolEngine != null) {
+            this.protocolEngine.choosePlayerName(playerName);
+        } else throw new BattleshipException();
+
     }
 
     private boolean nameTaken(String playerName) {
@@ -105,6 +115,13 @@ public class BattleshipImpl implements Battleship {
         ocean.placeShip(shipToSet, xy.x, xy.y, vertical);
         //update the list and the ocean for the actual player
         updateOceanAndShips(ships, ocean, player);
+
+        // tell other side - if local call (test of null if for some unit tests)
+        if (isLocalCall() && this.protocolEngine != null) {
+            this.protocolEngine.setShip(player, shipmodel, xy, vertical);
+        } else throw new BattleshipException();
+
+
         if (ships.isEmpty()) {
             if (ships1.isEmpty() && ships2.isEmpty()) {
                 setNextPhase();
@@ -114,6 +131,12 @@ public class BattleshipImpl implements Battleship {
         } else
             //if it was the last placed ship for the actual player
             return true;
+    }
+
+
+    //TODO implement the check, if the call was local or from remote!
+    private boolean isLocalCall() {
+        return false;
     }
 
     @Override
@@ -169,6 +192,11 @@ public class BattleshipImpl implements Battleship {
 
         if (hitResult == Result.WIN) setPhase(Phase.END);
 
+        // tell other side - if local call (test of null if for some unit tests)
+        if (isLocalCall() && this.protocolEngine != null) {
+            this.protocolEngine.attack(player,position);
+        } else throw new BattleshipException();
+
         setNextPhase();
         return hitResult;
     }
@@ -196,12 +224,22 @@ public class BattleshipImpl implements Battleship {
     private void setNextPhase() {
         switch (this.phase) {
             case CHOOSE -> setPhase(Phase.SETSHIPS);
-            case SETSHIPS -> setPhase(Phase.PLAY);
+            case SETSHIPS -> setPhase(startsFirst ? Phase.PLAY : Phase.WAITFORPLAY);
             case WAITFORPLAY -> setPhase(Phase.PLAY);
             case PLAY -> setPhase(Phase.WAITFORPLAY);
             case END -> {
             }
         }
+    }
+
+    @Override
+    public void sessionEstablished(boolean oracle, String partnerName) {
+        System.out.println(this.localPlayerName + ": gameSessionEstablished with " + partnerName + " | " + oracle);
+
+        this.startsFirst = oracle;
+        this.remotePlayerName = partnerName;
+
+        setPhase(Phase.SETSHIPS);
     }
 
     public void setProtocolEngine(BattleshipProtocolEngine protocolEngine) {
