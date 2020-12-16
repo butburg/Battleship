@@ -7,8 +7,6 @@ import field.OceanImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import ship.Ship;
-import ship.ShipImpl;
 import ship.Shipmodel;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,7 +41,7 @@ class BattleshipTest {
 
     @BeforeEach
     void setUp() throws ShipException {
-        bs = new BattleshipImpl();
+        bs = new BattleshipImpl("");
         ocean = new OceanImpl(11);
         oceanSize = ocean.getSize();
 

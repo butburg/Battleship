@@ -4,6 +4,7 @@ import exceptions.*;
 import field.Coordinate;
 import field.Ocean;
 import field.OceanImpl;
+import network.BattleshipProtocolEngine;
 import ship.Ship;
 import ship.ShipImpl;
 import ship.Shipmodel;
@@ -31,8 +32,9 @@ public class BattleshipImpl implements Battleship {
     private ArrayList<Ship> ships2 = new ArrayList<>();
     private int[] shipsDestroyed = new int[2];
     private int numberOfShips;
+    private BattleshipProtocolEngine protocolEngine;
 
-    public BattleshipImpl() {
+    public BattleshipImpl(String localPLayer) {
         createAllShips();
     }
 
@@ -202,4 +204,7 @@ public class BattleshipImpl implements Battleship {
         }
     }
 
+    public void setProtocolEngine(BattleshipProtocolEngine protocolEngine) {
+        this.protocolEngine = protocolEngine;
+    }
 }
