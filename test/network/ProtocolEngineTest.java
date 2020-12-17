@@ -16,8 +16,7 @@ import tcp_helper.TCPStream;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -106,13 +105,11 @@ class ProtocolEngineTest {
         //                                             tidy up                                                    //
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        aliceBsProtocol.close();
-        jakeBsProtocol.close();
-
         // stop test thread to allow operating system to close sockets
         Thread.sleep(TEST_THREAD_SLEEP_DURATION);
 
-
+        aliceBsProtocol.close();
+        jakeBsProtocol.close();
     }
 
     @Test
@@ -174,53 +171,29 @@ class ProtocolEngineTest {
         // pieces must not be same
         assertEquals(aliceBsImpl.getPhase(), jakeBsImpl.getPhase());
 
-        assertEquals(true, jakeBsImpl.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 0)));
+        assertTrue(jakeBsImpl.setShip(PNAME2, Shipmodel.BATTLESHIP, new Coordinate(6, 0)));
         assertEquals(aliceBsImpl.getPhase(), jakeBsImpl.getPhase());
-        assertEquals(true, jakeBsImpl.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 5)));
-        assertEquals(true, jakeBsImpl.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 7), true));
-        assertEquals(true, jakeBsImpl.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(3, 0), true));
-        assertEquals(true, jakeBsImpl.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(8, 8)));
-        assertEquals(true, jakeBsImpl.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(8, 10)));
-        assertEquals(true, jakeBsImpl.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(0, 0)));
-        assertEquals(true, jakeBsImpl.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(9, 2)));
-        assertEquals(true, jakeBsImpl.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(3, 10)));
-        assertEquals(false, jakeBsImpl.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(6, 9), true));
+        assertTrue(jakeBsImpl.setShip(PNAME2, Shipmodel.CRUISERS, new Coordinate(0, 5)));
+        assertTrue(jakeBsImpl.setShip(PNAME2, Shipmodel.CRUISERS, new Coordinate(0, 7), true));
+        assertTrue(jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(3, 0), true));
+        assertTrue(jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(8, 8)));
+        assertTrue(jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(8, 10)));
+        assertTrue(jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(0, 0)));
+        assertTrue(jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(9, 2)));
+        assertTrue(jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(3, 10)));
+        assertFalse(jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(6, 9), true));
 
 
-        assertEquals(true, aliceBsImpl.setShip(PNAME2, Shipmodel.BATTLESHIP, new Coordinate(6, 0)));
-        assertEquals(true, aliceBsImpl.setShip(PNAME2, Shipmodel.CRUISERS, new Coordinate(0, 5)));
-        assertEquals(true, aliceBsImpl.setShip(PNAME2, Shipmodel.CRUISERS, new Coordinate(0, 7), true));
-        assertEquals(true, aliceBsImpl.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(3, 0), true));
-        assertEquals(true, aliceBsImpl.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(8, 8)));
-        assertEquals(true, aliceBsImpl.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(8, 10)));
-        assertEquals(true, aliceBsImpl.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(0, 0)));
-        assertEquals(true, aliceBsImpl.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(9, 2)));
-        assertEquals(true, aliceBsImpl.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(3, 10)));
-        assertEquals(false, aliceBsImpl.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(6, 9), true));
-
-        assertEquals(true, jakeBsImpl.setShip(PNAME2, Shipmodel.BATTLESHIP, new Coordinate(6, 0)));
-        assertEquals(aliceBsImpl.getPhase(), jakeBsImpl.getPhase());
-        assertEquals(true, jakeBsImpl.setShip(PNAME2, Shipmodel.CRUISERS, new Coordinate(0, 5)));
-        assertEquals(true, jakeBsImpl.setShip(PNAME2, Shipmodel.CRUISERS, new Coordinate(0, 7), true));
-        assertEquals(true, jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(3, 0), true));
-        assertEquals(true, jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(8, 8)));
-        assertEquals(true, jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(8, 10)));
-        assertEquals(true, jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(0, 0)));
-        assertEquals(true, jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(9, 2)));
-        assertEquals(true, jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(3, 10)));
-        assertEquals(false, jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(6, 9), true));
-
-
-        assertEquals(true, aliceBsImpl.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 0)));
-        assertEquals(true, aliceBsImpl.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 5)));
-        assertEquals(true, aliceBsImpl.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 7), true));
-        assertEquals(true, aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(3, 0), true));
-        assertEquals(true, aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(8, 8)));
-        assertEquals(true, aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(8, 10)));
-        assertEquals(true, aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(0, 0)));
-        assertEquals(true, aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(9, 2)));
-        assertEquals(true, aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(3, 10)));
-        assertEquals(false, aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(6, 9), true));
+        assertTrue(aliceBsImpl.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 0)));
+        assertTrue(aliceBsImpl.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 5)));
+        assertTrue(aliceBsImpl.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 7), true));
+        assertTrue(aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(3, 0), true));
+        assertTrue(aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(8, 8)));
+        assertTrue(aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(8, 10)));
+        assertTrue(aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(0, 0)));
+        assertTrue(aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(9, 2)));
+        assertTrue(aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(3, 10)));
+        assertFalse(aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(6, 9), true));
 
         Thread.sleep(100);
 
@@ -231,11 +204,11 @@ class ProtocolEngineTest {
         //                                             tidy up                                                    //
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        aliceBsProtocol.close();
-        jakeBsProtocol.close();
 
         // stop test thread to allow operating system to close sockets
         Thread.sleep(TEST_THREAD_SLEEP_DURATION);
+        aliceBsProtocol.close();
+        jakeBsProtocol.close();
     }
 
 

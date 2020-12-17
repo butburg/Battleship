@@ -35,11 +35,10 @@ public class BattleshipImpl implements Battleship, SessionEstablishedListener {
     private int numberOfShips;
     private BattleshipProtocolEngine protocolEngine;
     private boolean startsFirst = false;
-    private String remotePlayerName;
-    private String localPlayerName;
 
     public BattleshipImpl(String localPLayer) {
         createAllShips();
+        players[0] = localPLayer;
     }
 
     /**
@@ -68,7 +67,7 @@ public class BattleshipImpl implements Battleship, SessionEstablishedListener {
 
     @Override
     public void choosePlayerName(String playerName) throws BattleshipException, PhaseException {
-        if (phase != Phase.CHOOSE) throw new PhaseException(ExceptionMsg.ph_wrongPhase);
+    /*    if (phase != Phase.CHOOSE) throw new PhaseException(ExceptionMsg.ph_wrongPhase);
         if (nameTaken(playerName)) throw new BattleshipException(ExceptionMsg.bs_playerNameTaken);
 
         //check for actual player names in the array and add the name if not full
@@ -82,10 +81,10 @@ public class BattleshipImpl implements Battleship, SessionEstablishedListener {
         }
 
         // tell other side - if local call (test of null if for some unit tests)
-        if (isLocalCall() && this.protocolEngine != null) {
+        if (isLocalCall(playerName) && this.protocolEngine != null) {
             this.protocolEngine.choosePlayerName(playerName);
         } else throw new BattleshipException();
-
+*/
     }
 
     private boolean nameTaken(String playerName) {
@@ -117,9 +116,9 @@ public class BattleshipImpl implements Battleship, SessionEstablishedListener {
         updateOceanAndShips(ships, ocean, player);
 
         // tell other side - if local call (test of null if for some unit tests)
-        if (isLocalCall() && this.protocolEngine != null) {
+        if (isLocalCall(player) && this.protocolEngine != null) {
             this.protocolEngine.setShip(player, shipmodel, xy, vertical);
-        } else throw new BattleshipException();
+        } else System.out.println(player + " set his ship for " + players[0]);
 
 
         if (ships.isEmpty()) {
@@ -133,10 +132,8 @@ public class BattleshipImpl implements Battleship, SessionEstablishedListener {
             return true;
     }
 
-
-    //TODO implement the check, if the call was local or from remote!
-    private boolean isLocalCall() {
-        return false;
+    private boolean isLocalCall(String calledPlayerName) {
+        return players[0].equals(calledPlayerName);
     }
 
     @Override
@@ -193,10 +190,9 @@ public class BattleshipImpl implements Battleship, SessionEstablishedListener {
         if (hitResult == Result.WIN) setPhase(Phase.END);
 
         // tell other side - if local call (test of null if for some unit tests)
-        if (isLocalCall() && this.protocolEngine != null) {
-            this.protocolEngine.attack(player,position);
-        } else throw new BattleshipException();
-
+        if (isLocalCall(player) && this.protocolEngine != null) {
+            this.protocolEngine.attack(player, position);
+        } else System.out.println(players[0] + "got attacked by " + player);
         setNextPhase();
         return hitResult;
     }
@@ -234,15 +230,16 @@ public class BattleshipImpl implements Battleship, SessionEstablishedListener {
 
     @Override
     public void sessionEstablished(boolean oracle, String partnerName) {
-        System.out.println(this.localPlayerName + ": gameSessionEstablished with " + partnerName + " | " + oracle);
+        players[1] = partnerName;
+        startsFirst = oracle;
 
-        this.startsFirst = oracle;
-        this.remotePlayerName = partnerName;
+        System.out.println(players[0] + ": gameSessionEstablished with " + players[1] + " | " + startsFirst);
 
         setPhase(Phase.SETSHIPS);
     }
 
     public void setProtocolEngine(BattleshipProtocolEngine protocolEngine) {
         this.protocolEngine = protocolEngine;
+        this.protocolEngine.subscribeGameSessionEstablishedListener(this);
     }
 }

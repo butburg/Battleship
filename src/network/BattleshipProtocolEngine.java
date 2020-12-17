@@ -252,7 +252,7 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
         long seed = this.hashCode() * System.currentTimeMillis();
         Random random = new Random(seed);
 
-        int localInt, remoteInt = 0;
+        int localInt, remoteInt;
         try {
             DataOutputStream dos = new DataOutputStream(this.os);
             DataInputStream dis = new DataInputStream(this.is);
@@ -329,7 +329,8 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
     }
 
     @Override
-    public void close() {
-
+    public void close() throws IOException {
+        //if (os != null) os.close();
+        //if (is != null) is.close();
     }
 }
