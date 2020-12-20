@@ -91,7 +91,7 @@ public class BattleshipImpl implements Battleship, SessionEstablishedListener {
         return Arrays.asList(players).contains(playerName);
     }
 
-    private void setPhase(Phase newPhase) {
+    public void setPhase(Phase newPhase) {
         this.phase = newPhase;
     }
 
@@ -192,7 +192,7 @@ public class BattleshipImpl implements Battleship, SessionEstablishedListener {
         // tell other side - if local call (test of null if for some unit tests)
         if (isLocalCall(player) && this.protocolEngine != null) {
             this.protocolEngine.attack(player, position);
-        } else System.out.println(players[0] + "got attacked by " + player);
+        } else System.out.println(players[0] + " got attacked by " + player);
         setNextPhase();
         return hitResult;
     }

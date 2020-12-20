@@ -39,6 +39,7 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
     private Thread setWaitThread;
     private Thread attackWaitThread;
     private Result storedAttackResult;
+    private boolean hasRead = true;
 
 
     public BattleshipProtocolEngine(Battleship gameEngine, String name) {
@@ -210,7 +211,7 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
         return new String[0];
     }
 
-    public void read() throws BattleshipException, PhaseException, ShipException, OceanException {
+    public boolean read() throws BattleshipException, PhaseException, ShipException, OceanException {
         System.out.println("ProtocolEngine(" + name + "): Read from input stream...");
         DataInputStream dis = new DataInputStream(this.is);
         try {
@@ -239,8 +240,15 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
                 }
                 default -> throw new BattleshipException("Deserialize: unknown Method ID:" + commandID);
             }
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("IOException caught - most probably connection close - stop thread / stop engine");
+            try {
+                this.close();
+            } catch (IOException ioException) {
+                System.out.println("ignore?");
+            }
+            return false;
         }
     }
 
@@ -278,8 +286,9 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
 
 
         try {
-            while (true) {
-                this.read();
+            while (hasRead) {
+                //stop, when stream is closed
+                hasRead = this.read();
             }
         } catch (BattleshipException | PhaseException | ShipException | OceanException e) {
             System.err.println("ProtocolEngine(" + name + "): Exception called in protocol engine thread");
@@ -330,7 +339,7 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
 
     @Override
     public void close() throws IOException {
-        //if (os != null) os.close();
-        //if (is != null) is.close();
+        if (os != null) os.close();
+        if (is != null) is.close();
     }
 }
