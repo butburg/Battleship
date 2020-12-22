@@ -15,7 +15,7 @@ public interface ProtocolEngine {
      * @param os the stream the class write into
      * @throws IOException if there is an input / output incorrect
      */
-    void handleConnection(InputStream is, OutputStream os) throws IOException;
+    void handleConnectionStream(InputStream is, OutputStream os) throws IOException;
 
     /**
      * Stop engine - close streams and release all resources

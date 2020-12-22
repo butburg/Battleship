@@ -6,7 +6,6 @@ import exceptions.PhaseException;
 import exceptions.ShipException;
 import field.Coordinate;
 import game.Battleship;
-import game.Phase;
 import game.Result;
 import ship.Shipmodel;
 
@@ -20,28 +19,82 @@ import java.util.Random;
  */
 public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolEngine {
 
+    /**
+     * Name of the Protocol-Object
+     */
     private final String name;
+    /**
+     * Name of the other Protocol-Object
+     */
     private String partnerName;
+    /**
+     * True or false, will distinguish the both Protocol-Engines
+     */
     private boolean oracle;
 
+    /**
+     * the Stream the Protocolengine receives from
+     */
     private InputStream is;
+    /**
+     * the Stream the Protocolengine sends to
+     */
     private OutputStream os;
+    /**
+     * the Gameengine the Protocol belongs to
+     */
     private final Battleship gameEngine;
 
+    /**
+     * Methods to Int for simple streaming
+     */
     private final int METHOD_CHOOSE = 0;
     private final int METHOD_SET = 1;
     private final int METHOD_ATTACK = 2;
     private static final int RESULT_SET = 3;
     private static final int RESULT_ATTACK = 4;
 
+    /**
+     * thread of the ProtocolEngine self for reading
+     */
     private Thread protocolThread;
-    private boolean storedSetResult;
+
+    /**
+     * thread to wait until it gets interrupted when a setShips result is received
+     */
     private Thread setWaitThread;
+    /**
+     * temp result from a received setShips result
+     */
+    private boolean storedSetResult;
+
+    /**
+     * thread to wait until it gets interrupted when a attack result is received
+     */
     private Thread attackWaitThread;
+    /**
+     * temp result from a received attack result
+     */
     private Result storedAttackResult;
+
+    /**
+     * flag for read loop, false when sockets gets closed
+     */
     private boolean hasRead = true;
 
+    /**
+     * List containing all instances, that want to be notified by events of this ProtocolEngine
+     */
+    private final List<SessionEstablishedSubscriber> sessionCreatedSubscibers = new ArrayList<>();
 
+
+    /**
+     * The ProtocolEngine expects a GameEngine it belongs to and a name for better understanding, which ProtocolEngine
+     * currently activev is
+     *
+     * @param gameEngine the actual GameEngine that belongs to the ProtocolEngine
+     * @param name       the name of the current ProtocolEngine-Object
+     */
     public BattleshipProtocolEngine(Battleship gameEngine, String name) {
         this.name = name;
         this.gameEngine = gameEngine;
@@ -77,7 +130,9 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
         DataOutputStream dos = new DataOutputStream(this.os);
 
         try {
+            //set the Method-Id for the receiver
             dos.writeInt(METHOD_SET);
+            //write the params of the method call
             dos.writeUTF(player);
             dos.writeUTF(String.valueOf(ship));
             dos.writeInt(xy.x);
@@ -85,7 +140,9 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
             dos.writeBoolean(vertical);
 
             try {
+                //store the current Thread
                 this.setWaitThread = Thread.currentThread();
+                //set it to sleep and wait for interruption
                 Thread.sleep(Long.MAX_VALUE);
 
             } catch (InterruptedException e) {
@@ -93,6 +150,7 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
                 System.out.println("ProtocolEngine(" + name + "): Received return value of setShip");
             }
             setWaitThread = null;
+            //after the interrupt the return value of the method was stored, return that stored value now
             return storedSetResult;
 
         } catch (IOException e) {
@@ -104,15 +162,17 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
         DataInputStream dis = new DataInputStream(this.is);
 
         try {
+            //receive the params for the method call
             String player = dis.readUTF();
             Shipmodel ship = Shipmodel.valueOf(dis.readUTF());
             int x = dis.readInt();
             int y = dis.readInt();
             boolean vertical = dis.readBoolean();
 
+            //apply the method call with its params and save the return value
             boolean isLastShip = this.gameEngine.setShip(player, ship, new Coordinate(x, y), vertical);
 
-            // write Result
+            // write the return value and send it back
             DataOutputStream dos = new DataOutputStream(os);
             dos.writeInt(RESULT_SET);
             dos.writeBoolean(isLastShip);
@@ -132,7 +192,9 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
         DataInputStream dis = new DataInputStream(this.is);
 
         try {
+            // get the return value and store it
             storedSetResult = dis.readBoolean();
+            // interrupt the Thread waiting for the return value, it can now read the returned value
             setWaitThread.interrupt();
 
         } catch (IOException e) {
@@ -201,22 +263,13 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
     }
 
 
-    @Override
-    public Phase getPhase() {
-        return null;
-    }
-
-    @Override
-    public String[] getPlayers() {
-        return new String[0];
-    }
-
     public boolean read() throws BattleshipException, PhaseException, ShipException, OceanException {
         System.out.println("ProtocolEngine(" + name + "): Read from input stream...");
         DataInputStream dis = new DataInputStream(this.is);
         try {
-
+            // get first int value from stream
             int commandID = dis.readInt();
+            // call method identified by int value
             switch (commandID) {
                 case METHOD_CHOOSE -> {
                     System.out.println("ProtocolEngine(" + name + "): read METHOD_CHOOSE");
@@ -257,6 +310,7 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
     public void run() {
         System.out.println("ProtocolEngine(" + name + "): started...flip coin!" + this);
 
+        // get "random" value
         long seed = this.hashCode() * System.currentTimeMillis();
         Random random = new Random(seed);
 
@@ -264,6 +318,7 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
         try {
             DataOutputStream dos = new DataOutputStream(this.os);
             DataInputStream dis = new DataInputStream(this.is);
+            // as long as the remote and the local random value are the same, change the random value
             do {
                 localInt = random.nextInt();
                 System.out.println("ProtocolEngine(" + name + "): flip and take number " + localInt);
@@ -271,21 +326,22 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
                 remoteInt = dis.readInt();
             } while (localInt == remoteInt);
 
+            // the one instance with the lower random value becomes the only and one oracle
             this.oracle = localInt < remoteInt;
             System.out.println("ProtocolEngine(" + name + "): Flipped a coin and got an oracle == " + oracle);
-            //this.oracleSet = true;
 
-            // finally - exchange names
+            // finally - exchange names with other ProtocolEngine
             dos.writeUTF(this.name);
             this.partnerName = dis.readUTF();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        // let all listeners know, that the connection is established now
         notifySessionEstablished(oracle, partnerName);
 
-
         try {
+            // everytime we can read st. from the stream, we run the read method
             while (hasRead) {
                 //stop, when stream is closed
                 hasRead = this.read();
@@ -301,40 +357,38 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
     //                                         oracle creation listener                                      //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private List<SessionEstablishedListener> sessionCreatedListenerList = new ArrayList<>();
 
-    public void subscribeGameSessionEstablishedListener(SessionEstablishedListener ocListener) {
-        this.sessionCreatedListenerList.add(ocListener);
+    // add a Listener
+    public void addGameSessionEstablishedSubscriber(SessionEstablishedSubscriber ocListener) {
+        this.sessionCreatedSubscibers.add(ocListener);
     }
 
-    public void unsubscribeGameSessionEstablishedListener(SessionEstablishedListener ocListener) {
-        this.sessionCreatedListenerList.remove(ocListener);
+    public void removeGameSessionEstablishedSubscriber(SessionEstablishedSubscriber ocListener) {
+        this.sessionCreatedSubscibers.remove(ocListener);
     }
 
     private void notifySessionEstablished(boolean oracle, String partnerName) {
-        // call listener
-        if (this.sessionCreatedListenerList != null && !this.sessionCreatedListenerList.isEmpty()) {
-            for (SessionEstablishedListener oclistener : this.sessionCreatedListenerList) {
+        // call all listener
+        if (!this.sessionCreatedSubscibers.isEmpty()) {
+            for (SessionEstablishedSubscriber oclistener : this.sessionCreatedSubscibers) {
+                //not clear why own Thread?
                 new Thread(() -> {
                     try {
                         Thread.sleep(1); // block a moment to let read thread start - just in case
-                    } catch (InterruptedException e) {
-                        // will not happen
-                    }
+                    } catch (InterruptedException e) { e.getStackTrace(); }
                     oclistener.sessionEstablished(oracle, partnerName);
                 }).start();
             }
         }
     }
 
-
     @Override
-    public void handleConnection(InputStream is, OutputStream os) {
+    public void handleConnectionStream(InputStream is, OutputStream os) {
         this.is = is;
         this.os = os;
 
-        this.protocolThread = new Thread(this);
-        this.protocolThread.start();
+        protocolThread = new Thread(this);
+        protocolThread.start();
     }
 
     @Override

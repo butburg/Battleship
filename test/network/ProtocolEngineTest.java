@@ -86,8 +86,8 @@ class ProtocolEngineTest {
         //                                       launch protocol engine                                           //
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // give protocol engines streams and launch (read / write)
-        aliceBsProtocol.handleConnection(aliceSide.getInputStream(), aliceSide.getOutputStream());
-        jakeBsProtocol.handleConnection(jakeSide.getInputStream(), jakeSide.getOutputStream());
+        aliceBsProtocol.handleConnectionStream(aliceSide.getInputStream(), aliceSide.getOutputStream());
+        jakeBsProtocol.handleConnectionStream(jakeSide.getInputStream(), jakeSide.getOutputStream());
         // give it a moment - important stop this test thread - to threads must be launched
         System.out.println("give threads a moment to be launched");
         Thread.sleep(TEST_THREAD_SLEEP_DURATION);
@@ -148,8 +148,8 @@ class ProtocolEngineTest {
             //                                       launch protocol engine                                           //
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // give protocol engines streams and launch (read / write)
-            aliceBsProtocol.handleConnection(aliceSide.getInputStream(), aliceSide.getOutputStream());
-            jakeBsProtocol.handleConnection(jakeSide.getInputStream(), jakeSide.getOutputStream());
+            aliceBsProtocol.handleConnectionStream(aliceSide.getInputStream(), aliceSide.getOutputStream());
+            jakeBsProtocol.handleConnectionStream(jakeSide.getInputStream(), jakeSide.getOutputStream());
             // give it a moment - important stop this test thread - to threads must be launched
             System.out.println("give threads a moment to be launched");
             Thread.sleep(TEST_THREAD_SLEEP_DURATION);

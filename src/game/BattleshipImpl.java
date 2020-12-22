@@ -5,7 +5,7 @@ import field.Coordinate;
 import field.Ocean;
 import field.OceanImpl;
 import network.BattleshipProtocolEngine;
-import network.SessionEstablishedListener;
+import network.SessionEstablishedSubscriber;
 import ship.Ship;
 import ship.ShipImpl;
 import ship.Shipmodel;
@@ -17,7 +17,7 @@ import java.util.Arrays;
  * @author Edwin W (HTW) on Nov 2020
  * This is an implementation for the battleship game.
  */
-public class BattleshipImpl implements Battleship, SessionEstablishedListener {
+public class BattleshipImpl implements Battleship, SessionEstablishedSubscriber {
 
     private Phase phase = Phase.CHOOSE;
     final private int PLAYERCOUNT = 2;
@@ -61,6 +61,11 @@ public class BattleshipImpl implements Battleship, SessionEstablishedListener {
         }
     }
 
+    /**
+     * returns an Array with the names of the player
+     *
+     * @return the names of the player
+     */
     public String[] getPlayers() {
         return players;
     }
@@ -212,7 +217,11 @@ public class BattleshipImpl implements Battleship, SessionEstablishedListener {
         }
     }
 
-    @Override
+    /**
+     * returns the phase of the game
+     *
+     * @return the Enum Phase: CHOOSE,SETSHIPS, PLAY, WAITFORPLAY or END
+     */
     public Phase getPhase() {
         return this.phase;
     }
@@ -240,6 +249,6 @@ public class BattleshipImpl implements Battleship, SessionEstablishedListener {
 
     public void setProtocolEngine(BattleshipProtocolEngine protocolEngine) {
         this.protocolEngine = protocolEngine;
-        this.protocolEngine.subscribeGameSessionEstablishedListener(this);
+        this.protocolEngine.addGameSessionEstablishedSubscriber(this);
     }
 }

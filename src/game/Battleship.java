@@ -70,17 +70,4 @@ public interface Battleship {
      */
     Result attack(String player, Coordinate position) throws BattleshipException, PhaseException, ShipException, OceanException;
 
-    /**
-     * returns the phase of the game
-     *
-     * @return the Enum Phase: CHOOSE,SETSHIPS, PLAY, WAITFORPLAY or END
-     */
-    Phase getPhase();
-
-    /**
-     * returns an Array with the names of the player
-     *
-     * @return the names of the player
-     */
-    String[] getPlayers();
 }

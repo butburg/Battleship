@@ -56,7 +56,7 @@ class BattleshipTest {
 
     @Test
     void checkPhaseChanges() {
-        assertEquals(Phase.CHOOSE, bs.getPhase());
+        assertEquals(Phase.CHOOSE, ((BattleshipImpl)bs).getPhase());
     }
 
     @Test
@@ -65,7 +65,7 @@ class BattleshipTest {
         bs.choosePlayerName(PNAME2);
         assertThrows(Exception.class, () -> bs.choosePlayerName(PNAME3));
         assertThrows(Exception.class, () -> bs.choosePlayerName(PNAME1));
-        assertArrayEquals(new String[]{PNAME1, PNAME2}, bs.getPlayers());
+        assertArrayEquals(new String[]{PNAME1, PNAME2},((BattleshipImpl)bs).getPlayers());
     }
 
     @Nested
