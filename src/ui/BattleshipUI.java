@@ -52,7 +52,7 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
 
         this.gameEngine = new BattleshipImpl(playerName);
         this.localGame = this.gameEngine;
-        this.localGame.subscribeChangeListener(this);
+        this.localGame.addLocalBSChangedSubscriber(this);
     }
 
     public void printUsage() {
@@ -160,40 +160,38 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
     }
 
     private void doSetShip(String userParameterPart) throws BattleshipException, PhaseException, OceanException, ShipException {
-        if (isConnected()) {
+        isConnectedGuard();
 
-            StringTokenizer st = new StringTokenizer(userParameterPart);
-            if (st.countTokens() < 3 || st.countTokens() > 4) {
-                throw new IllegalStateException("Need 3 or 4 Parameter but was: " + st.countTokens());
-            }
-
-            String ship = st.nextToken();
-            int x = Integer.parseInt(st.nextToken());
-            int y = Integer.parseInt(st.nextToken());
-            if (st.countTokens() == 4) {
-                String vertical = st.nextToken();
-                gameEngine.setShip(Shipmodel.valueOf(ship), new Coordinate(x, y), Boolean.getBoolean(vertical));
-            } else gameEngine.setShip(Shipmodel.valueOf(ship), new Coordinate(x, y));
+        StringTokenizer st = new StringTokenizer(userParameterPart);
+        if (st.countTokens() < 3 || st.countTokens() > 4) {
+            throw new IllegalStateException("Need 3 or 4 Parameter but was: " + st.countTokens());
         }
+
+        String ship = st.nextToken();
+        int x = Integer.parseInt(st.nextToken());
+        int y = Integer.parseInt(st.nextToken());
+        if (st.countTokens() == 4) {
+            String vertical = st.nextToken();
+            gameEngine.setShip(Shipmodel.valueOf(ship), new Coordinate(x, y), Boolean.getBoolean(vertical));
+        } else gameEngine.setShip(Shipmodel.valueOf(ship), new Coordinate(x, y));
+
     }
 
     private void doAttack(String userParameterPart) throws BattleshipException, PhaseException, OceanException, ShipException {
-        if (isConnected()) {
+        isConnectedGuard();
 
-            StringTokenizer st = new StringTokenizer(userParameterPart);
-            if (st.countTokens() != 2) {
-                throw new IllegalStateException("Need 3 or 4 Parameter but was: " + st.countTokens());
-            }
-            int x = Integer.parseInt(st.nextToken());
-            int y = Integer.parseInt(st.nextToken());
-            gameEngine.attack(new Coordinate(x, y));
+        StringTokenizer st = new StringTokenizer(userParameterPart);
+        if (st.countTokens() != 2) {
+            throw new IllegalStateException("Need 3 or 4 Parameter but was: " + st.countTokens());
         }
+        int x = Integer.parseInt(st.nextToken());
+        int y = Integer.parseInt(st.nextToken());
+        gameEngine.attack(new Coordinate(x, y));
+
     }
 
-    private boolean isConnected() throws BattleshipException {
-        if (this.protocolEngine == null) {
-            throw new BattleshipException("not connected yet, connect to or open Port!");
-        }
+    private void isConnectedGuard() throws BattleshipException {
+        if (this.protocolEngine == null) throw new BattleshipException("not connected yet, connect to or open Port!");
     }
 
     private void doOpenPort() {
@@ -231,7 +229,7 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
         }
     }
 
-    private void doPrintOcean() {
+    private void doPrintOcean() throws IOException {
         gameEngine.getPrintStreamView().print(System.out);
         System.out.println("your phase is " + localGame.getPhase());
         System.out.println("your name is " + localGame.getLocalPlayerName());

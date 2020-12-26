@@ -82,6 +82,12 @@ public interface LocalBattleship extends Battleship {
      *
      * @param changeListener the Instance the local BS wants to listen to or to be notified by
      */
-    void subscribeChangeListener(LocalBSChangedSubscriber changeListener);
+    void addLocalBSChangedSubscriber(LocalBSChangedSubscriber changeListener);/**
+
+     * Subscribe for changes
+     *
+     * @param changeListener the Instance the local BS wants to listen to or to be notified by
+     */
+    void removeLocalBSChangedSubscriber(LocalBSChangedSubscriber changeListener);
 
 }

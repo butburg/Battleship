@@ -8,8 +8,9 @@ import network.SessionEstablishedSubscriber;
 import ship.Ship;
 import ship.ShipImpl;
 import ship.Shipmodel;
+import view.BattleshipPrintStreamView;
+import view.PrintStreamView;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -200,7 +201,10 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
         // tell other side - if local call (test of null if for some unit tests)
         if (isLocalCall(player) && this.protocolEngine != null) {
             this.protocolEngine.attack(player, position);
-        } else System.out.println(players[0] + " got attacked by " + player);
+        } else {
+            System.out.println(players[0] + " got attacked by " + player +" remotely. Notify the ui!");
+            this.notifyLocalBSChanged();
+        }
         setNextPhase();
         return hitResult;
     }
@@ -265,10 +269,12 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
     //                                          battleship changed listener                                  //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     // add a Listener
+    @Override
     public void addLocalBSChangedSubscriber(LocalBSChangedSubscriber changeListener) {
         this.localBSChangedSubscribers.add(changeListener);
     }
 
+    @Override
     public void removeLocalBSChangedSubscriber(LocalBSChangedSubscriber changeListener) {
         this.localBSChangedSubscribers.remove(changeListener);
     }
