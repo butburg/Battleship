@@ -1,31 +1,21 @@
 package main;
 
-import ship.Ship;
-import ship.ShipImpl;
-import ship.Shipmodel;
-
-import java.util.ArrayList;
+import ui.BattleshipUI;
 
 public class Main {
 
     public static void main(String[] args) {
-        // write your code here
+        System.out.println("Battleship 2020 by Edwin W");
 
-        //some adhoc tests ...
-        ArrayList<Ship> ships1 = new ArrayList<>();
-        ships1.add(new ShipImpl(Shipmodel.CRUISERS));
-        Ship looo = new ShipImpl(Shipmodel.BATTLESHIP);
-        ships1.add(looo);
-        System.out.println(ships1);
-        Ship shipToSet = null;
-        for (Ship ship : ships1) {
-            if (ship.getModel() == Shipmodel.BATTLESHIP)
-                shipToSet = ship;
+        if (args.length < 1) {
+            System.err.println("Need a player name as parameter! Please restart with player name!");
+            System.exit(1);
         }
-        System.out.println("1" + shipToSet);
-        System.out.println("2" + looo);
-        System.out.println(ships1.indexOf(new ShipImpl(Shipmodel.BATTLESHIP)));
-        ships1.remove(new ShipImpl(Shipmodel.BATTLESHIP));
-        System.out.println(ships1);
+
+        System.out.println("Have fun " + args[0] + "!");
+        BattleshipUI userCmd = new BattleshipUI(args[0], System.out, System.in);
+
+        userCmd.printUsage();
+        userCmd.runLoop();
     }
 }
