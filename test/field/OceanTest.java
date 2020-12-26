@@ -33,9 +33,9 @@ class OceanTest {
         oceanSize = ocean.getSize();
 
         s1 = new ShipImpl(Shipmodel.BATTLESHIP);
-        s2 = new ShipImpl(Shipmodel.CRUISERS);
-        s3 = new ShipImpl(Shipmodel.DESTROYERS);
-        s4 = new ShipImpl(Shipmodel.SUBMARINES);
+        s2 = new ShipImpl(Shipmodel.CRUISER);
+        s3 = new ShipImpl(Shipmodel.DESTROYER);
+        s4 = new ShipImpl(Shipmodel.SUBMARINE);
     }
 
 

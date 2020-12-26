@@ -393,25 +393,25 @@ class ProtocolEngineTest {
         Thread.sleep(10);
 
         jakeBsImpl.setShip(PNAME2, Shipmodel.BATTLESHIP, new Coordinate(6, 0));
-        jakeBsImpl.setShip(PNAME2, Shipmodel.CRUISERS, new Coordinate(0, 5));
-        jakeBsImpl.setShip(PNAME2, Shipmodel.CRUISERS, new Coordinate(0, 7), true);
-        jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(3, 0), true);
-        jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(8, 8));
-        jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(8, 10));
-        jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(0, 0));
-        jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(9, 2));
-        jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(3, 10));
-        jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(6, 9), true);
+        jakeBsImpl.setShip(PNAME2, Shipmodel.CRUISER, new Coordinate(0, 5));
+        jakeBsImpl.setShip(PNAME2, Shipmodel.CRUISER, new Coordinate(0, 7), true);
+        jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(3, 0), true);
+        jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(8, 8));
+        jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(8, 10));
+        jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(0, 0));
+        jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(9, 2));
+        jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(3, 10));
+        jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(6, 9), true);
 
         aliceBsImpl.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 0));
-        aliceBsImpl.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 5));
-        aliceBsImpl.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 7), true);
-        aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(3, 0), true);
-        aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(8, 8));
-        aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(8, 10));
-        aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(0, 0));
-        aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(9, 2));
-        aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(3, 10));
-        aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(6, 9), true);
+        aliceBsImpl.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 5));
+        aliceBsImpl.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 7), true);
+        aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(3, 0), true);
+        aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 8));
+        aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 10));
+        aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(0, 0));
+        aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(9, 2));
+        aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(3, 10));
+        aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(6, 9), true);
     }
 }

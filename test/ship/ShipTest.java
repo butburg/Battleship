@@ -27,9 +27,9 @@ class ShipTest {
     @BeforeEach
     void setUp() throws OceanException, ShipException {
         s1 = new ShipImpl(Shipmodel.BATTLESHIP);
-        s2 = new ShipImpl(Shipmodel.CRUISERS);
-        s3 = new ShipImpl(Shipmodel.DESTROYERS);
-        s4 = new ShipImpl(Shipmodel.SUBMARINES);
+        s2 = new ShipImpl(Shipmodel.CRUISER);
+        s3 = new ShipImpl(Shipmodel.DESTROYER);
+        s4 = new ShipImpl(Shipmodel.SUBMARINE);
 
         ocean = new OceanImpl(11);
 
@@ -96,9 +96,9 @@ class ShipTest {
         @Test
         void getModel() {
             assertEquals(Shipmodel.BATTLESHIP, s1.getModel());
-            assertEquals(Shipmodel.CRUISERS, s2.getModel());
-            assertEquals(Shipmodel.DESTROYERS, s3.getModel());
-            assertEquals(Shipmodel.SUBMARINES, s4.getModel());
+            assertEquals(Shipmodel.CRUISER, s2.getModel());
+            assertEquals(Shipmodel.DESTROYER, s3.getModel());
+            assertEquals(Shipmodel.SUBMARINE, s4.getModel());
         }
 
 

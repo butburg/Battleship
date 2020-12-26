@@ -52,9 +52,9 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
      */
     private void createAllShips() {
         createShip(Shipmodel.BATTLESHIP, 1);
-        createShip(Shipmodel.CRUISERS, 2);
-        createShip(Shipmodel.DESTROYERS, 3);
-        createShip(Shipmodel.SUBMARINES, 4);
+        createShip(Shipmodel.CRUISER, 2);
+        createShip(Shipmodel.DESTROYER, 3);
+        createShip(Shipmodel.SUBMARINE, 4);
     }
 
     private void createShip(Shipmodel ship, int count) {

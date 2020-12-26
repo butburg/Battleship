@@ -202,6 +202,7 @@ public class TCPStream extends Thread {
     }
 
     private class TCPClient {
+        private static final int ATTEMPTS = 5;
         private boolean killed = false;
 
         public void kill() {
@@ -209,7 +210,9 @@ public class TCPStream extends Thread {
         }
 
         Socket getSocket() throws IOException {
-            while (!this.killed) {
+            int counter = 0;
+            while (!this.killed && counter < ATTEMPTS) {
+                counter++;
                 try {
                     //<<<<<<<<<<<<<<<<<<debug
                     StringBuilder b = new StringBuilder();
@@ -230,7 +233,7 @@ public class TCPStream extends Thread {
                     b.append(" (");
                     b.append(name);
                     b.append("): ");
-                    b.append("failed / wait and re-try");
+                    b.append("failed / wait and re-try ");
                     b.append(port);
                     System.out.println(b.toString());
                     try {

@@ -142,53 +142,53 @@ class BattleshipTest {
         @Test
         void setShipBorderGood() throws BattleshipException, PhaseException, ShipException, OceanException {
             assertEquals(true, bs.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 0)));
-            assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 5)));
-            assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 7), true));
-            assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(3, 0), true));
-            assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(8, 8)));
-            assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(8, 10)));
-            assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(0, 0)));
-            assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(9, 2)));
-            assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(3, 10)));
-            assertEquals(false, bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(6, 9), true));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 5)));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 7), true));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(3, 0), true));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 8)));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 10)));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(0, 0)));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(9, 2)));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(3, 10)));
+            assertEquals(false, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(6, 9), true));
 
 
             assertEquals(true, bs.setShip(PNAME2, Shipmodel.BATTLESHIP, new Coordinate(6, 0)));
-            assertEquals(true, bs.setShip(PNAME2, Shipmodel.CRUISERS, new Coordinate(0, 5)));
-            assertEquals(true, bs.setShip(PNAME2, Shipmodel.CRUISERS, new Coordinate(0, 7), true));
-            assertEquals(true, bs.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(3, 0), true));
-            assertEquals(true, bs.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(8, 8)));
-            assertEquals(true, bs.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(8, 10)));
-            assertEquals(true, bs.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(0, 0)));
-            assertEquals(true, bs.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(9, 2)));
-            assertEquals(true, bs.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(3, 10)));
-            assertEquals(false, bs.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(6, 9), true));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.CRUISER, new Coordinate(0, 5)));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.CRUISER, new Coordinate(0, 7), true));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(3, 0), true));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(8, 8)));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(8, 10)));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(0, 0)));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(9, 2)));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(3, 10)));
+            assertEquals(false, bs.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(6, 9), true));
         }
 
         @Test
         void setShipGood() throws BattleshipException, PhaseException, OceanException, ShipException {
             assertEquals(true, bs.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 0)));
-            assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 5)));
-            assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 7), true));
-            assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(3, 0), true));
-            assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(8, 8)));
-            assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(8, 10)));
-            assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(0, 0)));
-            assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(9, 2)));
-            assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(3, 10)));
-            assertEquals(false, bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(6, 9), true));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 5)));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 7), true));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(3, 0), true));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 8)));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 10)));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(0, 0)));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(9, 2)));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(3, 10)));
+            assertEquals(false, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(6, 9), true));
 
 
             assertEquals(true, bs.setShip(PNAME2, Shipmodel.BATTLESHIP, new Coordinate(6, 0)));
-            assertEquals(true, bs.setShip(PNAME2, Shipmodel.CRUISERS, new Coordinate(0, 5)));
-            assertEquals(true, bs.setShip(PNAME2, Shipmodel.CRUISERS, new Coordinate(0, 7), true));
-            assertEquals(true, bs.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(3, 0), true));
-            assertEquals(true, bs.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(8, 8)));
-            assertEquals(true, bs.setShip(PNAME2, Shipmodel.DESTROYERS, new Coordinate(8, 10)));
-            assertEquals(true, bs.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(0, 0)));
-            assertEquals(true, bs.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(9, 2)));
-            assertEquals(true, bs.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(3, 10)));
-            assertEquals(false, bs.setShip(PNAME2, Shipmodel.SUBMARINES, new Coordinate(6, 9), true));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.CRUISER, new Coordinate(0, 5)));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.CRUISER, new Coordinate(0, 7), true));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(3, 0), true));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(8, 8)));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(8, 10)));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(0, 0)));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(9, 2)));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(3, 10)));
+            assertEquals(false, bs.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(6, 9), true));
         }
 
         @Test
@@ -203,28 +203,28 @@ class BattleshipTest {
             Throwable e1 = assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(15, 1)));
             assertEquals(ExceptionMsg.oc_shipOutside, e1.getMessage());
 
-            Throwable e2 = assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(1, 15)));
+            Throwable e2 = assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(1, 15)));
             assertEquals(ExceptionMsg.oc_shipOutside, e2.getMessage());
 
-            Throwable e3 = assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(15, 16)));
+            Throwable e3 = assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(15, 16)));
             assertEquals(ExceptionMsg.oc_shipOutside, e3.getMessage());
         }
 
         @Test
         void setShipColliding() throws ShipException, BattleshipException, PhaseException, OceanException {
             bs.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(1, 1), false);
-            bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(1, 7), false);
-            bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(8, 8), true);
+            bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(1, 7), false);
+            bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(8, 8), true);
 
-            Throwable e = assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(5, 1), false));
+            Throwable e = assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(5, 1), false));
             assertEquals(ExceptionMsg.oc_shipCollidingPosition, e.getMessage());
-            e = assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(4, 6), true));
+            e = assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(4, 6), true));
             assertEquals(ExceptionMsg.oc_shipCollidingPosition, e.getMessage());
-            e = assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(0, 7), false));
+            e = assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(0, 7), false));
             assertEquals(ExceptionMsg.oc_shipCollidingPosition, e.getMessage());
-            e = assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(3, 0), true));
+            e = assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(3, 0), true));
             assertEquals(ExceptionMsg.oc_shipCollidingPosition, e.getMessage());
-            e = assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(7, 9), false));
+            e = assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(7, 9), false));
             assertEquals(ExceptionMsg.oc_shipCollidingPosition, e.getMessage());
         }
 
@@ -239,29 +239,29 @@ class BattleshipTest {
 
             @Test
             void setCruisersToOften() throws ShipException, BattleshipException, PhaseException, OceanException {
-                assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 5)));
-                assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 7), true));
+                assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 5)));
+                assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 7), true));
 
-                Throwable e1 = assertThrows(BattleshipException.class, () -> bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(6, 4)));
+                Throwable e1 = assertThrows(BattleshipException.class, () -> bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(6, 4)));
                 assertEquals(ExceptionMsg.bs_shipTypeAllSet, e1.getMessage());
             }
 
             @Test
             void setDestroyersToOften() throws ShipException, BattleshipException, PhaseException, OceanException {
-                assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(3, 0), true));
-                assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(8, 8)));
-                assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(8, 10)));
-                Throwable e1 = assertThrows(BattleshipException.class, () -> bs.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(6, 4)));
+                assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(3, 0), true));
+                assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 8)));
+                assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 10)));
+                Throwable e1 = assertThrows(BattleshipException.class, () -> bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(6, 4)));
                 assertEquals(ExceptionMsg.bs_shipTypeAllSet, e1.getMessage());
             }
 
             @Test
             void setSubmarinesToOften() throws ShipException, BattleshipException, PhaseException, OceanException {
-                assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(0, 0)));
-                assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(9, 2)));
-                assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(3, 10)));
-                assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(6, 9), true));
-                Throwable e1 = assertThrows(BattleshipException.class, () -> bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(6, 4)));
+                assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(0, 0)));
+                assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(9, 2)));
+                assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(3, 10)));
+                assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(6, 9), true));
+                Throwable e1 = assertThrows(BattleshipException.class, () -> bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(6, 4)));
                 assertEquals(ExceptionMsg.bs_shipTypeAllSet, e1.getMessage());
             }
 
@@ -269,14 +269,14 @@ class BattleshipTest {
             @Test
             void setShipsToOftenNotInRow() throws ShipException, BattleshipException, PhaseException, OceanException {
                 assertEquals(true, bs.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 0)));
-                assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 5)));
-                assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 7), true));
-                assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(3, 0), true));
-                assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(8, 8)));
-                assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYERS, new Coordinate(8, 10)));
-                assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(0, 0)));
-                assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINES, new Coordinate(9, 2)));
-                Throwable e1 = assertThrows(BattleshipException.class, () -> bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(6, 4)));
+                assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 5)));
+                assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 7), true));
+                assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(3, 0), true));
+                assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 8)));
+                assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 10)));
+                assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(0, 0)));
+                assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(9, 2)));
+                Throwable e1 = assertThrows(BattleshipException.class, () -> bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(6, 4)));
                 assertEquals(ExceptionMsg.bs_shipTypeAllSet, e1.getMessage());
             }
 
@@ -284,7 +284,7 @@ class BattleshipTest {
             void setMoreShipsThanGameOwns() throws ShipException, BattleshipException, PhaseException, OceanException {
                 setShipsDefaultOnePlayer(PNAME1);
                 //set 11th ship
-                Throwable e1 = assertThrows(BattleshipException.class, () -> bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(6, 4)));
+                Throwable e1 = assertThrows(BattleshipException.class, () -> bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(6, 4)));
                 assertEquals(ExceptionMsg.bs_shipAllSet, e1.getMessage());
             }
 
@@ -295,7 +295,7 @@ class BattleshipTest {
             @Test
             void choosePlayerWrongPhase1() throws BattleshipException, PhaseException, OceanException, ShipException {
                 bs.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 5));
-                bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 5));
+                bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 5));
 
                 Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayerName(PNAME3));
                 assertEquals(ExceptionMsg.ph_wrongPhase, e.getMessage());
@@ -311,7 +311,7 @@ class BattleshipTest {
             @Test
             void attackWrongPhase1() throws BattleshipException, PhaseException, OceanException, ShipException {
                 bs.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 5));
-                bs.setShip(PNAME1, Shipmodel.CRUISERS, new Coordinate(0, 5));
+                bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 5));
 
                 Throwable e = assertThrows(PhaseException.class, () -> bs.attack(PNAME1, p_0_0));
                 assertEquals(ExceptionMsg.ph_wrongPhase, e.getMessage());
@@ -559,15 +559,15 @@ class BattleshipTest {
 
     private void setShipsDefaultOnePlayer(String player) throws BattleshipException, OceanException, PhaseException, ShipException {
         bs.setShip(player, Shipmodel.BATTLESHIP, new Coordinate(6, 0));
-        bs.setShip(player, Shipmodel.CRUISERS, new Coordinate(0, 5));
-        bs.setShip(player, Shipmodel.CRUISERS, new Coordinate(0, 7), true);
-        bs.setShip(player, Shipmodel.DESTROYERS, new Coordinate(3, 0), true);
-        bs.setShip(player, Shipmodel.DESTROYERS, new Coordinate(8, 8));
-        bs.setShip(player, Shipmodel.DESTROYERS, new Coordinate(8, 10));
-        bs.setShip(player, Shipmodel.SUBMARINES, new Coordinate(0, 0));
-        bs.setShip(player, Shipmodel.SUBMARINES, new Coordinate(9, 2));
-        bs.setShip(player, Shipmodel.SUBMARINES, new Coordinate(3, 10));
-        bs.setShip(player, Shipmodel.SUBMARINES, new Coordinate(6, 9), true);
+        bs.setShip(player, Shipmodel.CRUISER, new Coordinate(0, 5));
+        bs.setShip(player, Shipmodel.CRUISER, new Coordinate(0, 7), true);
+        bs.setShip(player, Shipmodel.DESTROYER, new Coordinate(3, 0), true);
+        bs.setShip(player, Shipmodel.DESTROYER, new Coordinate(8, 8));
+        bs.setShip(player, Shipmodel.DESTROYER, new Coordinate(8, 10));
+        bs.setShip(player, Shipmodel.SUBMARINE, new Coordinate(0, 0));
+        bs.setShip(player, Shipmodel.SUBMARINE, new Coordinate(9, 2));
+        bs.setShip(player, Shipmodel.SUBMARINE, new Coordinate(3, 10));
+        bs.setShip(player, Shipmodel.SUBMARINE, new Coordinate(6, 9), true);
     }
 
     private void oneShipLeftToSink() throws ShipException, PhaseException, BattleshipException, OceanException {

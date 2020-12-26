@@ -72,13 +72,30 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
         b.append(".. print the ocean");
         b.append("\n");
         b.append(SETSHIP);
-        b.append(".. set a ship");
+        b.append(".. set a ship ( ");
+
+        for (int i = 0; i < Shipmodel.values().length; i++) {
+            b.append(Shipmodel.values()[i]);
+            b.append(" ");
+        }
+        b.append(")\n");
+
+        b.append("Parameter: SHIP X-Coorinate Y-Coordinate vertical(optinal)");
+        b.append("\n");
+        b.append("Horizontal is default!");
         b.append("\n");
         b.append(ATTACK);
-        b.append(".. attack a field");
+        b.append(".. attack a field, parameter are x and y coordinate");
         b.append("\n");
         b.append(EXIT);
         b.append(".. exit the game");
+        b.append("\n\n");
+        b.append("Example:");
+        b.append("\n");
+        b.append("set BATTLESHIP 2 4 true");
+        b.append("\n");
+        b.append("attack 2 5");
+        b.append("\n");
 
         this.outStream.println(b.toString());
     }
