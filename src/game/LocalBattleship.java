@@ -12,16 +12,6 @@ import ship.Shipmodel;
  */
 public interface LocalBattleship extends Battleship {
     /**
-     * The start of the game. Two players must choose a name (must be different).
-     * <p>
-     * Phase 1
-     *
-     * @throws BattleshipException when the names are equal or too many players call method
-     * @throws PhaseException      when the phase of the game is not anymore choosing the names, e.i. attacking phase
-     */
-    void choosePlayerName() throws BattleshipException, PhaseException;
-
-    /**
      * Set one ship at the players field, validate the position of the ship and check that all ships are set.
      * Usually there are 10 ships of different types to be placed.
      * <p>

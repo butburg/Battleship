@@ -6,10 +6,6 @@ package game;
  */
 public enum Phase {
     /**
-     * The players choose their names.
-     */
-    CHOOSE,
-    /**
      * the players place their own ships on their own field
      */
     SETSHIPS,

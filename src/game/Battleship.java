@@ -13,16 +13,6 @@ import ship.Shipmodel;
  * and after that attack each other in rounds until each ship has been hit and sunk by one player.
  */
 public interface Battleship {
-    /**
-     * The start of the game. Two players must choose a name (must be different).
-     * <p>
-     * Phase 1
-     *
-     * @param playerName the new Name for a Player
-     * @throws BattleshipException when the names are equal or too many players call method
-     * @throws PhaseException      when the phase of the game is not anymore choosing the names, e.i. attacking phase
-     */
-    void choosePlayerName(String playerName) throws BattleshipException, PhaseException;
 
     /**
      * Set one ship at the players field, validate the position of the ship and check that all ships are set.

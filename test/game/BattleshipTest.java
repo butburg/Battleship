@@ -41,7 +41,7 @@ class BattleshipTest {
 
     @BeforeEach
     void setUp() throws ShipException {
-        bs = new BattleshipImpl("");
+        bs = new BattleshipImpl("Edwin");
         ocean = new OceanImpl(11);
         oceanSize = ocean.getSize();
 
@@ -56,87 +56,20 @@ class BattleshipTest {
 
     @Test
     void checkPhaseChanges() {
-        assertEquals(Phase.CHOOSE, ((BattleshipImpl)bs).getPhase());
+        assertEquals(Phase.SETSHIPS, ((BattleshipImpl) bs).getPhase());
     }
 
     @Test
     void getPlayers() throws BattleshipException, PhaseException {
-        bs.choosePlayerName(PNAME1);
-        bs.choosePlayerName(PNAME2);
-        assertThrows(Exception.class, () -> bs.choosePlayerName(PNAME3));
-        assertThrows(Exception.class, () -> bs.choosePlayerName(PNAME1));
-        assertArrayEquals(new String[]{PNAME1, PNAME2},((BattleshipImpl)bs).getPlayers());
+        assertArrayEquals(new String[]{PNAME1, PNAME2}, ((BattleshipImpl) bs).getPlayers());
     }
 
-    @Nested
-    public class PhaseChoose {
-
-
-        @Test
-        void choosePlayerGood() throws BattleshipException, PhaseException {
-            bs.choosePlayerName(PNAME1);
-            bs.choosePlayerName(PNAME2);
-        }
-
-
-        @Test
-        void choosePlayerSameName() throws BattleshipException, PhaseException {
-            bs.choosePlayerName(PNAME2);
-            Throwable e = assertThrows(BattleshipException.class, () -> bs.choosePlayerName(PNAME2));
-            assertEquals(ExceptionMsg.bs_playerNameTaken, e.getMessage());
-        }
-
-        @Test
-        void choosePlayer3Player() throws BattleshipException, PhaseException {
-            bs.choosePlayerName(PNAME1);
-            bs.choosePlayerName(PNAME2);
-            Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayerName(PNAME3));
-            assertEquals(ExceptionMsg.ph_wrongPhase, e.getMessage());
-        }
-
-        @Test
-        void choosePlayer3PlayerSameName() throws BattleshipException, PhaseException {
-            bs.choosePlayerName(PNAME1);
-            bs.choosePlayerName(PNAME2);
-            Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayerName(PNAME1));
-            assertEquals(ExceptionMsg.ph_wrongPhase, e.getMessage());
-        }
-
-        @Nested
-        public class WrongPhase {
-            @Test
-            void setShipWrongPhase1() throws BattleshipException, PhaseException {
-                bs.choosePlayerName(PNAME1);
-                Throwable e = assertThrows(PhaseException.class, () -> bs.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 5)));
-                assertEquals(ExceptionMsg.ph_wrongPhase, e.getMessage());
-            }
-
-            @Test
-            void setShipWrongPhase2() throws BattleshipException, PhaseException {
-                Throwable e = assertThrows(PhaseException.class, () -> bs.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 5)));
-                assertEquals(ExceptionMsg.ph_wrongPhase, e.getMessage());
-            }
-
-            @Test
-            void attackWrongPhase1() throws BattleshipException, PhaseException {
-                bs.choosePlayerName(PNAME1);
-                Throwable e = assertThrows(PhaseException.class, () -> bs.attack(PNAME1, p_0_0));
-                assertEquals(ExceptionMsg.ph_wrongPhase, e.getMessage());
-            }
-
-            @Test
-            void attackWrongPhase2() throws BattleshipException, PhaseException {
-                Throwable e = assertThrows(PhaseException.class, () -> bs.attack(PNAME1, p_0_0));
-                assertEquals(ExceptionMsg.ph_wrongPhase, e.getMessage());
-            }
-        }
-    }
 
     @Nested
     public class PhaseSetShips {
         @BeforeEach
         public void setUp() throws BattleshipException, PhaseException {
-            choosePlayerDefault();
+
         }
 
         @Test
@@ -175,6 +108,34 @@ class BattleshipTest {
             assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 10)));
             assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(0, 0)));
             assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(9, 2)));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(3, 10)));
+            assertEquals(false, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(6, 9), true));
+
+
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.BATTLESHIP, new Coordinate(6, 0)));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.CRUISER, new Coordinate(0, 5)));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.CRUISER, new Coordinate(0, 7), true));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(3, 0), true));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(8, 8)));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(8, 10)));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(0, 0)));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(9, 2)));
+            assertEquals(true, bs.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(3, 10)));
+            assertEquals(false, bs.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(6, 9), true));
+        }
+
+        @Test
+        void setShipWithFailsBetween() throws BattleshipException, PhaseException, OceanException, ShipException {
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 0)));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 5)));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 7), true));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(3, 0), true));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 8)));
+            assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 8)));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 10)));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(0, 0)));
+            assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(9, 2)));
+            assertThrows(OceanException.class, () -> bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(9, 2)));
             assertEquals(true, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(3, 10)));
             assertEquals(false, bs.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(6, 9), true));
 
@@ -293,22 +254,6 @@ class BattleshipTest {
         @Nested
         public class WrongPhase {
             @Test
-            void choosePlayerWrongPhase1() throws BattleshipException, PhaseException, OceanException, ShipException {
-                bs.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 5));
-                bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 5));
-
-                Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayerName(PNAME3));
-                assertEquals(ExceptionMsg.ph_wrongPhase, e.getMessage());
-            }
-
-            @Test
-            void choosePlayerWrongPhase2() throws BattleshipException, PhaseException {
-                Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayerName(PNAME3));
-                assertEquals(ExceptionMsg.ph_wrongPhase, e.getMessage());
-            }
-
-
-            @Test
             void attackWrongPhase1() throws BattleshipException, PhaseException, OceanException, ShipException {
                 bs.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 5));
                 bs.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 5));
@@ -329,15 +274,16 @@ class BattleshipTest {
     public class PhaseAttack {
         @BeforeEach
         public void setUp() throws ShipException, OceanException, BattleshipException, PhaseException {
-            choosePlayerDefault();
+
             setShipsDefault();
         }
 
         @Test
         void attackGood() throws BattleshipException, PhaseException, ShipException, OceanException {
-            assertEquals(Result.HIT, bs.attack(PNAME1, p_0_0));
-            assertEquals(Result.MISSED, bs.attack(PNAME2, p_10_1));
-            assertEquals(Result.HIT, bs.attack(PNAME1, p_6_9));
+            assertEquals(Result.HIT, bs.attack(PNAME2, p_0_0));
+            assertEquals(Result.MISSED, bs.attack(PNAME1, p_10_1));
+            assertEquals(Result.HIT, bs.attack(PNAME2, p_6_9));
+            assertEquals(Result.HIT, bs.attack(PNAME1, p_1_0));
             assertEquals(Result.SINK, bs.attack(PNAME2, p_1_0));
         }
 
@@ -349,62 +295,62 @@ class BattleshipTest {
 
         @Test
         void attackWrongTurn1() throws BattleshipException, PhaseException, ShipException, OceanException {
-            assertEquals(Result.HIT, bs.attack(PNAME1, p_0_0));
-            assertEquals(Result.MISSED, bs.attack(PNAME2, p_10_1));
-            Throwable e2 = assertThrows(BattleshipException.class, () -> bs.attack(PNAME2, p_6_9));
-            assertEquals(ExceptionMsg.bs_wrongTurn2, e2.getMessage());
+            assertEquals(Result.HIT, bs.attack(PNAME2, p_0_0));
+            assertEquals(Result.MISSED, bs.attack(PNAME1, p_10_1));
+            Throwable e2 = assertThrows(BattleshipException.class, () -> bs.attack(PNAME1, p_6_9));
+            assertEquals(ExceptionMsg.bs_wrongTurn1, e2.getMessage());
         }
 
         @Test
         void attackWrongTurn2() throws BattleshipException, PhaseException, ShipException, OceanException {
-            assertEquals(Result.HIT, bs.attack(PNAME1, p_0_0));
-            assertEquals(Result.MISSED, bs.attack(PNAME2, p_10_1));
-            assertEquals(Result.SINK, bs.attack(PNAME1, p_1_0));
-            Throwable e2 = assertThrows(BattleshipException.class, () -> bs.attack(PNAME1, p_1_0));
-            assertEquals(ExceptionMsg.bs_wrongTurn1, e2.getMessage());
+            assertEquals(Result.HIT, bs.attack(PNAME2, p_0_0));
+            assertEquals(Result.MISSED, bs.attack(PNAME1, p_10_1));
+            assertEquals(Result.SINK, bs.attack(PNAME2, p_1_0));
+            Throwable e2 = assertThrows(BattleshipException.class, () -> bs.attack(PNAME2, p_1_0));
+            assertEquals(ExceptionMsg.bs_wrongTurn2, e2.getMessage());
         }
 
         @Nested
         public class OutsideOcean {
             @Test
             void attackOutsideOcean1() throws BattleshipException, PhaseException {
-                Throwable e = assertThrows(OceanException.class, () -> bs.attack(PNAME1, new Coordinate(-2, 3)));
+                Throwable e = assertThrows(OceanException.class, () -> bs.attack(PNAME2, new Coordinate(-2, 3)));
                 assertEquals(ExceptionMsg.oc_attackOutside, e.getMessage());
             }
 
             @Test
             void attackOutsideOcean2() throws BattleshipException, PhaseException, ShipException, OceanException {
-                assertEquals(Result.HIT, bs.attack(PNAME1, p_0_0));
-                assertEquals(Result.MISSED, bs.attack(PNAME2, p_10_1));
-                Throwable e = assertThrows(OceanException.class, () -> bs.attack(PNAME1, new Coordinate(2, -3)));
+                assertEquals(Result.HIT, bs.attack(PNAME2, p_0_0));
+                assertEquals(Result.MISSED, bs.attack(PNAME1, p_10_1));
+                Throwable e = assertThrows(OceanException.class, () -> bs.attack(PNAME2, new Coordinate(2, -3)));
                 assertEquals(ExceptionMsg.oc_attackOutside, e.getMessage());
             }
 
             @Test
             void attackOutsideOcean3() throws BattleshipException, PhaseException, ShipException, OceanException {
-                assertEquals(Result.HIT, bs.attack(PNAME1, p_0_0));
-                assertEquals(Result.MISSED, bs.attack(PNAME2, p_10_1));
-                Throwable e = assertThrows(OceanException.class, () -> bs.attack(PNAME1, new Coordinate(1, 15)));
+                assertEquals(Result.HIT, bs.attack(PNAME2, p_0_0));
+                assertEquals(Result.MISSED, bs.attack(PNAME1, p_10_1));
+                Throwable e = assertThrows(OceanException.class, () -> bs.attack(PNAME2, new Coordinate(1, 15)));
                 assertEquals(ExceptionMsg.oc_attackOutside, e.getMessage());
             }
 
             @Test
             void attackOutsideOcean4() throws BattleshipException, PhaseException {
-                Throwable e = assertThrows(OceanException.class, () -> bs.attack(PNAME1, new Coordinate(22, 3)));
+                Throwable e = assertThrows(OceanException.class, () -> bs.attack(PNAME2, new Coordinate(22, 3)));
                 assertEquals(ExceptionMsg.oc_attackOutside, e.getMessage());
             }
 
             @Test
             void attackOutsideOceanEdgeX() throws BattleshipException, PhaseException, ShipException, OceanException {
-                assertEquals(Result.HIT, bs.attack(PNAME1, p_max_max));
-                Throwable e = assertThrows(OceanException.class, () -> bs.attack(PNAME2, new Coordinate(oceanSize + 1, oceanSize)));
+                assertEquals(Result.HIT, bs.attack(PNAME2, p_max_max));
+                Throwable e = assertThrows(OceanException.class, () -> bs.attack(PNAME1, new Coordinate(oceanSize + 1, oceanSize)));
                 assertEquals(ExceptionMsg.oc_attackOutside, e.getMessage());
             }
 
             @Test
             void attackOutsideOceanEdgeY() throws BattleshipException, PhaseException, ShipException, OceanException {
-                assertEquals(Result.HIT, bs.attack(PNAME1, p_max_max));
-                Throwable e = assertThrows(OceanException.class, () -> bs.attack(PNAME2, new Coordinate(oceanSize, oceanSize + 1)));
+                assertEquals(Result.HIT, bs.attack(PNAME2, p_max_max));
+                Throwable e = assertThrows(OceanException.class, () -> bs.attack(PNAME1, new Coordinate(oceanSize, oceanSize + 1)));
                 assertEquals(ExceptionMsg.oc_attackOutside, e.getMessage());
             }
         }
@@ -412,22 +358,8 @@ class BattleshipTest {
         @Nested
         public class WrongPhase {
             @Test
-            void choosePlayerWrongPhase1() throws BattleshipException, PhaseException, ShipException, OceanException {
-                bs.attack(PNAME1, p_0_0);
-
-                Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayerName(PNAME3));
-                assertEquals(ExceptionMsg.ph_wrongPhase, e.getMessage());
-            }
-
-            @Test
-            void choosePlayerWrongPhase2() throws BattleshipException, PhaseException {
-                Throwable e = assertThrows(PhaseException.class, () -> bs.choosePlayerName(PNAME2));
-                assertEquals(ExceptionMsg.ph_wrongPhase, e.getMessage());
-            }
-
-            @Test
             void setShipWrongPhase1() throws BattleshipException, PhaseException, ShipException, OceanException {
-                bs.attack(PNAME1, p_0_0);
+                bs.attack(PNAME2, p_0_0);
 
                 Throwable e = assertThrows(PhaseException.class, () -> bs.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 5)));
                 assertEquals(ExceptionMsg.ph_wrongPhase, e.getMessage());
@@ -435,7 +367,7 @@ class BattleshipTest {
 
             @Test
             void setShipWrongPhase2() throws BattleshipException, PhaseException {
-                Throwable e = assertThrows(PhaseException.class, () -> bs.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 5)));
+                Throwable e = assertThrows(PhaseException.class, () -> bs.setShip(PNAME2, Shipmodel.BATTLESHIP, new Coordinate(6, 5)));
                 assertEquals(ExceptionMsg.ph_wrongPhase, e.getMessage());
             }
         }
@@ -445,111 +377,104 @@ class BattleshipTest {
     public class WinScenarios {
         @BeforeEach
         public void setUp() throws ShipException, OceanException, BattleshipException, PhaseException {
-            choosePlayerDefault();
+
             setShipsDefault();
         }
 
         @Test
         void winGood() throws ShipException, PhaseException, BattleshipException, OceanException {
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(0,0)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(0,0)));
-            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(1,0)));
-            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(1,0)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(0, 0)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(0, 0)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(1, 0)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(1, 0)));
 
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(3,0)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(3,0)));
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(6,0)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(6,0)));
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(7,0)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(7,0)));
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(8,0)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(8,0)));
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(9,0)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(9,0)));
-            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(10,0)));
-            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(10,0)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(3, 0)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(3, 0)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(6, 0)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(6, 0)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(7, 0)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(7, 0)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(8, 0)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(8, 0)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(9, 0)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(9, 0)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(10, 0)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(10, 0)));
 
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(3,1)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(3,1)));
-            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(3,2)));
-            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(3,2)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(3, 1)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(3, 1)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(3, 2)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(3, 2)));
 
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(9,2)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(9,2)));
-            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(10,2)));
-            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(10,2)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(9, 2)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(9, 2)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(10, 2)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(10, 2)));
 
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(0,5)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(0,5)));
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(1,5)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(1,5)));
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(2,5)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(2,5)));
-            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(3,5)));
-            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(3,5)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(0, 5)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(0, 5)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(1, 5)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(1, 5)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(2, 5)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(2, 5)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(3, 5)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(3, 5)));
 
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(0,7)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(0,7)));
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(0,8)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(0,8)));
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(0,9)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(0,9)));
-            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(0,10)));
-            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(0,10)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(0, 7)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(0, 7)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(0, 8)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(0, 8)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(0, 9)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(0, 9)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(0, 10)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(0, 10)));
 
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(8,8)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(8,8)));
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(9,8)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(9,8)));
-            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(10,8)));
-            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(10,8)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(8, 8)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(8, 8)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(9, 8)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(9, 8)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(10, 8)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(10, 8)));
 
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(3,10)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(3,10)));
-            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(4,10)));
-            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(4,10)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(3, 10)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(3, 10)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(4, 10)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(4, 10)));
 
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(8,10)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(8,10)));
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(9,10)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(9,10)));
-            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(10,10)));
-            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(10,10)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(8, 10)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(8, 10)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(9, 10)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(9, 10)));
+            assertEquals(Result.SINK, bs.attack(PNAME2, new Coordinate(10, 10)));
+            assertEquals(Result.SINK, bs.attack(PNAME1, new Coordinate(10, 10)));
 
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(6,9)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(6,9)));
-            assertEquals(Result.WIN, bs.attack(PNAME1, new Coordinate(6,10)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(6, 9)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(6, 9)));
+            assertEquals(Result.WIN, bs.attack(PNAME2, new Coordinate(6, 10)));
         }
 
         @Test
         void winGoodP2() throws ShipException, PhaseException, BattleshipException, OceanException {
             oneShipLeftToSink();
-            assertEquals(Result.MISSED, bs.attack(PNAME1, new Coordinate(6,8)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(6,9)));
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(6,9)));
-            assertEquals(Result.WIN, bs.attack(PNAME2, new Coordinate(6,10)));
+            assertEquals(Result.MISSED, bs.attack(PNAME2, new Coordinate(6, 8)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(6, 9)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(6, 9)));
+            assertEquals(Result.WIN, bs.attack(PNAME1, new Coordinate(6, 10)));
         }
 
         @Test
         void lastAttack() throws ShipException, PhaseException, BattleshipException, OceanException {
             oneShipLeftToSink();
-            assertEquals(Result.MISSED, bs.attack(PNAME1, new Coordinate(6,8)));
-            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(6,9)));
-            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(6,9)));
-            assertEquals(Result.WIN, bs.attack(PNAME2, new Coordinate(6,10)));
-            Throwable e = assertThrows(PhaseException.class, () -> bs.attack(PNAME1, new Coordinate(6,10)));
+            assertEquals(Result.MISSED, bs.attack(PNAME2, new Coordinate(6, 8)));
+            assertEquals(Result.HIT, bs.attack(PNAME1, new Coordinate(6, 9)));
+            assertEquals(Result.HIT, bs.attack(PNAME2, new Coordinate(6, 9)));
+            assertEquals(Result.WIN, bs.attack(PNAME1, new Coordinate(6, 10)));
+            Throwable e = assertThrows(PhaseException.class, () -> bs.attack(PNAME2, new Coordinate(6, 10)));
             assertEquals(ExceptionMsg.ph_wrongPhase, e.getMessage());
         }
 
     }
 
-
-    /* helping methods */
-
-    void choosePlayerDefault() throws BattleshipException, PhaseException {
-        bs.choosePlayerName(PNAME1);
-        bs.choosePlayerName(PNAME2);
-    }
 
     void setShipsDefault() throws ShipException, BattleshipException, PhaseException, OceanException {
         setShipsDefaultOnePlayer(PNAME1);
@@ -571,69 +496,70 @@ class BattleshipTest {
     }
 
     private void oneShipLeftToSink() throws ShipException, PhaseException, BattleshipException, OceanException {
-        bs.attack(PNAME1, new Coordinate(0,0));
-        bs.attack(PNAME2, new Coordinate(0,0));
-        bs.attack(PNAME1, new Coordinate(1,0));
-        bs.attack(PNAME2, new Coordinate(1,0));
+        bs.attack(PNAME2, new Coordinate(0, 0));
+        bs.attack(PNAME1, new Coordinate(0, 0));
+        bs.attack(PNAME2, new Coordinate(1, 0));
+        bs.attack(PNAME1, new Coordinate(1, 0));
 
-        bs.attack(PNAME1, new Coordinate(3,0));
-        bs.attack(PNAME2, new Coordinate(3,0));
-        bs.attack(PNAME1, new Coordinate(6,0));
-        bs.attack(PNAME2, new Coordinate(6,0));
-        bs.attack(PNAME1, new Coordinate(7,0));
-        bs.attack(PNAME2, new Coordinate(7,0));
-        bs.attack(PNAME1, new Coordinate(8,0));
-        bs.attack(PNAME2, new Coordinate(8,0));
-        bs.attack(PNAME1, new Coordinate(9,0));
-        bs.attack(PNAME2, new Coordinate(9,0));
-        bs.attack(PNAME1, new Coordinate(10,0));
-        bs.attack(PNAME2, new Coordinate(10,0));
+        bs.attack(PNAME2, new Coordinate(3, 0));
+        bs.attack(PNAME1, new Coordinate(3, 0));
+        bs.attack(PNAME2, new Coordinate(6, 0));
+        bs.attack(PNAME1, new Coordinate(6, 0));
+        bs.attack(PNAME2, new Coordinate(7, 0));
+        bs.attack(PNAME1, new Coordinate(7, 0));
+        bs.attack(PNAME2, new Coordinate(8, 0));
+        bs.attack(PNAME1, new Coordinate(8, 0));
+        bs.attack(PNAME2, new Coordinate(9, 0));
+        bs.attack(PNAME1, new Coordinate(9, 0));
+        bs.attack(PNAME2, new Coordinate(10, 0));
+        bs.attack(PNAME1, new Coordinate(10, 0));
 
-        bs.attack(PNAME1, new Coordinate(3,1));
-        bs.attack(PNAME2, new Coordinate(3,1));
-        bs.attack(PNAME1, new Coordinate(3,2));
-        bs.attack(PNAME2, new Coordinate(3,2));
+        bs.attack(PNAME2, new Coordinate(3, 1));
+        bs.attack(PNAME1, new Coordinate(3, 1));
+        bs.attack(PNAME2, new Coordinate(3, 2));
+        bs.attack(PNAME1, new Coordinate(3, 2));
 
-        bs.attack(PNAME1, new Coordinate(9,2));
-        bs.attack(PNAME2, new Coordinate(9,2));
-        bs.attack(PNAME1, new Coordinate(10,2));
-        bs.attack(PNAME2, new Coordinate(10,2));
+        bs.attack(PNAME2, new Coordinate(9, 2));
+        bs.attack(PNAME1, new Coordinate(9, 2));
+        bs.attack(PNAME2, new Coordinate(10, 2));
+        bs.attack(PNAME1, new Coordinate(10, 2));
 
-        bs.attack(PNAME1, new Coordinate(0,5));
-        bs.attack(PNAME2, new Coordinate(0,5));
-        bs.attack(PNAME1, new Coordinate(1,5));
-        bs.attack(PNAME2, new Coordinate(1,5));
-        bs.attack(PNAME1, new Coordinate(2,5));
-        bs.attack(PNAME2, new Coordinate(2,5));
-        bs.attack(PNAME1, new Coordinate(3,5));
-        bs.attack(PNAME2, new Coordinate(3,5));
+        bs.attack(PNAME2, new Coordinate(0, 5));
+        bs.attack(PNAME1, new Coordinate(0, 5));
+        bs.attack(PNAME2, new Coordinate(1, 5));
+        bs.attack(PNAME1, new Coordinate(1, 5));
+        bs.attack(PNAME2, new Coordinate(2, 5));
+        bs.attack(PNAME1, new Coordinate(2, 5));
+        bs.attack(PNAME2, new Coordinate(3, 5));
+        bs.attack(PNAME1, new Coordinate(3, 5));
 
-        bs.attack(PNAME1, new Coordinate(0,7));
-        bs.attack(PNAME2, new Coordinate(0,7));
-        bs.attack(PNAME1, new Coordinate(0,8));
-        bs.attack(PNAME2, new Coordinate(0,8));
-        bs.attack(PNAME1, new Coordinate(0,9));
-        bs.attack(PNAME2, new Coordinate(0,9));
-        bs.attack(PNAME1, new Coordinate(0,10));
-        bs.attack(PNAME2, new Coordinate(0,10));
+        bs.attack(PNAME2, new Coordinate(0, 7));
+        bs.attack(PNAME1, new Coordinate(0, 7));
+        bs.attack(PNAME2, new Coordinate(0, 8));
+        bs.attack(PNAME1, new Coordinate(0, 8));
+        bs.attack(PNAME2, new Coordinate(0, 9));
+        bs.attack(PNAME1, new Coordinate(0, 9));
+        bs.attack(PNAME2, new Coordinate(0, 10));
+        bs.attack(PNAME1, new Coordinate(0, 10));
 
-        bs.attack(PNAME1, new Coordinate(8,8));
-        bs.attack(PNAME2, new Coordinate(8,8));
-        bs.attack(PNAME1, new Coordinate(9,8));
-        bs.attack(PNAME2, new Coordinate(9,8));
-        bs.attack(PNAME1, new Coordinate(10,8));
-        bs.attack(PNAME2, new Coordinate(10,8));
+        bs.attack(PNAME2, new Coordinate(8, 8));
+        bs.attack(PNAME1, new Coordinate(8, 8));
+        bs.attack(PNAME2, new Coordinate(9, 8));
+        bs.attack(PNAME1, new Coordinate(9, 8));
+        bs.attack(PNAME2, new Coordinate(10, 8));
+        bs.attack(PNAME1, new Coordinate(10, 8));
 
-        bs.attack(PNAME1, new Coordinate(3,10));
-        bs.attack(PNAME2, new Coordinate(3,10));
-        bs.attack(PNAME1, new Coordinate(4,10));
-        bs.attack(PNAME2, new Coordinate(4,10));
+        bs.attack(PNAME2, new Coordinate(3, 10));
+        bs.attack(PNAME1, new Coordinate(3, 10));
+        bs.attack(PNAME2, new Coordinate(4, 10));
+        bs.attack(PNAME1, new Coordinate(4, 10));
 
-        bs.attack(PNAME1, new Coordinate(8,10));
-        bs.attack(PNAME2, new Coordinate(8,10));
-        bs.attack(PNAME1, new Coordinate(9,10));
-        bs.attack(PNAME2, new Coordinate(9,10));
-        bs.attack(PNAME1, new Coordinate(10,10));
-        bs.attack(PNAME2, new Coordinate(10,10));
+        bs.attack(PNAME2, new Coordinate(8, 10));
+        bs.attack(PNAME1, new Coordinate(8, 10));
+        bs.attack(PNAME2, new Coordinate(9, 10));
+        bs.attack(PNAME1, new Coordinate(9, 10));
+        bs.attack(PNAME2, new Coordinate(10, 10));
+        bs.attack(PNAME1, new Coordinate(10, 10));
     }
+
 }

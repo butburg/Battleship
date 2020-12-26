@@ -50,7 +50,6 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
     /**
      * Methods to Int for simple streaming
      */
-    private final int METHOD_CHOOSE = 0;
     private final int METHOD_SET = 1;
     private final int METHOD_ATTACK = 2;
     private static final int RESULT_SET = 3;
@@ -102,30 +101,6 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
         this.gameEngine = gameEngine;
     }
 
-    @Override
-    public void choosePlayerName(String playerName) throws BattleshipException {
-        DataOutputStream dos = new DataOutputStream(this.os);
-
-        try {
-            dos.writeInt(METHOD_CHOOSE);
-            dos.writeUTF(playerName);
-
-        } catch (IOException e) {
-            throw new BattleshipException("ProtocolEngine(" + name + "): Serialize error!");
-        }
-    }
-
-    private void deserializeChoosePlayerName() throws BattleshipException, PhaseException {
-        DataInputStream dis = new DataInputStream(this.is);
-
-        try {
-            String playerName = dis.readUTF();
-            this.gameEngine.choosePlayerName(playerName);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public boolean setShip(String player, Shipmodel ship, Coordinate xy, boolean vertical) throws BattleshipException {
@@ -273,10 +248,6 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
             int commandID = dis.readInt();
             // call method identified by int value
             switch (commandID) {
-                case METHOD_CHOOSE -> {
-                    System.out.println("ProtocolEngine(" + name + "): read METHOD_CHOOSE");
-                    this.deserializeChoosePlayerName();
-                }
                 case METHOD_SET -> {
                     System.out.println("ProtocolEngine(" + name + "): read METHOD_SET");
                     this.deserializeSetShip();

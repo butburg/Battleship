@@ -164,11 +164,6 @@ class ProtocolEngineTest {
             //                                             run scenario                                               //
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            aliceBsImpl.choosePlayerName(PNAME1);
-            jakeBsImpl.choosePlayerName(PNAME2);
-
-            aliceBsImpl.choosePlayerName(PNAME2);
-            jakeBsImpl.choosePlayerName(PNAME1);
             //give some time to transfer after call
             Thread.sleep(10);
 
@@ -384,11 +379,7 @@ class ProtocolEngineTest {
     }
 
     private void setShipsHelper() throws BattleshipException, PhaseException, OceanException, ShipException, InterruptedException {
-        aliceBsImpl.choosePlayerName(PNAME1);
-        jakeBsImpl.choosePlayerName(PNAME2);
 
-        aliceBsImpl.choosePlayerName(PNAME2);
-        jakeBsImpl.choosePlayerName(PNAME1);
         //give some time to transfer after call
         Thread.sleep(10);
 

@@ -21,10 +21,8 @@ import java.util.List;
  */
 public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstablishedSubscriber {
 
-    private Phase phase = Phase.CHOOSE;
-    final private int PLAYERCOUNT = 2;
-    private int playerNumber = 0; //is there a more generic way (needed?)
-    private final String[] players = new String[PLAYERCOUNT];
+    private Phase phase = Phase.SETSHIPS;
+    private final String[] players = new String[2];
     private Ocean ocean;
 
     private Ocean ocean1 = new OceanImpl(11);
@@ -43,6 +41,9 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
     public BattleshipImpl(String localPLayer) {
         createAllShips();
         players[0] = localPLayer;
+
+        //FOR TESTS DIRTY
+        players[1] = "Pia";
     }
 
     /**
@@ -74,28 +75,6 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
         return players;
     }
 
-    @Override
-    public void choosePlayerName(String playerName) throws BattleshipException, PhaseException {
-    /*    if (phase != Phase.CHOOSE) throw new PhaseException(ExceptionMsg.ph_wrongPhase);
-        if (nameTaken(playerName)) throw new BattleshipException(ExceptionMsg.bs_playerNameTaken);
-
-        //check for actual player names in the array and add the name if not full
-        if (playerNumber == 0) {
-            this.players[playerNumber] = playerName;
-            playerNumber++;
-        } else if (playerNumber == 1) {
-            this.players[playerNumber] = playerName;
-            playerNumber++;
-            setNextPhase();
-        }
-
-        // tell other side - if local call (test of null if for some unit tests)
-        if (isLocalCall(playerName) && this.protocolEngine != null) {
-            this.protocolEngine.choosePlayerName(playerName);
-        } else throw new BattleshipException();
-*/
-    }
-
     private boolean nameTaken(String playerName) {
         return Arrays.asList(players).contains(playerName);
     }
@@ -118,9 +97,12 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
                 shipToSet = ship;
             }
         }
-        ships.remove(shipToSet);
         if (shipToSet == null) throw new BattleshipException(ExceptionMsg.bs_shipTypeAllSet);
+
         ocean.placeShip(shipToSet, xy.x, xy.y, vertical);
+
+        ships.remove(shipToSet);
+
         //update the list and the ocean for the actual player
         updateOceanAndShips(ships, ocean, player);
 
@@ -225,11 +207,6 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
     }
 
     @Override
-    public void choosePlayerName() throws BattleshipException, PhaseException {
-        choosePlayerName(players[0]);
-    }
-
-    @Override
     public boolean setShip(Shipmodel ship, Coordinate xy, boolean vertical) throws BattleshipException, PhaseException, OceanException, ShipException {
         return setShip(players[0], ship, xy, vertical);
     }
@@ -256,7 +233,6 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
 
     private void setNextPhase() {
         switch (this.phase) {
-            case CHOOSE -> setPhase(Phase.SETSHIPS);
             case SETSHIPS -> setPhase(startsFirst ? Phase.PLAY : Phase.WAITFORPLAY);
             case WAITFORPLAY -> setPhase(Phase.PLAY);
             case PLAY -> setPhase(Phase.WAITFORPLAY);
