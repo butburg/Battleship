@@ -14,6 +14,11 @@ public class ShipImpl implements Ship {
     private final int size;
     Coordinate anchor;// = {{2,3},{2,4}};
     Coordinate[] position;// = {{2,3},{2,4}};
+
+    public boolean[] getHurt() {
+        return hurt;
+    }
+
     boolean[] hurt;// = {true,true};
 
 

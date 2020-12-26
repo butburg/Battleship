@@ -1,6 +1,8 @@
 package view;
 
 import field.Ocean;
+import ship.Ship;
+import ship.ShipImpl;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -17,10 +19,22 @@ public class BattleshipPrintStreamView implements PrintStreamView {
 
 
     @Override
-    public void print(PrintStream ps) throws IOException {
-        System.out.println("SEE THE FIELD HERE FROM YOUR SHIPS AND FALLEN BOMBS OF ENEMY");
-        System.out.println("SEE THE FIELD HERE FROM YOUR SHIPS AND FALLEN BOMBS OF ENEMY");
-        System.out.println("SEE THE FIELD HERE FROM YOUR SHIPS AND FALLEN BOMBS OF ENEMY");
-        if (false) throw new IOException();
+    public void print(PrintStream ps) {
+        for (int v = 0; v < ocean.getSize(); v++) {
+            ps.print(v + " ");
+            for (int h = 0; h < ocean.getSize(); h++) {
+                Ship[][] field = this.ocean.getField();
+                if (field[h][v] == null) {
+                    System.out.print(" - ");
+                } else {
+                    ShipImpl s = (ShipImpl) field[h][v];
+                    if (s.getHurt()[0] == true) { System.out.print(" X "); } else {
+                        ps.print(" O ");
+                    }
+                }
+            }
+            ps.print("\n");
+        }
     }
 }
+

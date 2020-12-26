@@ -43,4 +43,8 @@ public interface Ocean {
      * @throws ShipException  when the ship can't find its part coordination that should be attacked. Shouldn't be the case.
      */
     Result bombAt(Coordinate position) throws OceanException, ShipException;
+
+    Ship[][] getField();
+
+    boolean[][] getAttackedField();
 }
