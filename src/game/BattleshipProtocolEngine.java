@@ -1,4 +1,4 @@
-package network;
+package game;
 
 import exceptions.BattleshipException;
 import exceptions.OceanException;
@@ -7,6 +7,8 @@ import exceptions.ShipException;
 import field.Coordinate;
 import game.Battleship;
 import game.Result;
+import network.ProtocolEngine;
+import network.SessionEstablishedSubscriber;
 import ship.Shipmodel;
 
 import java.io.*;

@@ -6,6 +6,7 @@ import exceptions.PhaseException;
 import exceptions.ShipException;
 import field.Coordinate;
 import game.BattleshipImpl;
+import game.BattleshipProtocolEngine;
 import game.Phase;
 import game.Result;
 import org.junit.jupiter.api.BeforeEach;

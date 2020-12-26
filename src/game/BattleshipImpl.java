@@ -4,20 +4,21 @@ import exceptions.*;
 import field.Coordinate;
 import field.Ocean;
 import field.OceanImpl;
-import network.BattleshipProtocolEngine;
 import network.SessionEstablishedSubscriber;
 import ship.Ship;
 import ship.ShipImpl;
 import ship.Shipmodel;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Edwin W (HTW) on Nov 2020
  * This is an implementation for the battleship game.
  */
-public class BattleshipImpl implements Battleship, SessionEstablishedSubscriber {
+public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstablishedSubscriber {
 
     private Phase phase = Phase.CHOOSE;
     final private int PLAYERCOUNT = 2;
@@ -35,6 +36,8 @@ public class BattleshipImpl implements Battleship, SessionEstablishedSubscriber 
     private int numberOfShips;
     private BattleshipProtocolEngine protocolEngine;
     private boolean startsFirst = false;
+
+    private final List<LocalBSChangedSubscriber> localBSChangedSubscribers = new ArrayList<>();
 
     public BattleshipImpl(String localPLayer) {
         createAllShips();
@@ -217,13 +220,34 @@ public class BattleshipImpl implements Battleship, SessionEstablishedSubscriber 
         }
     }
 
-    /**
-     * returns the phase of the game
-     *
-     * @return the Enum Phase: CHOOSE,SETSHIPS, PLAY, WAITFORPLAY or END
-     */
+    @Override
+    public void choosePlayerName() throws BattleshipException, PhaseException {
+        choosePlayerName(players[0]);
+    }
+
+    @Override
+    public boolean setShip(Shipmodel ship, Coordinate xy, boolean vertical) throws BattleshipException, PhaseException, OceanException, ShipException {
+        return setShip(players[0], ship, xy, vertical);
+    }
+
+    @Override
+    public boolean setShip(Shipmodel ship, Coordinate xy) throws BattleshipException, PhaseException, OceanException, ShipException {
+        return setShip(players[0], ship, xy);
+    }
+
+    @Override
+    public Result attack(Coordinate position) throws BattleshipException, PhaseException, ShipException, OceanException {
+        return attack(players[0], position);
+    }
+
+    @Override
     public Phase getPhase() {
         return this.phase;
+    }
+
+    @Override
+    public String getLocalPlayerName() {
+        return players[0];
     }
 
     private void setNextPhase() {
@@ -237,6 +261,34 @@ public class BattleshipImpl implements Battleship, SessionEstablishedSubscriber 
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                          battleship changed listener                                  //
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // add a Listener
+    public void addLocalBSChangedSubscriber(LocalBSChangedSubscriber changeListener) {
+        this.localBSChangedSubscribers.add(changeListener);
+    }
+
+    public void removeLocalBSChangedSubscriber(LocalBSChangedSubscriber changeListener) {
+        this.localBSChangedSubscribers.remove(changeListener);
+    }
+
+    private void notifyLocalBSChanged() {
+        // call all listener
+        if (!this.localBSChangedSubscribers.isEmpty()) {
+            //not clear why own Thread?
+            new Thread(() -> {
+                for (LocalBSChangedSubscriber listener : this.localBSChangedSubscribers) {
+                    listener.changed();
+                }
+            }).start();
+        }
+    }
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                            listener                                                 //
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public void sessionEstablished(boolean oracle, String partnerName) {
         players[1] = partnerName;
@@ -250,5 +302,9 @@ public class BattleshipImpl implements Battleship, SessionEstablishedSubscriber 
     public void setProtocolEngine(BattleshipProtocolEngine protocolEngine) {
         this.protocolEngine = protocolEngine;
         this.protocolEngine.addGameSessionEstablishedSubscriber(this);
+    }
+
+    public PrintStreamView getPrintStreamView() {
+        return new BattleshipPrintStreamView(ocean1);
     }
 }
