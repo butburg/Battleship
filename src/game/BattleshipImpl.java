@@ -54,10 +54,10 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
      * (Default: 1 Battleship, 2 Cruiser, 3 Destroyers, 4 Submarines)
      */
     private void createAllShips() {
-        createShip(Shipmodel.BATTLESHIP, 1);
-        createShip(Shipmodel.CRUISER, 2);
+        createShip(Shipmodel.BATTLESHIP, 0);
+        createShip(Shipmodel.CRUISER, 0);
         createShip(Shipmodel.DESTROYER, 0);
-        createShip(Shipmodel.SUBMARINE, 0);
+        createShip(Shipmodel.SUBMARINE, 1);
     }
 
     private void createShip(Shipmodel ship, int count) {
@@ -114,18 +114,21 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
         // tell other side - if local call (test of null if for some unit tests)
         if (isLocalCall(player) && this.protocolEngine != null) {
             this.protocolEngine.setShip(player, shipmodel, xy, vertical);
-        } else System.out.println(player + " has set his ship.");
+        } else {
+            System.out.println(player + " has set his ship.");
+        }
 
-
-        if (ships.isEmpty()) {
-            if (shipsLocal.isEmpty() && shipsRemote.isEmpty()) {
+        if (shipsLocal.isEmpty()) {
+            if (shipsRemote.isEmpty()) {
                 setNextPhase();
+                notifyLocalBSChanged();
             }
-            //if there are more ships to set for the actual player
-            return false;
-        } else
             //if it was the last placed ship for the actual player
+            return false;
+        } else {
+            //if there are more ships to set for the actual player
             return true;
+        }
     }
 
     private boolean isLocalCall(String calledPlayerName) {
@@ -268,6 +271,9 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
         if (!this.localBSChangedSubscribers.isEmpty()) {
             //not clear why own Thread?
             new Thread(() -> {
+                try {
+                    Thread.sleep(1); // block a moment to let read thread start - just in case
+                } catch (InterruptedException e) { e.getStackTrace(); }
                 for (LocalBSChangedSubscriber listener : this.localBSChangedSubscribers) {
                     listener.changed();
                 }

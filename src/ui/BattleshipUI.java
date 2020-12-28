@@ -5,7 +5,10 @@ import exceptions.OceanException;
 import exceptions.PhaseException;
 import exceptions.ShipException;
 import field.Coordinate;
-import game.*;
+import game.BattleshipImpl;
+import game.BattleshipProtocolEngine;
+import game.LocalBSChangedSubscriber;
+import game.LocalBattleship;
 import network.SessionEstablishedSubscriber;
 import ship.Shipmodel;
 import tcp_helper.TCPStream;
@@ -54,10 +57,8 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
 
     public void printUsage() {
         StringBuilder b = new StringBuilder();
-
         b.append("\n");
-        b.append("\n");
-        b.append("valid commands:");
+        b.append("Valid commands:");
         b.append("\n");
         b.append(CONNECT2PORT + " hostname(optional)");
         b.append(".. connect as tcp client to another open port");
@@ -69,17 +70,17 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
         b.append(".. print the ocean");
         b.append("\n");
         b.append(SETSHIP + " shiptype x y v(optional)");
-        b.append(".. set a ship");
-
+        b.append(".. set a ship:");
+        b.append("\n");
         for (int i = 0; i < Shipmodel.values().length; i++) {
             b.append(Shipmodel.values()[i].toString().toLowerCase());
             b.append(" ");
         }
         b.append(")\n");
-        b.append("Horizontal is default!");
+        b.append("(Horizontal is default)");
         b.append("\n");
-        b.append(ATTACK + "x y");
-        b.append(".. attack a field, parameter are x and y coordinate");
+        b.append(ATTACK + " x y");
+        b.append(".. attack a field");
         b.append("\n");
         b.append(EXIT);
         b.append(".. exit the game");
@@ -172,18 +173,21 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
 
     private void doSetShip(String userParameterPart) throws BattleshipException, PhaseException, OceanException, ShipException {
         isConnectedGuard();
-
+        boolean testVertical;
         StringTokenizer st = new StringTokenizer(userParameterPart);
-        if (st.countTokens() < 3 || st.countTokens() > 4) {
-            throw new IllegalStateException("Need 3 or 4 Parameter but was: " + st.countTokens());
-        }
+        if (st.countTokens() == 3) {
+            testVertical = false;
+        } else if (st.countTokens() == 4) {
+            testVertical = true;
+        } else throw new IllegalStateException("Need 3 or 4 Parameter but was: " + st.countTokens());
 
-        String ship = st.nextToken();
+        String ship = st.nextToken().toUpperCase();
         int x = Integer.parseInt(st.nextToken());
         int y = Integer.parseInt(st.nextToken());
         boolean vertical = false;
-        if (st.countTokens() == 4) {
-            vertical = Boolean.getBoolean(st.nextToken());
+        if (testVertical) {
+            String v = st.nextToken();
+            if (v.equals("v")) vertical = true;
         }
         // not MVP:
         if (gameEngine.setShip(Shipmodel.valueOf(ship), new Coordinate(x, y), vertical)) {
