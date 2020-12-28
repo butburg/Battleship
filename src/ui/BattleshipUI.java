@@ -5,10 +5,7 @@ import exceptions.OceanException;
 import exceptions.PhaseException;
 import exceptions.ShipException;
 import field.Coordinate;
-import game.BattleshipImpl;
-import game.BattleshipProtocolEngine;
-import game.LocalBSChangedSubscriber;
-import game.LocalBattleship;
+import game.*;
 import network.SessionEstablishedSubscriber;
 import ship.Shipmodel;
 import tcp_helper.TCPStream;
@@ -62,7 +59,7 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
         b.append("\n");
         b.append("valid commands:");
         b.append("\n");
-        b.append(CONNECT2PORT);
+        b.append(CONNECT2PORT + " hostname(optional)");
         b.append(".. connect as tcp client to another open port");
         b.append("\n");
         b.append(OPENPORT);
@@ -71,20 +68,17 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
         b.append(PRINTOCEAN);
         b.append(".. print the ocean");
         b.append("\n");
-        b.append(SETSHIP);
-        b.append(".. set a ship ( ");
+        b.append(SETSHIP + " shiptype x y v(optional)");
+        b.append(".. set a ship");
 
         for (int i = 0; i < Shipmodel.values().length; i++) {
-            b.append(Shipmodel.values()[i]);
+            b.append(Shipmodel.values()[i].toString().toLowerCase());
             b.append(" ");
         }
         b.append(")\n");
-
-        b.append("Parameter: SHIP X-Coorinate Y-Coordinate vertical(optinal)");
-        b.append("\n");
         b.append("Horizontal is default!");
         b.append("\n");
-        b.append(ATTACK);
+        b.append(ATTACK + "x y");
         b.append(".. attack a field, parameter are x and y coordinate");
         b.append("\n");
         b.append(EXIT);
@@ -92,7 +86,7 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
         b.append("\n\n");
         b.append("Example:");
         b.append("\n");
-        b.append("set BATTLESHIP 2 4 true");
+        b.append("set battleship 2 4 v");
         b.append("\n");
         b.append("attack 2 5");
         b.append("\n");
@@ -113,8 +107,8 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
                 // finish that loop if less than nothing came in
                 if (userInput == null) break;
 
-                // trim whitespaces on both sides
-                userInput = userInput.trim();
+                // trim whitespaces on both sides and make to lower case
+                userInput = userInput.trim().toLowerCase();
 
                 // extract command
                 int spaceIndex = userInput.indexOf(' ');
@@ -147,7 +141,7 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
                         this.doExit();
                     }
                     default -> {
-                        this.outStream.println("unknown command:" + userInput);
+                        this.outStream.println("Unknown command: " + userInput);
                         this.printUsage();
                     }
                 }
@@ -159,15 +153,15 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
                     // ignore
                 }
             } catch (BattleshipException ex) {
-                this.outStream.println("game exception: " + ex.getLocalizedMessage());
+                this.outStream.println("Game exception: " + ex.getLocalizedMessage());
             } catch (PhaseException ex) {
-                this.outStream.println("wrong phase: " + ex.getLocalizedMessage());
+                this.outStream.println("Wrong phase: " + ex.getLocalizedMessage());
             } catch (OceanException ex) {
-                this.outStream.println("ocean problems: " + ex.getLocalizedMessage());
+                this.outStream.println("Ocean problems: " + ex.getLocalizedMessage());
             } catch (ShipException ex) {
-                this.outStream.println("ship problems: " + ex.getLocalizedMessage());
+                this.outStream.println("Ship problems: " + ex.getLocalizedMessage());
             } catch (RuntimeException ex) {
-                this.outStream.println("runtime problems: " + ex.getLocalizedMessage());
+                this.outStream.println("Runtime problems: " + ex.getLocalizedMessage());
             }
         }
     }
@@ -187,10 +181,15 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
         String ship = st.nextToken();
         int x = Integer.parseInt(st.nextToken());
         int y = Integer.parseInt(st.nextToken());
+        boolean vertical = false;
         if (st.countTokens() == 4) {
-            String vertical = st.nextToken();
-            gameEngine.setShip(Shipmodel.valueOf(ship), new Coordinate(x, y), Boolean.getBoolean(vertical));
-        } else gameEngine.setShip(Shipmodel.valueOf(ship), new Coordinate(x, y));
+            vertical = Boolean.getBoolean(st.nextToken());
+        }
+        // not MVP:
+        if (gameEngine.setShip(Shipmodel.valueOf(ship), new Coordinate(x, y), vertical)) {
+            System.out.println("Please set the next ship!");
+        } else { System.out.println("This was your last ship!"); }
+
 
     }
 
@@ -199,16 +198,18 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
 
         StringTokenizer st = new StringTokenizer(userParameterPart);
         if (st.countTokens() != 2) {
-            throw new IllegalStateException("Need 3 or 4 Parameter but was: " + st.countTokens());
+            throw new IllegalStateException("Need 2 Parameter but was: " + st.countTokens());
         }
+
         int x = Integer.parseInt(st.nextToken());
         int y = Integer.parseInt(st.nextToken());
-        gameEngine.attack(new Coordinate(x, y));
-
+        // not MVP:
+        System.out.println("Your attack result: " + gameEngine.attack(new Coordinate(x, y)));
     }
 
     private void isConnectedGuard() throws BattleshipException {
-        if (this.protocolEngine == null) throw new BattleshipException("not connected yet, connect to or open Port!");
+        if (this.protocolEngine == null)
+            throw new BattleshipException("Not connected yet, connect to a Port or open a Port!");
     }
 
     private void doOpenPort() {
@@ -223,7 +224,6 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
         if (!alreadyConnected()) {
             String hostname;
             try {
-
                 StringTokenizer st = new StringTokenizer(userParamterPart);
                 hostname = st.nextToken();
             } catch (NoSuchElementException e) {
@@ -248,26 +248,26 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
 
     private void doPrintOcean() throws IOException {
         gameEngine.getPrintStreamView().print(System.out);
-        System.out.println("your phase is " + localGame.getPhase());
-        System.out.println("your name is " + localGame.getLocalPlayerName());
+        System.out.println("Your phase is " + localGame.getPhase());
+        System.out.println("Your name is " + localGame.getLocalPlayerName());
     }
 
     @Override
     public void sessionEstablished(boolean oracle, String remoteName) {
-        System.out.println("game session created");
+        System.out.println("Game session created");
         this.remoteName = remoteName;
-
         if (oracle) {
-            System.out.println("Your turn now!");
+            System.out.println("You will attack first!");
         } else {
-            System.out.println("Wait for the game partner to start...");
+            System.out.println("You will attack second!");
         }
+        System.out.println("Please set your ships now!");
     }
 
     @Override
     public void streamCreated(TCPStream stream) {
         // connection established - setup protocol engine
-        System.out.println("stream created - setup engine - we can play quite soon.");
+        System.out.println("Stream created - setup engine now - we can play quite soon...");
         this.protocolEngine = new BattleshipProtocolEngine(this.gameEngine, this.playerName);
         this.gameEngine.setProtocolEngine(protocolEngine);
 
@@ -276,14 +276,14 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
         try {
             protocolEngine.handleConnectionStream(stream.getInputStream(), stream.getOutputStream());
         } catch (IOException e) {
-            System.err.println("cannot get streams from tcpStream - fatal, exit: " + e.getLocalizedMessage());
+            System.err.println("Cannot get streams from tcpStream - fatal, will exit: " + e.getLocalizedMessage());
             System.exit(1);
         }
     }
 
     private boolean alreadyConnected() {
         if (tcpStream != null) {
-            System.err.println("Connection established or connection attempt in progress");
+            System.err.println("Connection established already or connection attempt in progress!");
             return true;
         } else return false;
     }

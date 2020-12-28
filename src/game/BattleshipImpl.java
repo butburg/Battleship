@@ -12,7 +12,6 @@ import view.BattleshipPrintStreamView;
 import view.PrintStreamView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,28 +21,31 @@ import java.util.List;
 public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstablishedSubscriber {
 
     private Phase phase = Phase.SETSHIPS;
-    private final String[] players = new String[2];
-    private Ocean ocean;
+    private String playerLocal;
+    private String playerRemote;
 
-    private Ocean ocean1 = new OceanImpl(11);
-    private Ocean ocean2 = new OceanImpl(11);
-
-    private ArrayList<Ship> ships;
-    private ArrayList<Ship> ships1 = new ArrayList<>();
-    private ArrayList<Ship> ships2 = new ArrayList<>();
-    private int[] shipsDestroyed = new int[2];
-    private int numberOfShips;
     private BattleshipProtocolEngine protocolEngine;
     private boolean startsFirst = false;
 
+    private Ocean ocean;
+    private Ocean oceanLocal = new OceanImpl(11);
+    private Ocean oceanRemote = new OceanImpl(11);
+
+    private ArrayList<Ship> ships;
+    private ArrayList<Ship> shipsLocal = new ArrayList<>();
+    private ArrayList<Ship> shipsRemote = new ArrayList<>();
+    private int[] shipsDestroyed = new int[2];
+    private int numberOfShips;
+
     private final List<LocalBSChangedSubscriber> localBSChangedSubscribers = new ArrayList<>();
+
 
     public BattleshipImpl(String localPLayer) {
         createAllShips();
-        players[0] = localPLayer;
+        this.playerLocal = localPLayer;
 
         //FOR TESTS DIRTY
-        players[1] = "Pia";
+        this.playerRemote = "Pia";
     }
 
     /**
@@ -54,14 +56,14 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
     private void createAllShips() {
         createShip(Shipmodel.BATTLESHIP, 1);
         createShip(Shipmodel.CRUISER, 2);
-        createShip(Shipmodel.DESTROYER, 3);
-        createShip(Shipmodel.SUBMARINE, 4);
+        createShip(Shipmodel.DESTROYER, 0);
+        createShip(Shipmodel.SUBMARINE, 0);
     }
 
     private void createShip(Shipmodel ship, int count) {
         for (; count > 0; count--) {
-            ships1.add(new ShipImpl(ship));
-            ships2.add(new ShipImpl(ship));
+            shipsLocal.add(new ShipImpl(ship));
+            shipsRemote.add(new ShipImpl(ship));
             numberOfShips++;
         }
     }
@@ -72,11 +74,11 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
      * @return the names of the player
      */
     public String[] getPlayers() {
-        return players;
+        return new String[]{playerLocal, playerRemote};
     }
 
     private boolean nameTaken(String playerName) {
-        return Arrays.asList(players).contains(playerName);
+        return (playerName.equals(playerLocal) || playerName.equals(playerRemote));
     }
 
     public void setPhase(Phase newPhase) {
@@ -87,14 +89,17 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
     @Override
     public boolean setShip(String player, Shipmodel shipmodel, Coordinate xy, boolean vertical) throws BattleshipException, PhaseException, OceanException, ShipException {
         if (phase != Phase.SETSHIPS) throw new PhaseException(ExceptionMsg.ph_wrongPhase);
+
         //get the ships and ocean from the actual player
-        chooseOceanAndShips(player); //also have to restore the values back with actual list/map
+        chooseOceanAndShips(player);
+
         if (ships.isEmpty()) throw new BattleshipException(ExceptionMsg.bs_shipAllSet);
 
         Ship shipToSet = null;
         for (Ship ship : ships) {
-            if (ship.getModel() == shipmodel && shipToSet == null) {
+            if (ship.getModel() == shipmodel) {
                 shipToSet = ship;
+                break;
             }
         }
         if (shipToSet == null) throw new BattleshipException(ExceptionMsg.bs_shipTypeAllSet);
@@ -104,16 +109,16 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
         ships.remove(shipToSet);
 
         //update the list and the ocean for the actual player
-        updateOceanAndShips(ships, ocean, player);
+        updateOceanAndShips(player);
 
         // tell other side - if local call (test of null if for some unit tests)
         if (isLocalCall(player) && this.protocolEngine != null) {
             this.protocolEngine.setShip(player, shipmodel, xy, vertical);
-        } else System.out.println(player + " set his ship for " + players[0]);
+        } else System.out.println(player + " has set his ship.");
 
 
         if (ships.isEmpty()) {
-            if (ships1.isEmpty() && ships2.isEmpty()) {
+            if (shipsLocal.isEmpty() && shipsRemote.isEmpty()) {
                 setNextPhase();
             }
             //if there are more ships to set for the actual player
@@ -124,7 +129,7 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
     }
 
     private boolean isLocalCall(String calledPlayerName) {
-        return players[0].equals(calledPlayerName);
+        return playerLocal.equals(calledPlayerName);
     }
 
     @Override
@@ -134,45 +139,48 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
 
     private void chooseOceanAndShips(String player) throws BattleshipException {
         chooseOcean(player);
-        if (player.equals(players[0])) {
-            this.ships = ships1;
-        } else if (player.equals(players[1])) {
-            this.ships = ships2;
+        if (player.equals(playerLocal)) {
+            this.ships = shipsLocal;
+        } else if (player.equals(playerRemote)) {
+            this.ships = shipsRemote;
         } else throw new BattleshipException(ExceptionMsg.bs_wrongPlayer);
     }
 
     private void chooseOcean(String player) throws BattleshipException {
-        if (player.equals(players[0])) {
-            this.ocean = ocean1;
-        } else if (player.equals(players[1])) {
-            this.ocean = ocean2;
+        if (player.equals(playerLocal)) {
+            this.ocean = oceanLocal;
+        } else if (player.equals(playerRemote)) {
+            this.ocean = oceanRemote;
         } else throw new BattleshipException(ExceptionMsg.bs_wrongPlayer);
     }
 
-    private void updateOceanAndShips(ArrayList<Ship> ships, Ocean ocean, String player) throws BattleshipException {
+    private void updateOceanAndShips(String player) throws BattleshipException {
         updateOcean(player);
-        if (player.equals(players[0])) {
-            this.ships1 = ships;
-        } else if (player.equals(players[1])) {
-            this.ships2 = ships;
+        if (player.equals(playerLocal)) {
+            this.shipsLocal = ships;
+        } else if (player.equals(playerRemote)) {
+            this.shipsRemote = ships;
         } else throw new BattleshipException(ExceptionMsg.bs_wrongPlayer);
+        ships = null;
     }
 
     private void updateOcean(String player) throws BattleshipException {
-        if (player.equals(players[0])) {
-            this.ocean1 = ocean;
-        } else if (player.equals(players[1])) {
-            this.ocean2 = ocean;
+        if (player.equals(playerLocal)) {
+            this.oceanLocal = ocean;
+        } else if (player.equals(playerRemote)) {
+            this.oceanRemote = ocean;
         } else throw new BattleshipException(ExceptionMsg.bs_wrongPlayer);
+        ocean = null;
     }
 
     @Override
     public Result attack(String player, Coordinate position) throws PhaseException, BattleshipException, ShipException, OceanException {
         if (phase != Phase.PLAY && phase != Phase.WAITFORPLAY) throw new PhaseException(ExceptionMsg.ph_wrongPhase);
         if (!nameTaken(player)) throw new BattleshipException(ExceptionMsg.bs_wrongPlayer);
-        if (phase == Phase.WAITFORPLAY && players[0].equals(player))
+        if (phase == Phase.WAITFORPLAY && playerLocal.equals(player))
             throw new BattleshipException(ExceptionMsg.bs_wrongTurn1);
-        if (phase == Phase.PLAY && players[1].equals(player)) throw new BattleshipException(ExceptionMsg.bs_wrongTurn2);
+        if (phase == Phase.PLAY && playerRemote.equals(player))
+            throw new BattleshipException(ExceptionMsg.bs_wrongTurn2);
 
         chooseOcean(player);
         Result hitResult = checkWin(ocean.bombAt(position), player);
@@ -184,41 +192,41 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
         if (isLocalCall(player) && this.protocolEngine != null) {
             this.protocolEngine.attack(player, position);
         } else {
-            System.out.println(players[0] + " got attacked by " + player +" remotely. Notify the ui!");
+            System.out.println("You got attacked by " + player + "!");
             this.notifyLocalBSChanged();
         }
         setNextPhase();
         return hitResult;
     }
 
-    private Result checkWin(Result bomb, String p) {
+    private Result checkWin(Result r, String player) {
         //TODO improve the player one player two logic!
-        if (p.equals(players[0])) {
-            if (bomb == Result.SINK) shipsDestroyed[0]++;
+        if (player.equals(playerLocal)) {
+            if (r == Result.SINK) shipsDestroyed[0]++;
             if (shipsDestroyed[0] == numberOfShips) return Result.WIN;
             else
-                return bomb;
+                return r;
         } else {
-            if (bomb == Result.SINK) shipsDestroyed[1]++;
+            if (r == Result.SINK) shipsDestroyed[1]++;
             if (shipsDestroyed[1] == numberOfShips) return Result.WIN;
             else
-                return bomb;
+                return r;
         }
     }
 
     @Override
     public boolean setShip(Shipmodel ship, Coordinate xy, boolean vertical) throws BattleshipException, PhaseException, OceanException, ShipException {
-        return setShip(players[0], ship, xy, vertical);
+        return setShip(playerLocal, ship, xy, vertical);
     }
 
     @Override
     public boolean setShip(Shipmodel ship, Coordinate xy) throws BattleshipException, PhaseException, OceanException, ShipException {
-        return setShip(players[0], ship, xy);
+        return setShip(playerLocal, ship, xy);
     }
 
     @Override
     public Result attack(Coordinate position) throws BattleshipException, PhaseException, ShipException, OceanException {
-        return attack(players[0], position);
+        return attack(playerLocal, position);
     }
 
     @Override
@@ -228,7 +236,7 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
 
     @Override
     public String getLocalPlayerName() {
-        return players[0];
+        return playerLocal;
     }
 
     private void setNextPhase() {
@@ -273,10 +281,10 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public void sessionEstablished(boolean oracle, String partnerName) {
-        players[1] = partnerName;
+        playerRemote = partnerName;
         startsFirst = oracle;
 
-        System.out.println(players[0] + ": gameSessionEstablished with " + players[1] + " | " + startsFirst);
+        System.out.println(playerLocal + ": gameSessionEstablished with " + playerRemote + " | " + startsFirst);
 
         setPhase(Phase.SETSHIPS);
     }
@@ -287,6 +295,6 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
     }
 
     public PrintStreamView getPrintStreamView() {
-        return new BattleshipPrintStreamView(ocean1);
+        return new BattleshipPrintStreamView(oceanLocal);
     }
 }
