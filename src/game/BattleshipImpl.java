@@ -185,20 +185,25 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
         if (phase == Phase.PLAY && playerRemote.equals(player))
             throw new BattleshipException(ExceptionMsg.bs_wrongTurn2);
 
-        chooseOcean(player);
-        Result hitResult = checkWin(ocean.bombAt(position), player);
-        updateOcean(player);
 
-        if (hitResult == Result.WIN) setPhase(Phase.END);
-
-        // tell other side - if local call (test of null if for some unit tests)
+        Result hitResult;
+        // tell other side - if local call (test of null for some unit tests)
         if (isLocalCall(player) && this.protocolEngine != null) {
+            chooseOcean(playerRemote);
+            hitResult = checkWin(ocean.bombAt(position), playerRemote);
+            updateOcean(playerRemote);
+
             this.protocolEngine.attack(player, position);
         } else {
+            chooseOcean(playerLocal);
+            hitResult = checkWin(ocean.bombAt(position), playerLocal);
+            updateOcean(playerLocal);
+
             System.out.println("You got attacked by " + player + "!");
             this.notifyLocalBSChanged();
         }
-        setNextPhase();
+        if (hitResult == Result.WIN) setPhase(Phase.END);
+        else setNextPhase();
         return hitResult;
     }
 
@@ -300,7 +305,7 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
         this.protocolEngine.addGameSessionEstablishedSubscriber(this);
     }
 
-    public PrintStreamView getPrintStreamView() {
-        return new BattleshipPrintStreamView(oceanLocal);
+    public PrintStreamView getPrintStreamView() throws BattleshipException {
+        return new BattleshipPrintStreamView(oceanLocal.getField(), oceanRemote.getAttackedField());
     }
 }

@@ -99,7 +99,7 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
         boolean again = true;
 
         while (again) {
-            String userInput = null;
+            String userInput;
 
             try {
                 // read user input
@@ -125,16 +125,16 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
                 // start command loop
                 // redraw
                 switch (commandPart) {
-                    case PRINTOCEAN -> this.doPrintOcean();
+                    case PRINTOCEAN -> this.doPrintOcean(false);
                     case CONNECT2PORT -> this.doConnect2Port(parameterPart);
                     case OPENPORT -> this.doOpenPort();
                     case SETSHIP -> {
                         this.doSetShip(parameterPart);
-                        this.doPrintOcean();
+                        this.doPrintOcean(true);
                     }
                     case ATTACK -> {
                         this.doAttack(parameterPart);
-                        this.doPrintOcean();
+                        this.doPrintOcean(true);
                     }
                     case "q", EXIT -> {
                         // end loop
@@ -217,7 +217,7 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
     }
 
     private void doOpenPort() {
-        if (!alreadyConnected()) {
+        if (notConnected()) {
             tcpStream = new TCPStream(PORT, true, playerName);
             tcpStream.setStreamCreationListener(this);
             tcpStream.start();
@@ -225,7 +225,7 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
     }
 
     private void doConnect2Port(String userParamterPart) {
-        if (!alreadyConnected()) {
+        if (notConnected()) {
             String hostname;
             try {
                 StringTokenizer st = new StringTokenizer(userParamterPart);
@@ -244,14 +244,15 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
     @Override
     public void changed() {
         try {
-            this.doPrintOcean();
-        } catch (IOException e) {
+            this.doPrintOcean(true);
+        } catch (IOException | BattleshipException e) {
             System.err.println("very very unexpected: " + e.getLocalizedMessage());
         }
     }
 
-    private void doPrintOcean() throws IOException {
-        gameEngine.getPrintStreamView().print(System.out);
+    private void doPrintOcean(boolean small) throws IOException, BattleshipException {
+        if (small) gameEngine.getPrintStreamView().printSmall(System.out);
+        else gameEngine.getPrintStreamView().printLarge(System.out);
         System.out.println("Your phase is " + localGame.getPhase());
         System.out.println("Your name is " + localGame.getLocalPlayerName());
     }
@@ -285,10 +286,10 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
         }
     }
 
-    private boolean alreadyConnected() {
+    private boolean notConnected() {
         if (tcpStream != null) {
             System.err.println("Connection established already or connection attempt in progress!");
-            return true;
-        } else return false;
+            return false;
+        } else return true;
     }
 }
