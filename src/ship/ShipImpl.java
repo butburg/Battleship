@@ -14,13 +14,16 @@ public class ShipImpl implements Ship {
     private final int size;
     Coordinate anchor;// = {{2,3},{2,4}};
     Coordinate[] position;// = {{2,3},{2,4}};
+    boolean[] hurt;// = {true,true};
+
 
     public boolean[] getHurt() {
         return hurt;
     }
 
-    boolean[] hurt;// = {true,true};
-
+    public boolean getHurtAt(int located_x, int located_y) throws ShipException {
+        return hurt[delocate(located_x, located_y)];
+    }
 
     public ShipImpl(Shipmodel model) {
         this.model = model;
@@ -67,6 +70,25 @@ public class ShipImpl implements Ship {
         if (anchor == null) anchor = xy;
         else validate(field, located_x, located_y);
         position[field] = xy;
+    }
+
+    public int delocate(int location_x, int location_y) throws ShipException {
+        if (anchor == null) throw new ShipException(ExceptionMsg.sh_shipFieldInvalid);
+
+
+        Coordinate xy = new Coordinate(location_x, location_y);
+        int res = 0;
+        if (anchor.equals(xy)) res = 0;
+        else if (anchor.x == location_x)
+            res = location_y - anchor.y;
+        else if (anchor.y == location_y)
+            res = location_x - anchor.x;
+        else throw new ShipException(ExceptionMsg.sh_wrongLocate);
+
+        // the res should be in range of the size of the ship
+        if (res >= size || res < 0)
+            throw new ShipException(ExceptionMsg.sh_wrongLocate);
+        return res;
     }
 
     private void validate(int field, int located_x, int located_y) throws ShipException {

@@ -1,6 +1,7 @@
 package view;
 
 import exceptions.BattleshipException;
+import exceptions.ShipException;
 import ship.Ship;
 import ship.ShipImpl;
 
@@ -23,7 +24,7 @@ public class BattleshipPrintStreamView implements PrintStreamView {
 
 
     @Override
-    public void printLarge(PrintStream ps) {
+    public void printLarge(PrintStream ps) throws ShipException {
         //print your ocean with ships
         scala(ps, "  ", " | ");
         ps.println();
@@ -42,7 +43,7 @@ public class BattleshipPrintStreamView implements PrintStreamView {
 
 
     @Override
-    public void printSmall(PrintStream ps) {
+    public void printSmall(PrintStream ps) throws ShipException {
         //print your ocean with ships
         scala(ps, " ", "  ");
         ps.println();
@@ -57,7 +58,7 @@ public class BattleshipPrintStreamView implements PrintStreamView {
     }
 
 
-    private void shipField(PrintStream ps, String hitfield, String emptyfield, String okfield, boolean small) {
+    private void shipField(PrintStream ps, String hitfield, String emptyfield, String okfield, boolean small) throws ShipException {
         for (int y = 0; y < size; y++) {
             if (!small) {
                 lineHorizont(ps);
@@ -71,7 +72,7 @@ public class BattleshipPrintStreamView implements PrintStreamView {
                     ps.print(emptyfield);
                 } else {
                     ShipImpl s = (ShipImpl) shipFields[h][y];
-                    if (s.getHurt()[0]) { ps.print(hitfield); } else {
+                    if (s.getHurtAt(h,y)) { ps.print(hitfield); } else {
                         ps.print(okfield);
                     }
                 }

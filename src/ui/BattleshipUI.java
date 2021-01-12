@@ -245,12 +245,12 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
     public void changed() {
         try {
             this.doPrintOcean(true);
-        } catch (IOException | BattleshipException e) {
+        } catch (IOException | BattleshipException | ShipException e) {
             System.err.println("very very unexpected: " + e.getLocalizedMessage());
         }
     }
 
-    private void doPrintOcean(boolean small) throws IOException, BattleshipException {
+    private void doPrintOcean(boolean small) throws IOException, BattleshipException, ShipException {
         if (small) gameEngine.getPrintStreamView().printSmall(System.out);
         else gameEngine.getPrintStreamView().printLarge(System.out);
         System.out.println("Your phase is " + localGame.getPhase());
