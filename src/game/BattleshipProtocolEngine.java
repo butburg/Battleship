@@ -246,11 +246,20 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
             int commandID = dis.readInt();
             // call method identified by int value
             switch (commandID) {
-                case METHOD_SET -> this.deserializeSetShip();
-                case METHOD_ATTACK -> this.deserializeAttack();
-                case RESULT_SET -> this.deserializeResultSet();
-                case RESULT_ATTACK -> this.deserializeResultAttack();
-                default -> throw new BattleshipException("Deserialize: unknown Method ID:" + commandID);
+                case METHOD_SET:
+                    this.deserializeSetShip();
+                    break;
+                case METHOD_ATTACK:
+                    this.deserializeAttack();
+                    break;
+                case RESULT_SET:
+                    this.deserializeResultSet();
+                    break;
+                case RESULT_ATTACK:
+                    this.deserializeResultAttack();
+                    break;
+                default:
+                    throw new BattleshipException("Deserialize: unknown Method ID:" + commandID);
             }
             return true;
         } catch (IOException e) {
@@ -333,7 +342,7 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
                 //not clear why own Thread?
                 new Thread(() -> {
                     try {
-                        Thread.sleep(1); // block a moment to let read thread start - just in case
+                        Thread.sleep(10); // block a moment to let read thread start - just in case
                     } catch (InterruptedException e) { e.getStackTrace(); }
                     oclistener.sessionEstablished(oracle, partnerName);
                 }).start();

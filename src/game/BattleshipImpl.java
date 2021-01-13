@@ -62,10 +62,10 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
      * 2xSubmarine(1))
      */
     private void createAllShips() {
-        createShip(Shipmodel.CARRIER, 0);
-        createShip(Shipmodel.BATTLESHIP, 0);
-        createShip(Shipmodel.CRUISER, 0);
-        createShip(Shipmodel.DESTROYER, 0);
+        createShip(Shipmodel.CARRIER, 1);
+        createShip(Shipmodel.BATTLESHIP, 1);
+        createShip(Shipmodel.CRUISER, 1);
+        createShip(Shipmodel.DESTROYER, 2);
         createShip(Shipmodel.SUBMARINE, 2);
     }
 
@@ -266,11 +266,17 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
 
     private void setNextPhase() {
         switch (this.phase) {
-            case SETSHIPS -> setPhase(startsFirst ? Phase.PLAY : Phase.WAITFORPLAY);
-            case WAITFORPLAY -> setPhase(Phase.PLAY);
-            case PLAY -> setPhase(Phase.WAITFORPLAY);
-            case END -> {
-            }
+            case SETSHIPS:
+                setPhase(startsFirst ? Phase.PLAY : Phase.WAITFORPLAY);
+                break;
+            case WAITFORPLAY:
+                setPhase(Phase.PLAY);
+                break;
+            case PLAY:
+                setPhase(Phase.WAITFORPLAY);
+                break;
+            case END:
+                break;
         }
     }
 
@@ -294,7 +300,7 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
             //not clear why own Thread?
             new Thread(() -> {
                 try {
-                    Thread.sleep(1); // block a moment to let read thread start - just in case
+                    Thread.sleep(10); // block a moment to let read thread start - just in case
                 } catch (InterruptedException e) { e.getStackTrace(); }
                 for (LocalBSChangedSubscriber listener : this.localBSChangedSubscribers) {
                     listener.changed();

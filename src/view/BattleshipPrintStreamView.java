@@ -25,6 +25,9 @@ public class BattleshipPrintStreamView implements PrintStreamView {
 
     public void printAttack(PrintStream ps) {
         //print the attacked field
+        System.out.println("------------My Shots:--------------");
+        scala(ps, " ", "  ");
+        ps.println();
         attackField(ps, " X ", " ~ ", true);
         scala(ps, " ", "  ");
         ps.println();
@@ -32,6 +35,7 @@ public class BattleshipPrintStreamView implements PrintStreamView {
 
     public void printOcean(PrintStream ps) throws ShipException {
         //print your ocean with ships
+        System.out.println("------------My Ships:--------------");
         scala(ps, " ", "  ");
         ps.println();
         shipField(ps, " X ", " ~ ", " O ", true);

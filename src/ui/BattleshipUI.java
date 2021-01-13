@@ -132,29 +132,33 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
                 // start command loop
                 // redraw
                 switch (commandPart) {
-                    case PRINTOCEAN -> {
+                    case PRINTOCEAN:
                         this.doPrint(false);
                         this.doPrint(true);
-                    }
-                    case CONNECT2PORT -> this.doConnect2Port(parameterPart);
-                    case OPENPORT -> this.doOpenPort();
-                    case SETSHIP -> {
+                        break;
+                    case CONNECT2PORT:
+                        this.doConnect2Port(parameterPart);
+                        break;
+                    case OPENPORT:
+                        this.doOpenPort();
+                        break;
+                    case SETSHIP:
                         this.doSetShip(parameterPart);
-                        this.doPrint(false);
-                    }
-                    case ATTACK -> {
+                        break;
+                    case ATTACK:
                         this.doAttack(parameterPart);
                         this.doPrint(true);
-                    }
-                    case "q", EXIT -> {
-                        // end loop
+                        break;
+// end loop
+                    case "q":
+                    case EXIT:
                         again = false;
                         this.doExit();
-                    }
-                    default -> {
+                        break;
+                    default:
                         this.outStream.println("Unknown command: " + userInput);
                         this.printUsage();
-                    }
+                        break;
                 }
             } catch (IOException ex) {
                 this.outStream.println("Cannot read from input stream - fatal. Exit.");
@@ -203,6 +207,7 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
         if (gameEngine.setShip(Shipmodel.valueOf(ship), new Coordinate(x, y), vertical)) {
             printShips();
             System.out.println("Please set the next ship!");
+            this.doPrint(false);
         } else { System.out.println("This was your last ship!"); }
 
 
@@ -254,12 +259,12 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
 
     @Override
     public void changed() {
-        //try {
-        //this.doPrint(false);
-        System.out.println("Changes happend...");
-        //} catch (IOException | BattleshipException | ShipException e) {
-        //    System.err.println("very very unexpected: " + e.getLocalizedMessage());
-        //}
+        try {
+            this.doPrint(false);
+            System.out.println("Phase: " + localGame.getPhase());
+        } catch (BattleshipException | ShipException e) {
+            System.err.println("very very unexpected: " + e.getLocalizedMessage());
+        }
     }
 
     private void doPrint(boolean attack) throws BattleshipException, ShipException {
@@ -270,7 +275,6 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
         } else {
             gameEngine.getPrintStreamView().printOcean(System.out);
         }
-        System.out.println("Phase: " + localGame.getPhase());
     }
 
 
