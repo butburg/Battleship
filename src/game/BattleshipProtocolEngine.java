@@ -5,8 +5,6 @@ import exceptions.OceanException;
 import exceptions.PhaseException;
 import exceptions.ShipException;
 import field.Coordinate;
-import game.Battleship;
-import game.Result;
 import network.ProtocolEngine;
 import network.SessionEstablishedSubscriber;
 import ship.Shipmodel;
@@ -124,7 +122,7 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
 
             } catch (InterruptedException e) {
                 //interrupted
-                System.out.println("ProtocolEngine(" + name + "): Received return value of setShip");
+                //System.out.println("ProtocolEngine(" + name + "): Received return value of setShip");
             }
             setWaitThread = null;
             //after the interrupt the return value of the method was stored, return that stored value now
@@ -195,7 +193,7 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
 
             } catch (InterruptedException e) {
                 //interrupted
-                System.out.println("ProtocolEngine(" + name + "): Received return value of attack");
+                //System.out.println("ProtocolEngine(" + name + "): Received return value of attack");
             }
             attackWaitThread = null;
             return storedAttackResult;
@@ -241,29 +239,17 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
 
 
     public boolean read() throws BattleshipException, PhaseException, ShipException, OceanException {
-        System.out.println("ProtocolEngine(" + name + "): Read from input stream...");
+        //System.out.println("ProtocolEngine(" + name + "): Read from input stream...");
         DataInputStream dis = new DataInputStream(this.is);
         try {
             // get first int value from stream
             int commandID = dis.readInt();
             // call method identified by int value
             switch (commandID) {
-                case METHOD_SET -> {
-                    System.out.println("ProtocolEngine(" + name + "): read METHOD_SET");
-                    this.deserializeSetShip();
-                }
-                case METHOD_ATTACK -> {
-                    System.out.println("ProtocolEngine(" + name + "): read METHOD_ATTACK");
-                    this.deserializeAttack();
-                }
-                case RESULT_SET -> {
-                    System.out.println("ProtocolEngine(" + name + "): read RESULT_SET");
-                    this.deserializeResultSet();
-                }
-                case RESULT_ATTACK -> {
-                    System.out.println("ProtocolEngine(" + name + "): read RESULT_ATTACK");
-                    this.deserializeResultAttack();
-                }
+                case METHOD_SET -> this.deserializeSetShip();
+                case METHOD_ATTACK -> this.deserializeAttack();
+                case RESULT_SET -> this.deserializeResultSet();
+                case RESULT_ATTACK -> this.deserializeResultAttack();
                 default -> throw new BattleshipException("Deserialize: unknown Method ID:" + commandID);
             }
             return true;
@@ -281,7 +267,7 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
 
     @Override
     public void run() {
-        System.out.println("ProtocolEngine(" + name + "): started...flip coin!" + this);
+        //System.out.println("ProtocolEngine(" + name + "): started...flip coin!" + this);
 
         // get "random" value
         long seed = this.hashCode() * System.currentTimeMillis();
@@ -294,14 +280,14 @@ public class BattleshipProtocolEngine implements Battleship, Runnable, ProtocolE
             // as long as the remote and the local random value are the same, change the random value
             do {
                 localInt = random.nextInt();
-                System.out.println("ProtocolEngine(" + name + "): flip and take number " + localInt);
+                //System.out.println("ProtocolEngine(" + name + "): flip and take number " + localInt);
                 dos.writeInt(localInt);
                 remoteInt = dis.readInt();
             } while (localInt == remoteInt);
 
             // the one instance with the lower random value becomes the only and one oracle
             this.oracle = localInt < remoteInt;
-            System.out.println("ProtocolEngine(" + name + "): Flipped a coin and got an oracle == " + oracle);
+            //System.out.println("ProtocolEngine(" + name + "): Flipped a coin and got an oracle == " + oracle);
 
             // finally - exchange names with other ProtocolEngine
             dos.writeUTF(this.name);

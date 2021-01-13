@@ -18,41 +18,23 @@ public class BattleshipPrintStreamView implements PrintStreamView {
     public BattleshipPrintStreamView(Ship[][] shipFields, boolean[][] attackFields) throws BattleshipException {
         this.shipFields = shipFields;
         this.attackFields = attackFields;
-        if (shipFields.length != attackFields.length) throw new BattleshipException("The ship and ocean field should be the same size!");
+        if (shipFields.length != attackFields.length)
+            throw new BattleshipException("The ship and ocean field should be the same size!");
         this.size = shipFields.length;
     }
 
-
-    @Override
-    public void printLarge(PrintStream ps) throws ShipException {
-        //print your ocean with ships
-        scala(ps, "  ", " | ");
-        ps.println();
-        shipField(ps, " X |", "   |", " O |", false);
-        lineHorizont(ps);
-
+    public void printAttack(PrintStream ps) {
         //print the attacked field
-        scala(ps, "  ", " | ");
+        attackField(ps, " X ", " ~ ", true);
+        scala(ps, " ", "  ");
         ps.println();
-        attackField(ps, " X |", "   |", false);
-        lineHorizont(ps);
-        scala(ps, "  ", " | ");
-        ps.println();
-
     }
 
-
-    @Override
-    public void printSmall(PrintStream ps) throws ShipException {
+    public void printOcean(PrintStream ps) throws ShipException {
         //print your ocean with ships
         scala(ps, " ", "  ");
         ps.println();
         shipField(ps, " X ", " ~ ", " O ", true);
-        scala(ps, " ", "  ");
-        ps.println();
-
-        //print the attacked field
-        attackField(ps, " X ", " ~ ", true);
         scala(ps, " ", "  ");
         ps.println();
     }
@@ -72,7 +54,7 @@ public class BattleshipPrintStreamView implements PrintStreamView {
                     ps.print(emptyfield);
                 } else {
                     ShipImpl s = (ShipImpl) shipFields[h][y];
-                    if (s.getHurtAt(h,y)) { ps.print(hitfield); } else {
+                    if (s.getHurtAt(h, y)) { ps.print(hitfield); } else {
                         ps.print(okfield);
                     }
                 }

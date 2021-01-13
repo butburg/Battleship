@@ -55,35 +55,42 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
         this.localGame.addLocalBSChangedSubscriber(this);
     }
 
+    public void printShips() {
+        System.out.println("Ships to set:");
+        System.out.println(gameEngine.countShipsLocal());
+    }
+
     public void printUsage() {
         StringBuilder b = new StringBuilder();
         b.append("\n");
         b.append("Valid commands:");
         b.append("\n");
         b.append(CONNECT2PORT + " hostname(optional)");
-        b.append(".. connect as tcp client to another open port");
+        b.append(" ?connect as tcp client to another open port");
         b.append("\n");
         b.append(OPENPORT);
-        b.append(".. open port and become tcp server");
+        b.append(" ?open port and become tcp server");
         b.append("\n");
         b.append(PRINTOCEAN);
-        b.append(".. print the ocean");
+        b.append(" ?print the ocean");
         b.append("\n");
         b.append(SETSHIP + " shiptype x y v(optional)");
-        b.append(".. set a ship:");
+        b.append(".. set a ship");
+        b.append("\n");
+        b.append("(Horizontal is default)");
+        b.append("\n");
+        b.append(ATTACK + " x y");
+        b.append(" ?attack a field");
+        b.append("\n");
+        b.append(EXIT);
+        b.append(" ?exit the game");
+        b.append("\n\n");
+        b.append("Ships you will set:");
         b.append("\n");
         for (int i = 0; i < Shipmodel.values().length; i++) {
             b.append(Shipmodel.values()[i].toString().toLowerCase());
             b.append(" ");
         }
-        b.append(")\n");
-        b.append("(Horizontal is default)");
-        b.append("\n");
-        b.append(ATTACK + " x y");
-        b.append(".. attack a field");
-        b.append("\n");
-        b.append(EXIT);
-        b.append(".. exit the game");
         b.append("\n\n");
         b.append("Example:");
         b.append("\n");
@@ -125,16 +132,19 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
                 // start command loop
                 // redraw
                 switch (commandPart) {
-                    case PRINTOCEAN -> this.doPrintOcean(false);
+                    case PRINTOCEAN -> {
+                        this.doPrint(false);
+                        this.doPrint(true);
+                    }
                     case CONNECT2PORT -> this.doConnect2Port(parameterPart);
                     case OPENPORT -> this.doOpenPort();
                     case SETSHIP -> {
                         this.doSetShip(parameterPart);
-                        this.doPrintOcean(true);
+                        this.doPrint(false);
                     }
                     case ATTACK -> {
                         this.doAttack(parameterPart);
-                        this.doPrintOcean(true);
+                        this.doPrint(true);
                     }
                     case "q", EXIT -> {
                         // end loop
@@ -191,6 +201,7 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
         }
         // not MVP:
         if (gameEngine.setShip(Shipmodel.valueOf(ship), new Coordinate(x, y), vertical)) {
+            printShips();
             System.out.println("Please set the next ship!");
         } else { System.out.println("This was your last ship!"); }
 
@@ -243,36 +254,44 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
 
     @Override
     public void changed() {
-        try {
-            this.doPrintOcean(true);
-        } catch (IOException | BattleshipException | ShipException e) {
-            System.err.println("very very unexpected: " + e.getLocalizedMessage());
-        }
+        //try {
+        //this.doPrint(false);
+        System.out.println("Changes happend...");
+        //} catch (IOException | BattleshipException | ShipException e) {
+        //    System.err.println("very very unexpected: " + e.getLocalizedMessage());
+        //}
     }
 
-    private void doPrintOcean(boolean small) throws IOException, BattleshipException, ShipException {
-        if (small) gameEngine.getPrintStreamView().printSmall(System.out);
-        else gameEngine.getPrintStreamView().printLarge(System.out);
-        System.out.println("Your phase is " + localGame.getPhase());
-        System.out.println("Your name is " + localGame.getLocalPlayerName());
+    private void doPrint(boolean attack) throws BattleshipException, ShipException {
+
+        //System.out.println(playerName + " play against " + remoteName);
+        if (attack) {
+            gameEngine.getPrintStreamView().printAttack(System.out);
+        } else {
+            gameEngine.getPrintStreamView().printOcean(System.out);
+        }
+        System.out.println("Phase: " + localGame.getPhase());
     }
+
 
     @Override
     public void sessionEstablished(boolean oracle, String remoteName) {
-        System.out.println("Game session created");
+        //System.out.println("Game session created");
         this.remoteName = remoteName;
         if (oracle) {
             System.out.println("You will attack first!");
         } else {
             System.out.println("You will attack second!");
         }
+        printShips();
+        System.out.println();
         System.out.println("Please set your ships now!");
     }
 
     @Override
     public void streamCreated(TCPStream stream) {
         // connection established - setup protocol engine
-        System.out.println("Stream created - setup engine now - we can play quite soon...");
+        //System.out.println("Stream created - setup engine now - we can play quite soon...");
         this.protocolEngine = new BattleshipProtocolEngine(this.gameEngine, this.playerName);
         this.gameEngine.setProtocolEngine(protocolEngine);
 

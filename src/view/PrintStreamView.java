@@ -2,7 +2,6 @@ package view;
 
 import exceptions.ShipException;
 
-import java.io.IOException;
 import java.io.PrintStream;
 
 /**
@@ -10,15 +9,13 @@ import java.io.PrintStream;
  */
 public interface PrintStreamView {
     /**
-     *
-     * @param ps
-     * @throws IOException
+     * @param out PrintStream that will wait for the Stream
+     * @throws ShipException when the ship get bad addressed
      */
-    void printLarge(PrintStream ps) throws IOException, ShipException;
+    void printOcean(PrintStream out) throws ShipException;
+
     /**
-     *
-     * @param ps
-     * @throws IOException
+     * @param out PrintStream that will wait for the Stream
      */
-    void printSmall(PrintStream ps) throws IOException, ShipException;
+    void printAttack(PrintStream out);
 }

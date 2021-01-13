@@ -12,6 +12,7 @@ import view.BattleshipPrintStreamView;
 import view.PrintStreamView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -19,6 +20,8 @@ import java.util.List;
  * This is an implementation for the battleship game.
  */
 public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstablishedSubscriber {
+
+    private final int SIZE_OF_FIELDS = 10;
 
     private Phase phase = Phase.SETSHIPS;
     private String playerLocal;
@@ -28,8 +31,8 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
     private boolean startsFirst = false;
 
     private Ocean ocean;
-    private Ocean oceanLocal = new OceanImpl(11);
-    private Ocean oceanRemote = new OceanImpl(11);
+    private Ocean oceanLocal = new OceanImpl(SIZE_OF_FIELDS);
+    private Ocean oceanRemote = new OceanImpl(SIZE_OF_FIELDS);
 
     private ArrayList<Ship> ships;
     private ArrayList<Ship> shipsLocal = new ArrayList<>();
@@ -51,13 +54,19 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
     /**
      * This Method creates the ships that can be set in the game. Will create the ships for both player.
      * Here you can change the number of every shipmodel!
-     * (Default: 1 Battleship, 2 Cruiser, 3 Destroyers, 4 Submarines)
+     * (Default:
+     * 1xAircraft carrier(5)
+     * 1xBattleship(4)
+     * 1xCruiser(3)
+     * 2xDestroyer(2)
+     * 2xSubmarine(1))
      */
     private void createAllShips() {
+        createShip(Shipmodel.CARRIER, 0);
         createShip(Shipmodel.BATTLESHIP, 0);
         createShip(Shipmodel.CRUISER, 0);
         createShip(Shipmodel.DESTROYER, 0);
-        createShip(Shipmodel.SUBMARINE, 1);
+        createShip(Shipmodel.SUBMARINE, 2);
     }
 
     private void createShip(Shipmodel ship, int count) {
@@ -85,6 +94,14 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
         this.phase = newPhase;
     }
 
+    public HashMap<Shipmodel, Integer> countShipsLocal() {
+        HashMap<Shipmodel, Integer> shipsCount = new HashMap<>();
+        for (Ship ship : shipsLocal) {
+            Integer count = shipsCount.getOrDefault(ship.getModel(), 0);
+            shipsCount.put(ship.getModel(), count + 1);
+        }
+        return shipsCount;
+    }
 
     @Override
     public boolean setShip(String player, Shipmodel shipmodel, Coordinate xy, boolean vertical) throws BattleshipException, PhaseException, OceanException, ShipException {
@@ -115,7 +132,7 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
         if (isLocalCall(player) && this.protocolEngine != null) {
             this.protocolEngine.setShip(player, shipmodel, xy, vertical);
         } else {
-            System.out.println(player + " has set his ship.");
+            System.out.println(player + " has set a ship.");
         }
 
         if (shipsLocal.isEmpty()) {
@@ -295,7 +312,7 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
         playerRemote = partnerName;
         startsFirst = oracle;
 
-        System.out.println(playerLocal + ": gameSessionEstablished with " + playerRemote + " | " + startsFirst);
+        //System.out.println(playerLocal + ": gameSessionEstablished with " + playerRemote + " | " + startsFirst);
 
         setPhase(Phase.SETSHIPS);
     }

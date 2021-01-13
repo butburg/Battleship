@@ -78,12 +78,11 @@ public class ShipImpl implements Ship {
 
         Coordinate xy = new Coordinate(location_x, location_y);
         int res = 0;
-        if (anchor.equals(xy)) res = 0;
-        else if (anchor.x == location_x)
+        if (anchor.x == location_x)
             res = location_y - anchor.y;
         else if (anchor.y == location_y)
             res = location_x - anchor.x;
-        else throw new ShipException(ExceptionMsg.sh_wrongLocate);
+        else if (!anchor.equals(xy)) throw new ShipException(ExceptionMsg.sh_wrongLocate);
 
         // the res should be in range of the size of the ship
         if (res >= size || res < 0)
@@ -132,5 +131,10 @@ public class ShipImpl implements Ship {
     @Override
     public Shipmodel getModel() {
         return model;
+    }
+
+    @Override
+    public String toString() {
+        return model + "(" + size + ")";
     }
 }

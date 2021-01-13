@@ -6,21 +6,25 @@ package ship;
  */
 public enum Shipmodel {
     /**
-     * usually 4 Submarines(size: 2)
+     * usually 2 Submarines(size: 1)
      */
-    SUBMARINE(2),  //4x
+    SUBMARINE(1),  //2x
     /**
-     * usually 3 Destroyers(size: 3)
+     * usually 2 Destroyers(size: 2)
      */
-    DESTROYER(3),  //3x
+    DESTROYER(2),  //2x
     /**
-     * usually 2 Cruisers(size: 4)
+     * usually 1 Cruisers(size: 3)
      */
-    CRUISER(4),    //2x
+    CRUISER(3),    //1x
     /**
-     * usually 1 Battleship(size: 5)
+     * usually 1 Battleship(size: 4)
      */
-    BATTLESHIP(5);  //1x
+    BATTLESHIP(4),  //1x
+    /**
+     * usually 1 Aircraft carrier(size: 5)
+     */
+    CARRIER(5);  //1x
 
     /**
      * the size or number of fields for the type
