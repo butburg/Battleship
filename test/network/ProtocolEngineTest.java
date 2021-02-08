@@ -49,7 +49,7 @@ class ProtocolEngineTest {
             ProtocolEngineTest.port++;
         }
 
-        System.out.println("use portnumber " + ProtocolEngineTest.port);
+        System.out.println("use port " + ProtocolEngineTest.port);
         return ProtocolEngineTest.port;
     }
 
@@ -204,72 +204,45 @@ class ProtocolEngineTest {
 
             assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(0, 0)));
             assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(0, 0)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(1, 0)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(1, 0)));
-
+            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(1, 0)));
+            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(1, 0)));
+            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(2, 0)));
+            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(2, 0)));
             assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(3, 0)));
             assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(3, 0)));
+            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(4, 0)));
+            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(4, 0)));
+
             assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(6, 0)));
             assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(6, 0)));
             assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(7, 0)));
             assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(7, 0)));
             assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(8, 0)));
             assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(8, 0)));
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(9, 0)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(9, 0)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(10, 0)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(10, 0)));
+            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(9, 0)));
+            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(9, 0)));
 
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(3, 1)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(3, 1)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(3, 2)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(3, 2)));
+            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(3, 2)));
+            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(3, 2)));
+            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(3, 3)));
+            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(3, 3)));
 
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(9, 2)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(9, 2)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(10, 2)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(10, 2)));
-
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(0, 5)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(0, 5)));
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(1, 5)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(1, 5)));
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(2, 5)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(2, 5)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(3, 5)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(3, 5)));
+            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(9, 2)));
+            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(9, 2)));
 
             assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(0, 7)));
             assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(0, 7)));
             assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(0, 8)));
             assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(0, 8)));
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(0, 9)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(0, 9)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(0, 10)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(0, 10)));
+            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(0, 9)));
+            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(0, 9)));
 
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(8, 8)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(8, 8)));
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(9, 8)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(9, 8)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(10, 8)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(10, 8)));
+            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(8, 9)));
+            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(8, 9)));
+            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(9, 9)));
+            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(9, 9)));
 
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(3, 10)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(3, 10)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(4, 10)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(4, 10)));
-
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(8, 10)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(8, 10)));
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(9, 10)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(9, 10)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(10, 10)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(10, 10)));
-
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(6, 9)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(6, 9)));
-            assertEquals(Result.WIN, aliceBsImpl.attack(PNAME1, new Coordinate(6, 10)));
+            assertEquals(Result.WIN, aliceBsImpl.attack(PNAME1, new Coordinate(6, 9)));
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //                                             tidy up                                                    //
@@ -299,73 +272,46 @@ class ProtocolEngineTest {
 
             assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(0, 0)));
             assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(0, 0)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(1, 0)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(1, 0)));
-
+            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(1, 0)));
+            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(1, 0)));
+            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(2, 0)));
+            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(2, 0)));
             assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(3, 0)));
             assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(3, 0)));
+            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(4, 0)));
+            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(4, 0)));
+
             assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(6, 0)));
             assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(6, 0)));
             assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(7, 0)));
             assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(7, 0)));
             assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(8, 0)));
             assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(8, 0)));
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(9, 0)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(9, 0)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(10, 0)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(10, 0)));
+            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(9, 0)));
+            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(9, 0)));
 
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(3, 1)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(3, 1)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(3, 2)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(3, 2)));
+            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(3, 2)));
+            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(3, 2)));
+            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(3, 3)));
+            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(3, 3)));
 
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(9, 2)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(9, 2)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(10, 2)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(10, 2)));
-
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(0, 5)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(0, 5)));
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(1, 5)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(1, 5)));
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(2, 5)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(2, 5)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(3, 5)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(3, 5)));
+            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(9, 2)));
+            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(9, 2)));
 
             assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(0, 7)));
             assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(0, 7)));
             assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(0, 8)));
             assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(0, 8)));
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(0, 9)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(0, 9)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(0, 10)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(0, 10)));
+            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(0, 9)));
+            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(0, 9)));
 
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(8, 8)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(8, 8)));
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(9, 8)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(9, 8)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(10, 8)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(10, 8)));
+            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(8, 9)));
+            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(8, 9)));
+            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(9, 9)));
+            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(9, 9)));
 
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(3, 10)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(3, 10)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(4, 10)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(4, 10)));
-
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(8, 10)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(8, 10)));
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(9, 10)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(9, 10)));
-            assertEquals(Result.SINK, aliceBsImpl.attack(PNAME1, new Coordinate(10, 10)));
-            assertEquals(Result.SINK, jakeBsImpl.attack(PNAME2, new Coordinate(10, 10)));
-
-            assertEquals(Result.HIT, aliceBsImpl.attack(PNAME1, new Coordinate(6, 9)));
-            assertEquals(Result.HIT, jakeBsImpl.attack(PNAME2, new Coordinate(6, 9)));
-            assertEquals(Result.MISSED, aliceBsImpl.attack(PNAME1, new Coordinate(6, 8)));
-            assertEquals(Result.WIN, jakeBsImpl.attack(PNAME2, new Coordinate(6, 10)));
+            assertEquals(Result.MISSED, aliceBsImpl.attack(PNAME1, new Coordinate(5, 9)));
+            assertEquals(Result.WIN, jakeBsImpl.attack(PNAME2, new Coordinate(6, 9)));
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //                                             tidy up                                                    //
@@ -383,26 +329,20 @@ class ProtocolEngineTest {
         //give some time to transfer after call
         Thread.sleep(10);
 
+        jakeBsImpl.setShip(PNAME2, Shipmodel.CARRIER, new Coordinate(0, 0));
         jakeBsImpl.setShip(PNAME2, Shipmodel.BATTLESHIP, new Coordinate(6, 0));
-        jakeBsImpl.setShip(PNAME2, Shipmodel.CRUISER, new Coordinate(0, 5));
         jakeBsImpl.setShip(PNAME2, Shipmodel.CRUISER, new Coordinate(0, 7), true);
-        jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(3, 0), true);
-        jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(8, 8));
-        jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(8, 10));
-        jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(0, 0));
+        jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(3, 2), true);
+        jakeBsImpl.setShip(PNAME2, Shipmodel.DESTROYER, new Coordinate(8, 9));
         jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(9, 2));
-        jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(3, 10));
         jakeBsImpl.setShip(PNAME2, Shipmodel.SUBMARINE, new Coordinate(6, 9), true);
 
+        aliceBsImpl.setShip(PNAME1, Shipmodel.CARRIER, new Coordinate(0, 0));
         aliceBsImpl.setShip(PNAME1, Shipmodel.BATTLESHIP, new Coordinate(6, 0));
-        aliceBsImpl.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 5));
         aliceBsImpl.setShip(PNAME1, Shipmodel.CRUISER, new Coordinate(0, 7), true);
-        aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(3, 0), true);
-        aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 8));
-        aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 10));
-        aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(0, 0));
+        aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(3, 2), true);
+        aliceBsImpl.setShip(PNAME1, Shipmodel.DESTROYER, new Coordinate(8, 9));
         aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(9, 2));
-        aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(3, 10));
         aliceBsImpl.setShip(PNAME1, Shipmodel.SUBMARINE, new Coordinate(6, 9), true);
     }
 }

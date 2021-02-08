@@ -53,7 +53,7 @@ public class BattleshipImpl implements Battleship, LocalBattleship, SessionEstab
 
     /**
      * This Method creates the ships that can be set in the game. Will create the ships for both player.
-     * Here you can change the number of every shipmodel!
+     * Here you can change the number of every ship model!
      * (Default:
      * 1xAircraft carrier(5)
      * 1xBattleship(4)

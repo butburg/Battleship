@@ -38,7 +38,7 @@ public class BattleshipPrintStreamView implements PrintStreamView {
         System.out.println("------------My Ships:--------------");
         scala(ps, " ", "  ");
         ps.println();
-        shipField(ps, " X ", " ~ ", " O ", true);
+        shipField(ps, " # ", " ~ ", " S ", true);
         scala(ps, " ", "  ");
         ps.println();
     }

@@ -41,8 +41,8 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
     private static final String EXIT = "exit";
     private static final String CONNECT2PORT = "connect";
     private static final String OPENPORT = "open";
-    private static final String SETSHIP = "set";
-    private static final String ATTACK = "attack";
+    private static final String SETSHIP = "place";
+    private static final String ATTACK = "att";
 
 
     public BattleshipUI(String playerName, PrintStream os, InputStream in) {
@@ -56,47 +56,48 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
     }
 
     public void printShips() {
-        System.out.println("Ships to set:");
-        System.out.println(gameEngine.countShipsLocal());
+        for (Shipmodel sm : Shipmodel.values()) {
+            System.out.println(
+                    (gameEngine.countShipsLocal().get(sm) == null ? "0" : gameEngine.countShipsLocal().get(sm))
+                            + "x " + sm.toString()
+                            + ", Size: "
+                            + sm.returnSize());
+        }
     }
 
     public void printUsage() {
         StringBuilder b = new StringBuilder();
         b.append("\n");
-        b.append("Valid commands:");
+        b.append("Valid commands you can type:");
         b.append("\n");
-        b.append(CONNECT2PORT + " hostname(optional)");
-        b.append(" ?connect as tcp client to another open port");
+        b.append(CONNECT2PORT + " [HOSTNAME]");
+        b.append(" => connect as tcp client to another open port");
         b.append("\n");
         b.append(OPENPORT);
-        b.append(" ?open port and become tcp server");
+        b.append(" => open port and become tcp server");
         b.append("\n");
         b.append(PRINTOCEAN);
-        b.append(" ?print the ocean");
+        b.append(" => print the ocean / game field");
         b.append("\n");
-        b.append(SETSHIP + " shiptype x y v(optional)");
-        b.append(".. set a ship");
+        b.append(SETSHIP + " [SHIPMODEL] x y v(optional)");
         b.append("\n");
-        b.append("(Horizontal is default)");
+        b.append(" => place a type of ship at position x y, add v to place it vertical");
+        b.append("\n");
+        b.append("(without v it will be placed horizontal)");
         b.append("\n");
         b.append(ATTACK + " x y");
-        b.append(" ?attack a field");
+        b.append(" => attack the enemy at the position x y");
         b.append("\n");
         b.append(EXIT);
-        b.append(" ?exit the game");
+        b.append(" => exit the game");
         b.append("\n\n");
-        b.append("Ships you will set:");
+        b.append("Examples:");
         b.append("\n");
-        for (int i = 0; i < Shipmodel.values().length; i++) {
-            b.append(Shipmodel.values()[i].toString().toLowerCase());
-            b.append(" ");
-        }
-        b.append("\n\n");
-        b.append("Example:");
+        b.append(CONNECT2PORT + " 192.168.1.1");
         b.append("\n");
-        b.append("set battleship 2 4 v");
+        b.append(SETSHIP + " battleship 2 4 v");
         b.append("\n");
-        b.append("attack 2 5");
+        b.append(ATTACK + " 2 5");
         b.append("\n");
 
         this.outStream.println(b.toString());
@@ -149,7 +150,15 @@ public class BattleshipUI implements LocalBSChangedSubscriber, SessionEstablishe
                         this.doAttack(parameterPart);
                         this.doPrint(true);
                         break;
-// end loop
+                    case "default":
+                        this.doSetShip("submarine 0 0");
+                        this.doSetShip("submarine 0 2");
+                        this.doSetShip("destroyer 0 4");
+                        this.doSetShip("destroyer 0 6");
+                        this.doSetShip("cruiser 0 8");
+                        this.doSetShip("battleship 3 0");
+                        this.doSetShip("carrier 3 2");
+                        break;
                     case "q":
                     case EXIT:
                         again = false;

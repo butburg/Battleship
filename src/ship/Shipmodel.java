@@ -29,7 +29,7 @@ public enum Shipmodel {
     /**
      * the size or number of fields for the type
      */
-    private int size;
+    private final int size;
 
     Shipmodel(int size) {
         this.size = size;
